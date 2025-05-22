@@ -2,25 +2,59 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Porsche 996 Maintenance Tracker</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Ensure touch-friendly tap targets */
+        button, input, select {
+            min-height: 44px; /* Minimum tap target size for iOS */
+            font-size: 16px; /* Minimum font size for readability on iPhone */
+        }
+        /* Adjust table for small screens */
+        .table-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+        }
+        /* Hide scrollbars on iPhone while keeping scroll functionality */
+        .table-container::-webkit-scrollbar {
+            display: none;
+        }
+        /* Ensure tables don't break layout */
+        table {
+            min-width: 100%;
+        }
+        th, td {
+            white-space: nowrap; /* Prevent text wrapping in table cells */
+        }
+        /* Responsive font sizes for headers */
+        h1 {
+            font-size: 1.5rem; /* 24px on small screens */
+        }
+        @media (min-width: 640px) {
+            h1 {
+                font-size: 2.25rem; /* 36px on larger screens */
+            }
+        }
+    </style>
 </head>
 <body class="bg-gray-100 font-sans">
-    <div class="container mx-auto p-4">
+    <div class="container mx-auto p-4 sm:p-6">
         <h1 class="text-3xl font-bold text-center mb-6">Porsche 996 Maintenance Tracker</h1>
 
         <!-- Tab Navigation -->
         <div class="mb-4">
-            <ul class="flex border-b">
+            <ul class="flex border-b flex-wrap">
                 <li class="mr-1">
-                    <button id="maintenanceTab" onclick="openTab('maintenance')" class="bg-white inline-block py-2 px-4 text-blue-500 font-semibold border-l border-t border-r rounded-t">Maintenance</button>
+                    <button id="maintenanceTab" onclick="openTab('maintenance')" class="bg-white inline-block py-2 px-4 text-blue-500 font-semibold border-l border-t border-r rounded-t text-sm sm:text-base">Maintenance</button>
                 </li>
                 <li class="mr-1">
-                    <button id="valueTab" onclick="openTab('value')" class="bg-gray-200 inline-block py-2 px-4 text-gray-700 font-semibold">Car Value</button>
+                    <button id="valueTab" onclick="openTab('value')" class="bg-gray-200 inline-block py-2 px-4 text-gray-700 font-semibold text-sm sm:text-base">Car Value</button>
                 </li>
                 <li class="mr-1">
-                    <button id="eventsTab" onclick="openTab('events')" class="bg-gray-200 inline-block py-2 px-4 text-gray-700 font-semibold">Upcoming Events</button>
+                    <button id="eventsTab" onclick="openTab('events')" class="bg-gray-200 inline-block py-2 px-4 text-gray-700 font-semibold text-sm sm:text-base">Upcoming Events</button>
                 </li>
             </ul>
         </div>
@@ -31,7 +65,7 @@
             <div class="mb-6 p-4 bg-white rounded-lg shadow">
                 <h2 class="text-xl font-semibold mb-2">Car Photo</h2>
                 <input id="carPhotoInput" type="file" accept="image/*" class="border p-2 rounded w-full mb-2">
-                <button onclick="uploadCarPhoto()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Upload Photo</button>
+                <button onclick="uploadCarPhoto()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 w-full sm:w-auto">Upload Photo</button>
                 <div class="mt-4">
                     <img id="carPhoto" class="max-w-full h-auto rounded-lg hidden" alt="Car Photo">
                 </div>
@@ -41,14 +75,14 @@
             <div class="mb-6 p-4 bg-white rounded-lg shadow">
                 <h2 class="text-xl font-semibold mb-2">Current Mileage</h2>
                 <input id="mileageInput" type="number" value="136000" class="border p-2 rounded w-full mb-2" placeholder="Enter current mileage">
-                <button onclick="updateMileage()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Update Mileage</button>
+                <button onclick="updateMileage()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 w-full sm:w-auto">Update Mileage</button>
                 <p class="mt-2">Current Mileage: <span id="currentMileage">136,000</span> miles</p>
             </div>
 
             <!-- Add Upcoming Service -->
             <div class="mb-6 p-4 bg-white rounded-lg shadow">
                 <h2 class="text-xl font-semibold mb-2">Add Upcoming Service</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                     <input id="upcomingType" type="text" class="border p-2 rounded w-full" placeholder="Type (e.g., SERVICE)">
                     <input id="upcomingDate" type="date" class="border p-2 rounded w-full" placeholder="Date">
                     <input id="upcomingMileage" type="number" class="border p-2 rounded w-full" placeholder="Mileage">
@@ -59,186 +93,191 @@
                     <input id="upcomingBrake" type="text" class="border p-2 rounded w-full" placeholder="Brake (Yes/No)">
                     <input id="upcomingCost" type="text" class="border p-2 rounded w-full" placeholder="Projected Cost">
                 </div>
-                <button onclick="addUpcomingService()" class="mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Add Service</button>
+                <button onclick="addUpcomingService()" class="mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 w-full sm:w-auto">Add Service</button>
             </div>
 
             <!-- Upcoming Services -->
             <div class="mb-6 p-4 bg-white rounded-lg shadow">
-                <h2 class="text-xl font-semibold mb-2">Upcoming Services</h2>
-                <table class="w-full border-collapse">
-                    <thead>
-                        <tr class="bg-gray-200">
-                            <th class="border p-2">Type</th>
-                            <th class="border p-2">Date</th>
-                            <th class="border p-2">Mileage</th>
-                            <th class="border p-2">Project</th>
-                            <th class="border p-2">Description</th>
-                            <th class="border p-2">Oil Change</th>
-                            <th class="border p-2">Spark Plug</th>
-                            <th class="border p-2">Brake</th>
-                            <th class="border p-2">Projected Cost</th>
-                            <th class="border p-2">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="upcomingTable">
-                        <tr data-project="Minor Service">
-                            <td class="border p-2">SERVICE</td>
-                            <td class="border p-2">2025-05-15</td>
-                            <td class="border p-2">136000</td>
-                            <td class="border p-2">Minor Service</td>
-                            <td class="border p-2">Oil Change, Inspection, Brake Fluid Flush, Coolant Flush, Air Filter</td>
-                            <td class="border p-2">Yes</td>
-                            <td class="border p-2">No</td>
-                            <td class="border p-2">Yes</td>
-                            <td class="border p-2">$1,000</td>
-                            <td class="border p-2">
-                                <button onclick="editUpcomingService(this)" class="text-blue-500 hover:text-blue-700 mr-2">✏️</button>
-                                <button onclick="removeUpcomingService('Minor Service')" class="text-red-500 hover:text-red-700">✖</button>
-                            </td>
-                        </tr>
-                        <tr data-project="Oil Change">
-                            <td class="border p-2">SERVICE</td>
-                            <td class="border p-2">2025-08-15</td>
-                            <td class="border p-2">139000</td>
-                            <td class="border p-2">Oil Change</td>
-                            <td class="border p-2">Oil Change, Inspection</td>
-                            <td class="border p-2">Yes</td>
-                            <td class="border p-2">No</td>
-                            <td class="border p-2">No</td>
-                            <td class="border p-2">$200</td>
-                            <td class="border p-2">
-                                <button onclick="editUpcomingService(this)" class="text-blue-500 hover:text-blue-700 mr-2">✏️</button>
-                                <button onclick="removeUpcomingService('Oil Change')" class="text-red-500 hover:text-red-700">✖</button>
-                            </td>
-                        </tr>
-                        <tr data-project="IMS Bearing/Clutch Check">
-                            <td class="border p-2">UPGRADE</td>
-                            <td class="border p-2">2025-05-15</td>
-                            <td class="border p-2">136000</td>
-                            <td class="border p-2">IMS Bearing/Clutch Check</td>
-                            <td class="border p-2">Inspect IMS Bearing, Clutch</td>
-                            <td class="border p-2">No</td>
-                            <td class="border p-2">No</td>
-                            <td class="border p-2">No</td>
-                            <td class="border p-2">$500</td>
-                            <td class="border p-2">
-                                <button onclick="editUpcomingService(this)" class="text-blue-500 hover:text-blue-700 mr-2">✏️</button>
-                                <button onclick="removeUpcomingService('IMS Bearing/Clutch Check')" class="text-red-500 hover:text-red-700">✖</button>
-                            </td>
-                        </tr>
-                        <tr data-project="Tire Replacement">
-                            <td class="border p-2">UPGRADE</td>
-                            <td class="border p-2">2025-05-15</td>
-                            <td class="border p-2">136000</td>
-                            <td class="border p-2">Tire Replacement</td>
-                            <td class="border p-2">Replace Tires</td>
-                            <td class="border p-2">No</td>
-                            <td class="border p-2">No</td>
-                            <td class="border p-2">No</td>
-                            <td class="border p-2">$1,200</td>
-                            <td class="border p-2">
-                                <button onclick="editUpcomingService(this)" class="text-blue-500 hover:text-blue-700 mr-2">✏️</button>
-                                <button onclick="removeUpcomingService('Tire Replacement')" class="text-red-500 hover:text-red-700">✖</button>
-                            </td>
-                        </tr>
-                        <tr data-project="Minor Service">
-                            <td class="border p-2">SERVICE</td>
-                            <td class="border p-2">2025-11-15</td>
-                            <td class="border p-2">144000</td>
-                            <td class="border p-2">Minor Service</td>
-                            <td class="border p-2">Oil Change, Inspection</td>
-                            <td class="border p-2">Yes</td>
-                            <td class="border p-2">No</td>
-                            <td class="border p-2">No</td>
-                            <td class="border p-2">$200</td>
-                            <td class="border p-2">
-                                <button onclick="editUpcomingService(this)" class="text-blue-500 hover:text-blue-700 mr-2">✏️</button>
-                                <button onclick="removeUpcomingService('Minor Service')" class="text-red-500 hover:text-red-700">✖</button>
-                            </td>
-                        </tr>
-                        <tr data-project="Major Service">
-                            <td class="border p-2">SERVICE</td>
-                            <td class="border p-2">2026-05-15</td>
-                            <td class="border p-2">150664</td>
-                            <td class="border p-2">Major Service</td>
-                            <td class="border p-2">Oil Change, Spark Plugs, Filters, Inspection</td>
-                            <td class="border p-2">Yes</td>
-                            <td class="border p-2">Yes</td>
-                            <td class="border p-2">No</td>
-                            <td class="border p-2">$1,500</td>
-                            <td class="border p-2">
-                                <button onclick="editUpcomingService(this)" class="text-blue-500 hover:text-blue-700 mr-2">✏️</button>
-                                <button onclick="removeUpcomingService('Major Service')" class="text-red-500 hover:text-red-700">✖</button>
-                            </td>
-                        </tr>
-                        <tr data-project="Brake Fluid Flush">
-                            <td class="border p-2">SERVICE</td>
-                            <td class="border p-2">2027-05-15</td>
-                            <td class="border p-2">151000</td>
-                            <td class="border p-2">Brake Fluid Flush</td>
-                            <td class="border p-2">Brake Fluid Flush</td>
-                            <td class="border p-2">No</td>
-                            <td class="border p-2">No</td>
-                            <td class="border p-2">Yes</td>
-                            <td class="border p-2">$300</td>
-                            <td class="border p-2">
-                                <button onclick="editUpcomingService(this)" class="text-blue-500 hover:text-blue-700 mr-2">✏️</button>
-                                <button onclick="removeUpcomingService('Brake Fluid Flush')" class="text-red-500 hover:text-red-700">✖</button>
-                            </td>
-                        </tr>
-                        <tr data-project="Coolant Flush">
-                            <td class="border p-2">SERVICE</td>
-                            <td class="border p-2">2029-05-15</td>
-                            <td class="border p-2">162245</td>
-                            <td class="border p-2">Coolant Flush</td>
-                            <td class="border p-2">Coolant Flush</td>
-                            <td class="border p-2">No</td>
-                            <td class="border p-2">No</td>
-                            <td class="border p-2">No</td>
-                            <td class="border p-2">$400</td>
-                            <td class="border p-2">
-                                <button onclick="editUpcomingService(this)" class="text-blue-500 hover:text-blue-700 mr-2">✏️</button>
-                                <button onclick="removeUpcomingService('Coolant Flush')" class="text-red-500 hover:text-red-700">✖</button>
-                            </td>
-                        </tr>
-                        <tr data-project="Air Filter/Fuel Filter">
-                            <td class="border p-2">SERVICE</td>
-                            <td class="border p-2">2029-05-15</td>
-                            <td class="border p-2">162245</td>
-                            <td class="border p-2">Air Filter/Fuel Filter</td>
-                            <td class="border p-2">Replace Air Filter, Fuel Filter</td>
-                            <td class="border p-2">No</td>
-                            <td class="border p-2">No</td>
-                            <td class="border p-2">No</td>
-                            <td class="border p-2">$300</td>
-                            <td class="border p-2">
-                                <button onclick="editUpcomingService(this)" class="text-blue-500 hover:text-blue-700 mr-2">✏️</button>
-                                <button onclick="removeUpcomingService('Air Filter/Fuel Filter')" class="text-red-500 hover:text-red-700">✖</button>
-                            </td>
-                        </tr>
-                        <tr data-project="IMS Bearing/Clutch Check">
-                            <td class="border p-2">UPGRADE</td>
-                            <td class="border p-2">2029-05-15</td>
-                            <td class="border p-2">188985</td>
-                            <td class="border p-2">IMS Bearing/Clutch Check</td>
-                            <td class="border p-2">Inspect IMS Bearing, Clutch</td>
-                            <td class="border p-2">No</td>
-                            <td class="border p-2">No</td>
-                            <td class="border p-2">No</td>
-                            <td class="border p-2">$500</td>
-                            <td class="border p-2">
-                                <button onclick="editUpcomingService(this)" class="text-blue-500 hover:text-blue-700 mr-2">✏️</button>
-                                <button onclick="removeUpcomingService('IMS Bearing/Clutch Check')" class="text-red-500 hover:text-red-700">✖</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="flex justify-between items-center mb-2">
+                    <h2 class="text-xl font-semibold">Upcoming Services</h2>
+                    <input id="upcomingSearch" type="text" class="border p-2 rounded w-full sm:w-1/3" placeholder="Search Upcoming Services..." onkeyup="searchTable('upcomingTable', 'upcomingSearch')">
+                </div>
+                <div class="table-container">
+                    <table class="w-full border-collapse">
+                        <thead>
+                            <tr class="bg-gray-200">
+                                <th class="border p-2 text-sm sm:text-base">Type</th>
+                                <th class="border p-2 text-sm sm:text-base">Date</th>
+                                <th class="border p-2 text-sm sm:text-base">Mileage</th>
+                                <th class="border p-2 text-sm sm:text-base">Project</th>
+                                <th class="border p-2 text-sm sm:text-base">Description</th>
+                                <th class="border p-2 text-sm sm:text-base">Oil Change</th>
+                                <th class="border p-2 text-sm sm:text-base">Spark Plug</th>
+                                <th class="border p-2 text-sm sm:text-base">Brake</th>
+                                <th class="border p-2 text-sm sm:text-base">Projected Cost</th>
+                                <th class="border p-2 text-sm sm:text-base">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="upcomingTable">
+                            <tr data-project="Minor Service">
+                                <td class="border p-2 text-sm sm:text-base">SERVICE</td>
+                                <td class="border p-2 text-sm sm:text-base">2025-05-15</td>
+                                <td class="border p-2 text-sm sm:text-base">136000</td>
+                                <td class="border p-2 text-sm sm:text-base">Minor Service</td>
+                                <td class="border p-2 text-sm sm:text-base">Oil Change, Inspection, Brake Fluid Flush, Coolant Flush, Air Filter</td>
+                                <td class="border p-2 text-sm sm:text-base">Yes</td>
+                                <td class="border p-2 text-sm sm:text-base">No</td>
+                                <td class="border p-2 text-sm sm:text-base">Yes</td>
+                                <td class="border p-2 text-sm sm:text-base">$1,000</td>
+                                <td class="border p-2 text-sm sm:text-base">
+                                    <button onclick="editUpcomingService(this)" class="text-blue-500 hover:text-blue-700 mr-2">✏️</button>
+                                    <button onclick="removeUpcomingService('Minor Service')" class="text-red-500 hover:text-red-700">✖</button>
+                                </td>
+                            </tr>
+                            <tr data-project="Oil Change">
+                                <td class="border p-2 text-sm sm:text-base">SERVICE</td>
+                                <td class="border p-2 text-sm sm:text-base">2025-08-15</td>
+                                <td class="border p-2 text-sm sm:text-base">139000</td>
+                                <td class="border p-2 text-sm sm:text-base">Oil Change</td>
+                                <td class="border p-2 text-sm sm:text-base">Oil Change, Inspection</td>
+                                <td class="border p-2 text-sm sm:text-base">Yes</td>
+                                <td class="border p-2 text-sm sm:text-base">No</td>
+                                <td class="border p-2 text-sm sm:text-base">No</td>
+                                <td class="border p-2 text-sm sm:text-base">$200</td>
+                                <td class="border p-2 text-sm sm:text-base">
+                                    <button onclick="editUpcomingService(this)" class="text-blue-500 hover:text-blue-700 mr-2">✏️</button>
+                                    <button onclick="removeUpcomingService('Oil Change')" class="text-red-500 hover:text-red-700">✖</button>
+                                </td>
+                            </tr>
+                            <tr data-project="IMS Bearing/Clutch Check">
+                                <td class="border p-2 text-sm sm:text-base">UPGRADE</td>
+                                <td class="border p-2 text-sm sm:text-base">2025-05-15</td>
+                                <td class="border p-2 text-sm sm:text-base">136000</td>
+                                <td class="border p-2 text-sm sm:text-base">IMS Bearing/Clutch Check</td>
+                                <td class="border p-2 text-sm sm:text-base">Inspect IMS Bearing, Clutch</td>
+                                <td class="border p-2 text-sm sm:text-base">No</td>
+                                <td class="border p-2 text-sm sm:text-base">No</td>
+                                <td class="border p-2 text-sm sm:text-base">No</td>
+                                <td class="border p-2 text-sm sm:text-base">$500</td>
+                                <td class="border p-2 text-sm sm:text-base">
+                                    <button onclick="editUpcomingService(this)" class="text-blue-500 hover:text-blue-700 mr-2">✏️</button>
+                                    <button onclick="removeUpcomingService('IMS Bearing/Clutch Check')" class="text-red-500 hover:text-red-700">✖</button>
+                                </td>
+                            </tr>
+                            <tr data-project="Tire Replacement">
+                                <td class="border p-2 text-sm sm:text-base">UPGRADE</td>
+                                <td class="border p-2 text-sm sm:text-base">2025-05-15</td>
+                                <td class="border p-2 text-sm sm:text-base">136000</td>
+                                <td class="border p-2 text-sm sm:text-base">Tire Replacement</td>
+                                <td class="border p-2 text-sm sm:text-base">Replace Tires</td>
+                                <td class="border p-2 text-sm sm:text-base">No</td>
+                                <td class="border p-2 text-sm sm:text-base">No</td>
+                                <td class="border p-2 text-sm sm:text-base">No</td>
+                                <td class="border p-2 text-sm sm:text-base">$1,200</td>
+                                <td class="border p-2 text-sm sm:text-base">
+                                    <button onclick="editUpcomingService(this)" class="text-blue-500 hover:text-blue-700 mr-2">✏️</button>
+                                    <button onclick="removeUpcomingService('Tire Replacement')" class="text-red-500 hover:text-red-700">✖</button>
+                                </td>
+                            </tr>
+                            <tr data-project="Minor Service">
+                                <td class="border p-2 text-sm sm:text-base">SERVICE</td>
+                                <td class="border p-2 text-sm sm:text-base">2025-11-15</td>
+                                <td class="border p-2 text-sm sm:text-base">144000</td>
+                                <td class="border p-2 text-sm sm:text-base">Minor Service</td>
+                                <td class="border p-2 text-sm sm:text-base">Oil Change, Inspection</td>
+                                <td class="border p-2 text-sm sm:text-base">Yes</td>
+                                <td class="border p-2 text-sm sm:text-base">No</td>
+                                <td class="border p-2 text-sm sm:text-base">No</td>
+                                <td class="border p-2 text-sm sm:text-base">$200</td>
+                                <td class="border p-2 text-sm sm:text-base">
+                                    <button onclick="editUpcomingService(this)" class="text-blue-500 hover:text-blue-700 mr-2">✏️</button>
+                                    <button onclick="removeUpcomingService('Minor Service')" class="text-red-500 hover:text-red-700">✖</button>
+                                </td>
+                            </tr>
+                            <tr data-project="Major Service">
+                                <td class="border p-2 text-sm sm:text-base">SERVICE</td>
+                                <td class="border p-2 text-sm sm:text-base">2026-05-15</td>
+                                <td class="border p-2 text-sm sm:text-base">150664</td>
+                                <td class="border p-2 text-sm sm:text-base">Major Service</td>
+                                <td class="border p-2 text-sm sm:text-base">Oil Change, Spark Plugs, Filters, Inspection</td>
+                                <td class="border p-2 text-sm sm:text-base">Yes</td>
+                                <td class="border p-2 text-sm sm:text-base">Yes</td>
+                                <td class="border p-2 text-sm sm:text-base">No</td>
+                                <td class="border p-2 text-sm sm:text-base">$1,500</td>
+                                <td class="border p-2 text-sm sm:text-base">
+                                    <button onclick="editUpcomingService(this)" class="text-blue-500 hover:text-blue-700 mr-2">✏️</button>
+                                    <button onclick="removeUpcomingService('Major Service')" class="text-red-500 hover:text-red-700">✖</button>
+                                </td>
+                            </tr>
+                            <tr data-project="Brake Fluid Flush">
+                                <td class="border p-2 text-sm sm:text-base">SERVICE</td>
+                                <td class="border p-2 text-sm sm:text-base">2027-05-15</td>
+                                <td class="border p-2 text-sm sm:text-base">151000</td>
+                                <td class="border p-2 text-sm sm:text-base">Brake Fluid Flush</td>
+                                <td class="border p-2 text-sm sm:text-base">Brake Fluid Flush</td>
+                                <td class="border p-2 text-sm sm:text-base">No</td>
+                                <td class="border p-2 text-sm sm:text-base">No</td>
+                                <td class="border p-2 text-sm sm:text-base">Yes</td>
+                                <td class="border p-2 text-sm sm:text-base">$300</td>
+                                <td class="border p-2 text-sm sm:text-base">
+                                    <button onclick="editUpcomingService(this)" class="text-blue-500 hover:text-blue-700 mr-2">✏️</button>
+                                    <button onclick="removeUpcomingService('Brake Fluid Flush')" class="text-red-500 hover:text-red-700">✖</button>
+                                </td>
+                            </tr>
+                            <tr data-project="Coolant Flush">
+                                <td class="border p-2 text-sm sm:text-base">SERVICE</td>
+                                <td class="border p-2 text-sm sm:text-base">2029-05-15</td>
+                                <td class="border p-2 text-sm sm:text-base">162245</td>
+                                <td class="border p-2 text-sm sm:text-base">Coolant Flush</td>
+                                <td class="border p-2 text-sm sm:text-base">Coolant Flush</td>
+                                <td class="border p-2 text-sm sm:text-base">No</td>
+                                <td class="border p-2 text-sm sm:text-base">No</td>
+                                <td class="border p-2 text-sm sm:text-base">No</td>
+                                <td class="border p-2 text-sm sm:text-base">$400</td>
+                                <td class="border p-2 text-sm sm:text-base">
+                                    <button onclick="editUpcomingService(this)" class="text-blue-500 hover:text-blue-700 mr-2">✏️</button>
+                                    <button onclick="removeUpcomingService('Coolant Flush')" class="text-red-500 hover:text-red-700">✖</button>
+                                </td>
+                            </tr>
+                            <tr data-project="Air Filter/Fuel Filter">
+                                <td class="border p-2 text-sm sm:text-base">SERVICE</td>
+                                <td class="border p-2 text-sm sm:text-base">2029-05-15</td>
+                                <td class="border p-2 text-sm sm:text-base">162245</td>
+                                <td class="border p-2 text-sm sm:text-base">Air Filter/Fuel Filter</td>
+                                <td class="border p-2 text-sm sm:text-base">Replace Air Filter, Fuel Filter</td>
+                                <td class="border p-2 text-sm sm:text-base">No</td>
+                                <td class="border p-2 text-sm sm:text-base">No</td>
+                                <td class="border p-2 text-sm sm:text-base">No</td>
+                                <td class="border p-2 text-sm sm:text-base">$300</td>
+                                <td class="border p-2 text-sm sm:text-base">
+                                    <button onclick="editUpcomingService(this)" class="text-blue-500 hover:text-blue-700 mr-2">✏️</button>
+                                    <button onclick="removeUpcomingService('Air Filter/Fuel Filter')" class="text-red-500 hover:text-red-700">✖</button>
+                                </td>
+                            </tr>
+                            <tr data-project="IMS Bearing/Clutch Check">
+                                <td class="border p-2 text-sm sm:text-base">UPGRADE</td>
+                                <td class="border p-2 text-sm sm:text-base">2029-05-15</td>
+                                <td class="border p-2 text-sm sm:text-base">188985</td>
+                                <td class="border p-2 text-sm sm:text-base">IMS Bearing/Clutch Check</td>
+                                <td class="border p-2 text-sm sm:text-base">Inspect IMS Bearing, Clutch</td>
+                                <td class="border p-2 text-sm sm:text-base">No</td>
+                                <td class="border p-2 text-sm sm:text-base">No</td>
+                                <td class="border p-2 text-sm sm:text-base">No</td>
+                                <td class="border p-2 text-sm sm:text-base">$500</td>
+                                <td class="border p-2 text-sm sm:text-base">
+                                    <button onclick="editUpcomingService(this)" class="text-blue-500 hover:text-blue-700 mr-2">✏️</button>
+                                    <button onclick="removeUpcomingService('IMS Bearing/Clutch Check')" class="text-red-500 hover:text-red-700">✖</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <!-- Log Completed Service -->
             <div class="mb-6 p-4 bg-white rounded-lg shadow">
                 <h2 class="text-xl font-semibold mb-2">Log Completed Service</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <input id="completedDate" type="date" class="border p-2 rounded w-full" placeholder="Date">
                     <input id="completedMileage" type="number" class="border p-2 rounded w-full" placeholder="Mileage">
                     <input id="completedProject" type="text" class="border p-2 rounded w-full" placeholder="Project">
@@ -246,28 +285,33 @@
                     <input id="completedCost" type="text" class="border p-2 rounded w-full" placeholder="Actual Cost">
                     <input id="completedVendor" type="text" class="border p-2 rounded w-full" placeholder="Vendor">
                 </div>
-                <button onclick="logService()" class="mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Log Service</button>
+                <button onclick="logService()" class="mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 w-full sm:w-auto">Log Service</button>
             </div>
 
             <!-- Completed Services -->
             <div class="p-4 bg-white rounded-lg shadow">
-                <h2 class="text-xl font-semibold mb-2">Completed Services</h2>
-                <table class="w-full border-collapse">
-                    <thead>
-                        <tr class="bg-gray-200">
-                            <th class="border p-2">Date</th>
-                            <th class="border p-2">Mileage</th>
-                            <th class="border p-2">Project</th>
-                            <th class="border p-2">Description</th>
-                            <th class="border p-2">Actual Cost</th>
-                            <th class="border p-2">Vendor</th>
-                            <th class="border p-2">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="completedTable">
-                        <!-- Completed services will be populated here -->
-                    </tbody>
-                </table>
+                <div class="flex justify-between items-center mb-2">
+                    <h2 class="text-xl font-semibold">Completed Services</h2>
+                    <input id="completedSearch" type="text" class="border p-2 rounded w-full sm:w-1/3" placeholder="Search Completed Services..." onkeyup="searchTable('completedTable', 'completedSearch')">
+                </div>
+                <div class="table-container">
+                    <table class="w-full border-collapse">
+                        <thead>
+                            <tr class="bg-gray-200">
+                                <th class="border p-2 text-sm sm:text-base">Date</th>
+                                <th class="border p-2 text-sm sm:text-base">Mileage</th>
+                                <th class="border p-2 text-sm sm:text-base">Project</th>
+                                <th class="border p-2 text-sm sm:text-base">Description</th>
+                                <th class="border p-2 text-sm sm:text-base">Actual Cost</th>
+                                <th class="border p-2 text-sm sm:text-base">Vendor</th>
+                                <th class="border p-2 text-sm sm:text-base">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="completedTable">
+                            <!-- Completed services will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
@@ -276,7 +320,7 @@
             <div class="p-4 bg-white rounded-lg shadow">
                 <h2 class="text-xl font-semibold mb-2">Estimate Your Porsche 996's Value</h2>
                 <p class="mb-4">Enter your car's details to estimate its current market value based on recent sales data.</p>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
                     <div>
                         <label class="block mb-1">Year:</label>
                         <select id="carYear" class="border p-2 rounded w-full">
@@ -303,7 +347,7 @@
                         </select>
                     </div>
                 </div>
-                <button onclick="calculateCarValue()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Calculate Value</button>
+                <button onclick="calculateCarValue()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 w-full sm:w-auto">Calculate Value</button>
                 <div id="valueResult" class="mt-4">
                     <p>Estimated Value: <span id="estimatedValue">$17,250</span></p>
                     <p class="text-sm text-gray-600">Note: This is an estimate based on recent market data for Porsche 996 Carrera Cabriolets. Actual value may vary depending on specific features, location, and market conditions.</p>
@@ -466,6 +510,34 @@
             document.getElementById(`${tabName}Tab`).classList.add('bg-white', 'text-blue-500');
         }
 
+        // Search Functionality for Tables
+        function searchTable(tableId, searchInputId) {
+            const searchInput = document.getElementById(searchInputId).value.toLowerCase();
+            const table = document.getElementById(tableId);
+            const rows = table.getElementsByTagName('tr');
+
+            for (let i = 0; i < rows.length; i++) {
+                const cells = rows[i].getElementsByTagName('td');
+                let match = false;
+
+                for (let j = 0; j < cells.length; j++) {
+                    if (cells[j]) {
+                        const cellText = cells[j].textContent.toLowerCase();
+                        if (cellText.includes(searchInput)) {
+                            match = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (match) {
+                    rows[i].style.display = '';
+                } else {
+                    rows[i].style.display = 'none';
+                }
+            }
+        }
+
         function uploadCarPhoto() {
             const fileInput = document.getElementById('carPhotoInput');
             const file = fileInput.files[0];
@@ -523,16 +595,16 @@
                 const row = document.createElement('tr');
                 row.setAttribute('data-project', project);
                 row.innerHTML = `
-                    <td class="border p-2">${type}</td>
-                    <td class="border p-2">${date}</td>
-                    <td class="border p-2">${parseInt(mileage).toLocaleString()}</td>
-                    <td class="border p-2">${project}</td>
-                    <td class="border p-2">${description}</td>
-                    <td class="border p-2">${oilChange}</td>
-                    <td class="border p-2">${sparkPlug}</td>
-                    <td class="border p-2">${brake}</td>
-                    <td class="border p-2">${cost}</td>
-                    <td class="border p-2">
+                    <td class="border p-2 text-sm sm:text-base">${type}</td>
+                    <td class="border p-2 text-sm sm:text-base">${date}</td>
+                    <td class="border p-2 text-sm sm:text-base">${parseInt(mileage).toLocaleString()}</td>
+                    <td class="border p-2 text-sm sm:text-base">${project}</td>
+                    <td class="border p-2 text-sm sm:text-base">${description}</td>
+                    <td class="border p-2 text-sm sm:text-base">${oilChange}</td>
+                    <td class="border p-2 text-sm sm:text-base">${sparkPlug}</td>
+                    <td class="border p-2 text-sm sm:text-base">${brake}</td>
+                    <td class="border p-2 text-sm sm:text-base">${cost}</td>
+                    <td class="border p-2 text-sm sm:text-base">
                         <button onclick="editUpcomingService(this)" class="text-blue-500 hover:text-blue-700 mr-2">✏️</button>
                         <button onclick="removeUpcomingService('${project}')" class="text-red-500 hover:text-red-700">✖</button>
                     </td>
@@ -671,13 +743,13 @@
             completedServices.forEach((service, index) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td class="border p-2">${service.date}</td>
-                    <td class="border p-2">${service.mileage}</td>
-                    <td class="border p-2">${service.project}</td>
-                    <td class="border p-2">${service.description}</td>
-                    <td class="border p-2">${service.cost}</td>
-                    <td class="border p-2">${service.vendor}</td>
-                    <td class="border p-2">
+                    <td class="border p-2 text-sm sm:text-base">${service.date}</td>
+                    <td class="border p-2 text-sm sm:text-base">${service.mileage}</td>
+                    <td class="border p-2 text-sm sm:text-base">${service.project}</td>
+                    <td class="border p-2 text-sm sm:text-base">${service.description}</td>
+                    <td class="border p-2 text-sm sm:text-base">${service.cost}</td>
+                    <td class="border p-2 text-sm sm:text-base">${service.vendor}</td>
+                    <td class="border p-2 text-sm sm:text-base">
                         <button onclick="editCompletedService(${index})" class="text-blue-500 hover:text-blue-700 mr-2">✏️</button>
                         <button onclick="deleteCompletedService(${index})" class="text-red-500 hover:text-red-700">✖</button>
                     </td>
