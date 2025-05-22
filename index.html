@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Porsche 996 Maintenance Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="container mx-auto p-4">
+        <h1 class="text-3xl font-bold text-center mb-6">Porsche 996 Maintenance Tracker</h1>
+
+        <!-- Tab Navigation -->
+        <div class="mb-4">
+            <ul class="flex border-b">
+                <li class="mr-1">
+                    <button id="maintenanceTab" onclick="openTab('maintenance')" class="bg-white inline-block py-2 px-4 text-blue-500 font-semibold border-l border-t border-r rounded-t">Maintenance</button>
+                </li>
+                <li class="mr-1">
+                    <button id="valueTab" onclick="openTab('value')" class="bg-gray-200 inline-block py-2 px-4 text-gray-700 font-semibold">Car Value</button>
+                </li>
+                <li class="mr-1">
+                    <button id="eventsTab" onclick="openTab('events')" class="bg-gray-200 inline-block py-2 px-4 text-gray-700 font-semibold">Upcoming Events</button>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Maintenance Tab Content -->
+        <div id="maintenance" class="tab-content">
+            <!-- Car Photo Upload -->
+            <div class="mb-6 p-4 bg-white rounded-lg shadow">
+                <h2 class="text-xl font-semibold mb-2">Car Photo</h2>
+                <input id="carPhotoInput" type="file" accept="image/*" class="border p-2 rounded w-full mb-2">
+                <button onclick="uploadCarPhoto()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Upload Photo</button>
+                <div class="mt-4">
+                    <img id="carPhoto" class="max-w-full h-auto rounded-lg hidden" alt="Car Photo">
+                </div>
+            </div>
+
+            <!-- Mileage Input -->
+            <div class="mb-6 p-4 bg-white rounded-lg shadow">
+                <h2 class="text-xl font-semibold mb-2">Current Mileage</h2>
+                <input id="mileageInput" type="number" value="136000" class="border p-2 rounded w-full mb-2" placeholder="Enter current mileage">
+                <button onclick="updateMileage()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Update Mileage</button>
+                <p class="mt-2">Current Mileage: <span id="currentMileage">136,000</span> miles</p>
+            </div>
+
+            <!-- Add Upcoming Service -->
+            <div class="mb-6 p-4 bg-white rounded-lg shadow">
+                <h2 class="text-xl font-semibold mb-2">Add Upcoming Service</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <input id="upcomingType" type="text" class="border p-2 rounded w-full" placeholder="Type (e.g., SERVICE)">
+                    <input id="upcomingDate" type="date" class="border p-2 rounded w-full" placeholder="Date">
+                    <input id="upcomingMileage" type="number" class="border p-2 rounded w-full" placeholder="Mileage">
+                    <input id="upcomingProject" type="text" class="border p-2 rounded w-full" placeholder="Project">
+                    <input id="upcomingDescription" type="text" class="border p-2 rounded w-full" placeholder="Description">
+                    <input id="upcomingOilChange" type="text" class="border p-2 rounded w-full" placeholder="Oil Change (Yes/No)">
+                    <input id="upcomingSparkPlug" type="text" class="border p-2 rounded w-full" placeholder="Spark Plug (Yes/No)">
+                    <input id="upcomingBrake" type="text" class="border p-2 rounded w-full" placeholder="Brake (Yes/No)">
+                    <input id="upcomingCost" type="text" class="border p-2 rounded w-full" placeholder="Projected Cost">
+                </div>
+                <button onclick="addUpcomingService()" class="mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Add Service</button>
+            </div>
+
+            <!-- Upcoming Services -->
+            <div class="mb-6 p-4 bg-white rounded-lg shadow">
+                <h2 class="text-xl font-semibold mb-2">Upcoming Services</h2>
+                <table class="w-full border-collapse">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="border p-2">Type</th>
+                            <th class="border p-2">Date</th>
+                            <th class="border p-2">Mileage</th>
+                            <th class="border p-2">Project</th>
+                            <th class="border p-2">Description</th>
+                            <th class="border p-2">Oil Change</th>
+                            <th class="border p-2">Spark Plug</th>
+                            <th class="border p-2">Brake</th>
+                            <th class="border p-2">Projected Cost</th>
+                            <th class="border p-2">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="upcomingTable">
+                        <tr data-project="Minor Service">
+                            <td class="border p-2">SERVICE</td>
+                            <td class="border p-2">2025-05-15</td>
+                            <td class="border p-2">136000</td>
+                            <td class="border p-2">Minor Service</td>
+                            <td class="border p-2">Oil Change, Inspection, Brake Fluid Flush, Coolant Flush, Air Filter</td>
+                            <td class="border p-2">Yes</td>
+                            <td class="border p-2">No</td>
+                            <td class="border p-2">Yes</td>
+                            <td class="border p-2">$1,000</td>
+                            <td class="border p-2">
+                                <button onclick="editUpcomingService(this)" class="text-blue-500 hover:text-blue-700 mr-2">✏️</button>
+                                <button onclick="removeUpcomingService('Minor Service')" class="text-red-500 hover:text-red-700">✖</button>
+                            </td>
+                        </tr>
+                        <tr data-project="Oil Change">
+                            <td class="border p-2">SERVICE</td>
+                            <td class="border p-2">2025-08-15</td>
+                            <td class="border p-2">139000</td>
+                            <td class="border p-2">Oil Change</td>
+                            <td class="border p-2">Oil Change, Inspection</td>
+                            <td class="border p-2">Yes</td>
+                            <td class="border p-2">No</td>
+                            <td class="border p-2">No</td>
+                            <td class="border p-2">$200</td>
+                            <td class="border p-2">
+                                <button onclick="editUpcomingService(this)" class="text-blue-500 hover:text-blue-700 mr-2">✏️</button>
+                                <button onclick="removeUpcomingService('Oil Change')" class="text-red-500 hover:text-red-700">✖</button>
+                            </td>
+                        </tr>
+                        <tr data-project="IMS Bearing/Clutch Check">
+                            <td class="border p-2">UPGRADE</td>
+                            <td class="border p-2">2025-05-15</td>
+                            <td class="border p-2">136000</td>
+                            <td class="border p-2">IMS Bearing/Clutch Check</td>
+                            <td class="border p-2">Inspect IMS Bearing, Clutch</td>
+                            <td class="border p-2">No</td>
+                            <td class="border p-2">No</td>
+                            <td class="border p-2">No</td>
+                            <td class="border p-2">$500</td>
+                            <td class="border p-2">
+                                <button onclick="editUpcomingService(this)" class="text-blue-500 hover:text-blue-700 mr-2">✏️</button>
+                                <button onclick="removeUpcomingService('IMS Bearing/Clutch Check')" class="text-red-500 hover:text-red-700">✖</button>
+                            </td>
+                        </tr>
+                        <tr data-project="Tire Replacement">
+                            <td class="border p-2">UPGRADE</td>
+                            <td class="border p-2">2025-05-15</td>
+                            <td class="border p-2">136000</td>
+                            <td class="border p-2">Tire Replacement</td>
+                            <td class="border p-2">Replace Tires</td>
+                            <td class="border p-2">No</td>
+                            <td class="border p-2">No</td>
+                            <td class="border p-2">No</td>
+                            <td class="border p-2">$1,200</td>
+                            <td class="border p-2">
+                                <button onclick="editUpcomingService(this)" class="text-blue-500 hover:text-blue-700 mr-2">✏️</button>
+                                <button onclick="removeUpcomingService('Tire Replacement')" class="text-red-500 hover:text-red-700">✖</button>
+                            </td>
+                        </tr>
+                        <tr data-project="Minor Service">
+                            <td class="border p-2">SERVICE</td>
+                            <td class="border p-2">2025-11-15</td>
+                            <td class="border p-2">144000</td>
+                            <td class="border p-2">Minor Service</td>
+                            <td class="border p-2">Oil Change, Inspection</td>
+                            <td class="border p-2">Yes</td>
+                            <td class="border p-2">No</td>
+                            <td class="border p-2">No</td>
+                            <td class="border p-2">$200</td>
+                            <td class="border p-2">
+                                <button onclick="editUpcomingService(this)" class="text-blue-500 hover:text-blue-700 mr-2">✏️</button>
+                                <button onclick="removeUpcomingService('Minor Service')" class="text-red-500 hover:text-red-700">✖</button>
+                            </td>
+                        </tr>
+                        <tr data-project="Major Service">
+                            <td class="border p-2">SERVICE</td>
+                            <td class="border p-2">2026-05-15</td>
+                            <td class="border p-2">150664</td>
+                            <td class="border p-2">Major Service</td>
+                            <td class="border p-2">Oil Change, Spark Plugs, Filters, Inspection</td>
+                            <td class="border p-2">Yes</td>
+                            <td class="border p-2">Yes</td>
+                            <td class="border p-2">No</td>
+                            <td class="border p-2">$1,500</td>
+                            <td class="border p-2">
+                                <button onclick="editUpcomingService(this)" class="text-blue-500 hover:text-blue-700 mr-2">✏️</button>
+                                <button onclick="removeUpcomingService('Major Service')" class="text-red-500 hover:text-red-700">✖</button>
+                            </td>
+                        </tr>
+                        <tr data-project="Brake Fluid Flush">
+                            <td class="border p-2">SERVICE</td>
+                            <td class="border p-2">2027-05-15</td>
+                            <td class="border p-2">151000</td>
+                            <td class="border p-2">Brake Fluid Flush</td>
+                            <td class="border p-2">Brake Fluid Flush</td>
+                            <td class="border p-2">No</td>
+                            <td class="border p-2">No</td>
+                            <td class="border p-2">Yes</td>
+                            <td class="border p-2">$300</td>
+                            <td class="border p-2">
+                                <button onclick="editUpcomingService(this)" class="text-blue-500 hover:text-blue-700 mr-2">✏️</button>
+                                <button onclick="removeUpcomingService('Brake Fluid Flush')" class="text-red-500 hover:text-red-700">✖</button>
+                            </td>
+                        </tr>
+                        <tr data-project="Coolant Flush">
+                            <td class="border p-2">SERVICE</td>
+                            <td class="border p-2">2029-05-15</td>
+                            <td class="border p-2">162245</td>
+                            <td class="border p-2">Coolant Flush</td>
+                            <td class="border p-2">Coolant Flush</td>
+                            <td class="border p-2">No</td>
+                            <td class="border p-2">No</td>
+                            <td class="border p-2">No</td>
+                            <td class="border p-2">$400</td>
+                            <td class="border p-2">
+                                <button onclick="editUpcomingService(this)" class="text-blue-500 hover:text-blue-700 mr-2">✏️</button>
+                                <button onclick="removeUpcomingService('Coolant Flush')" class="text-red-500 hover:text-red-700">✖</button>
+                            </td>
+                        </tr>
+                        <tr data-project="Air Filter/Fuel Filter">
+                            <td class="border p-2">SERVICE</td>
+                            <td class="border p-2">2029-05-15</td>
+                            <td class="border p-2">162245</td>
+                            <td class="border p-2">Air Filter/Fuel Filter</td>
+                            <td class="border p-2">Replace Air Filter, Fuel Filter</td>
+                            <td class="border p-2">No</td>
+                            <td class="border p-2">No</td>
+                            <td class="border p-2">No</td>
+                            <td class="border p-2">$300</td>
+                            <td class="border p-2">
+                                <button onclick="editUpcomingService(this)" class="text-blue-500 hover:text-blue-700 mr-2">✏️</button>
+                                <button onclick="removeUpcomingService('Air Filter/Fuel Filter')" class="text-red-500 hover:text-red-700">✖</button>
+                            </td>
+                        </tr>
+                        <tr data-project="IMS Bearing/Clutch Check">
+                            <td class="border p-2">UPGRADE</td>
+                            <td class="border p-2">2029-05-15</td>
+                            <td class="border p-2">188985</td>
+                            <td class="border p-2">IMS Bearing/Clutch Check</td>
+                            <td class="border p-2">Inspect IMS Bearing, Clutch</td>
+                            <td class="border p-2">No</td>
+                            <td class="border p-2">No</td>
+                            <td class="border p-2">No</td>
+                            <td class="border p-2">$500</td>
+                            <td class="border p-2">
+                                <button onclick="editUpcomingService(this)" class="text-blue-500 hover:text-blue-700 mr-2">✏️</button>
+                                <button onclick="removeUpcomingService('IMS Bearing/Clutch Check')" class="text-red-500 hover:text-red-700">✖</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Log Completed Service -->
+            <div class="mb-6 p-4 bg-white rounded-lg shadow">
+                <h2 class="text-xl font-semibold mb-2">Log Completed Service</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input id="completedDate" type="date" class="border p-2 rounded w-full" placeholder="Date">
+                    <input id="completedMileage" type="number" class="border p-2 rounded w-full" placeholder="Mileage">
+                    <input id="completedProject" type="text" class="border p-2 rounded w-full" placeholder="Project">
+                    <input id="completedDescription" type="text" class="border p-2 rounded w-full" placeholder="Description">
+                    <input id="completedCost" type="text" class="border p-2 rounded w-full" placeholder="Actual Cost">
+                    <input id="completedVendor" type="text" class="border p-2 rounded w-full" placeholder="Vendor">
+                </div>
+                <button onclick="logService()" class="mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Log Service</button>
+            </div>
+
+            <!-- Completed Services -->
+            <div class="p-4 bg-white rounded-lg shadow">
+                <h2 class="text-xl font-semibold mb-2">Completed Services</h2>
+                <table class="w-full border-collapse">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="border p-2">Date</th>
+                            <th class="border p-2">Mileage</th>
+                            <th class="border p-2">Project</th>
+                            <th class="border p-2">Description</th>
+                            <th class="border p-2">Actual Cost</th>
+                            <th class="border p-2">Vendor</th>
+                            <th class="border p-2">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="completedTable">
+                        <!-- Completed services will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Car Value Tab Content -->
+        <div id="value" class="tab-content hidden">
+            <div class="p-4 bg-white rounded-lg shadow">
+                <h2 class="text-xl font-semibold mb-2">Estimate Your Porsche 996's Value</h2>
+                <p class="mb-4">Enter your car's details to estimate its current market value based on recent sales data.</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div>
+                        <label class="block mb-1">Year:</label>
+                        <select id="carYear" class="border p-2 rounded w-full">
+                            <option value="1998">1998</option>
+                            <option value="1999">1999</option>
+                            <option value="2000">2000</option>
+                            <option value="2001">2001</option>
+                            <option value="2002">2002</option>
+                            <option value="2003" selected>2003</option>
+                            <option value="2004">2004</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block mb-1">Mileage:</label>
+                        <input id="carMileage" type="number" value="136000" class="border p-2 rounded w-full" placeholder="Enter mileage">
+                    </div>
+                    <div>
+                        <label class="block mb-1">Condition:</label>
+                        <select id="carCondition" class="border p-2 rounded w-full">
+                            <option value="poor">Poor</option>
+                            <option value="fair">Fair</option>
+                            <option value="good" selected>Good</option>
+                            <option value="excellent">Excellent</option>
+                        </select>
+                    </div>
+                </div>
+                <button onclick="calculateCarValue()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Calculate Value</button>
+                <div id="valueResult" class="mt-4">
+                    <p>Estimated Value: <span id="estimatedValue">$17,250</span></p>
+                    <p class="text-sm text-gray-600">Note: This is an estimate based on recent market data for Porsche 996 Carrera Cabriolets. Actual value may vary depending on specific features, location, and market conditions.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upcoming Events Tab Content -->
+        <div id="events" class="tab-content hidden">
+            <div class="p-4 bg-white rounded-lg shadow">
+                <h2 class="text-xl font-semibold mb-2">Upcoming Porsche Events</h2>
+                <p class="mb-4">Porsche car events in the Bay Area and around Carmel, CA, from May 22, 2025, to November 22, 2025.</p>
+                <div class="space-y-4">
+                    <div>
+                        <h3 class="text-lg font-medium">May 23, 2025 – Fremont, CA</h3>
+                        <p><strong>Event:</strong> Friday Night Grill n Chill Cruise Night</p>
+                        <p><strong>Description:</strong> A weekly cruise night for car enthusiasts, including Porsche owners, at the Flying A Service Station.</p>
+                        <p><strong>Link:</strong> <a href="https://norcalcarculture.com" target="_blank" class="text-blue-500 hover:underline">norcalcarculture.com</a></p>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-medium">May 24, 2025 – Concord, CA</h3>
+                        <p><strong>Event:</strong> Hot Concord Nights Cruise-In</p>
+                        <p><strong>Description:</strong> A Saturday evening cruise-in event welcoming all car makes, including Porsches, at Los Tacos de Pancho.</p>
+                        <p><strong>Link:</strong> <a href="https://norcalcarculture.com" target="_blank" class="text-blue-500 hover:underline">norcalcarculture.com</a></p>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-medium">May 25, 2025 – Santa Rosa, CA</h3>
+                        <p><strong>Event:</strong> Hot Rods & Burgers</p>
+                        <p><strong>Description:</strong> A Sunday event featuring classic cars, including Porsches, at Machado Burgers.</p>
+                        <p><strong>Link:</strong> <a href="https://norcalcarculture.com" target="_blank" class="text-blue-500 hover:underline">norcalcarculture.com</a></p>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-medium">May 25-29, 2025 – Watkins Glen, NY (Co-hosted by Metro NY and Niagara PCA)</h3>
+                        <p><strong>Event:</strong> Watkins Glen HPDE (High Performance Drivers Education)</p>
+                        <p><strong>Description:</strong> A fully instructed High Performance Drivers Education event at Watkins Glen International, co-hosted by Metro NY and Niagara PCA, offering Bay Area PCA members a chance to participate.</p>
+                        <p><strong>Link:</strong> <a href="https://www.pca.org" target="_blank" class="text-blue-500 hover:underline">pca.org</a></p>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-medium">June 15, 2025 – Santa Cruz, CA</h3>
+                        <p><strong>Event:</strong> Forest Bathing in the Redwoods Tour</p>
+                        <p><strong>Description:</strong> A tour through the Santa Cruz Mountains' redwoods, inspired by Shinrin-yoku, organized by the Loma Prieta Region PCA, starting in Santa Cruz and ending in Loma Mar.</p>
+                        <p><strong>Link:</strong> <a href="https://lprpca.org" target="_blank" class="text-blue-500 hover:underline">lprpca.org</a></p>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-medium">July 6-12, 2025 – Monterey Bay Region</h3>
+                        <p><strong>Event:</strong> 2025 Porsche Parade</p>
+                        <p><strong>Description:</strong> The 69th Porsche Parade, a major PCA event, held at the Omni Oklahoma City Hotel, relevant for Monterey Bay Region PCA members to attend or follow.</p>
+                        <p><strong>Link:</strong> <a href="https://mby.pca.org" target="_blank" class="text-blue-500 hover:underline">mby.pca.org</a></p>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-medium">August 15, 2025 – Monterey, CA</h3>
+                        <p><strong>Event:</strong> 2025 Werks Reunion Monterey</p>
+                        <p><strong>Description:</strong> A significant Porsche event during Monterey Car Week, showcasing a curated selection of Porsches at Monterey Pines Golf Course.</p>
+                        <p><strong>Link:</strong> <a href="https://mby.pca.org" target="_blank" class="text-blue-500 hover:underline">mby.pca.org</a></p>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-medium">September 21, 2025 – Rio Vista, CA (Drives from North Bay, East Bay, South Bay)</h3>
+                        <p><strong>Event:</strong> 356CAR Driving Tours for Ferry Porsche’s Birthday</p>
+                        <p><strong>Description:</strong> Four driving tours starting from North Bay, East Bay, South Bay, and Sacramento, converging at The Point Restaurant in Rio Vista to celebrate Ferry Porsche’s birthday.</p>
+                        <p><strong>Link:</strong> <a href="https://www.356car.org" target="_blank" class="text-blue-500 hover:underline">356car.org</a></p>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-medium">September 21, 2025 – Monterey Area (Carmel to Big Sur)</h3>
+                        <p><strong>Event:</strong> Drive Your Porsche Day – Carmel to Big Sur Tour</p>
+                        <p><strong>Description:</strong> A tour from Carmel to Big Sur followed by lunch, organized by the Monterey group of 356CAR to celebrate Drive Your Porsche Day.</p>
+                        <p><strong>Link:</strong> <a href="https://www.356car.org" target="_blank" class="text-blue-500 hover:underline">356car.org</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentMileage = 136000;
+
+        // Initialize completed services with data from the previous spreadsheet
+        const initialCompletedServices = [
+            { date: "2024-04-26", mileage: "129876", project: "Porsche Classic Engine Oil SW-50 + Filter", description: "Oil Change, Inspection", cost: "$200", vendor: "Pelican Parts" },
+            { date: "2024-10-01", mileage: "128000", project: "Paint Front Bumper and Hood", description: "Paint Front Bumper and Hood", cost: "$3,500", vendor: "TBD" },
+            { date: "2023-02-15", mileage: "120664", project: "Oil Change, Mobile 1 OW-40", description: "Oil Change, Mobile 1 OW-40", cost: "$150", vendor: "Self" },
+            { date: "2022-08-11", mileage: "118068", project: "Refresh Spark Plugs and Coils", description: "Refresh Spark Plugs and Coils", cost: "$300", vendor: "FCP Euro.com" },
+            { date: "2021-11-11", mileage: "115500", project: "Adapter", description: "PCCM+ Installation", cost: "$1,700", vendor: "topsonline.com" },
+            { date: "2021-10-29", mileage: "113000", project: "Window Tint 70 Front 40 Rear", description: "Window Tint 70 Front 40 Rear", cost: "$800", vendor: "??" },
+            { date: "2021-10-11", mileage: "113000", project: "Sport Steering Wheel and Airbag Leather Wrap", description: "Sport Steering Wheel and Airbag Leather Wrap", cost: "$1,300", vendor: "eBay" },
+            { date: "2021-10-04", mileage: "113000", project: "996 Turbo Front Bumper Cover with 45 Spoiler Lip", description: "996 Turbo Front Bumper Cover with 45 Spoiler Lip", cost: "$739", vendor: "eBay" },
+            { date: "2021-08-29", mileage: "113000", project: "Leather Interior, Dash, Door Panels, Steering Column Trim, Dash Vents", description: "Leather Interior, Dash, Door Panels, Steering Column Trim, Dash Vents", cost: "$2,810", vendor: "eBay, Pride Auto Wrecking" },
+            { date: "2021-08-29", mileage: "113000", project: "Rebuild Convertible Top Hydraulic Pistons", description: "Rebuild Convertible Top Hydraulic Pistons", cost: "$34", vendor: "N/A" },
+            { date: "2021-07-06", mileage: "113000", project: "PCCM+ Unit", description: "Replace Shift Knob, Center Console Storage", cost: "$351", vendor: "Suncoastparts.com" },
+            { date: "2021-07-01", mileage: "113000", project: "Replace with Magnaflow Catalytic Converter", description: "Replace with Magnaflow Catalytic Converter", cost: "$411", vendor: "Makellos Classics" },
+            { date: "2020-05-24", mileage: "102245", project: "Lube, Oil and Filter Service + New Xenon Light Bulbs", description: "Lube, Oil and Filter Service + New Xenon Light Bulbs", cost: "$585", vendor: "Makellos Classics" },
+            { date: "2020-05-24", mileage: "97069", project: "Replace Catalytic Converter", description: "Replace Catalytic Converter", cost: "$1,849", vendor: "Makellos Classics" },
+            { date: "2020-05-14", mileage: "104938", project: "Headlight Switch", description: "Headlight Switch", cost: "$153", vendor: "Makellos Classics" },
+            { date: "2020-02-18", mileage: "105289", project: "Replace Brake Rotors, Pads, Sensors and Hardware", description: "Replace Brake Rotors, Pads, Sensors and Hardware", cost: "$1,239", vendor: "Makellos Classics" },
+            { date: "2020-01-30", mileage: "104556", project: "New Rear Tires Cont Extreme Contact Sport", description: "New Rear Tires Cont Extreme Contact Sport", cost: "$688", vendor: "Discount Tire" },
+            { date: "2018-12-19", mileage: "96115", project: "Replace Starter", description: "Hood Lock Actuator", cost: "$1,082", vendor: "Makellos Classics" },
+            { date: "2018-11-21", mileage: "95636", project: "Enkei Wheels and P-Zero Tires", description: "Enkei Wheels and P-Zero Tires", cost: "$2,405", vendor: "Makellos Classics" },
+            { date: "2018-11-20", mileage: "95534", project: "Lube, Oil and Filter Service", description: "Remove and Replace Secondary Air Components and Check for Fault Codes", cost: "$266", vendor: "Makellos Classics" },
+            { date: "2018-06-15", mileage: "86922", project: "Lube, Oil and Filter Service, Cab Top Operation, New Key, Remove and Replace Coolant Cover Flange", description: "Lube, Oil and Filter Service, Cab Top Operation, New Key, Remove and Replace Coolant Cover Flange", cost: "$454", vendor: "Makellos Classics" },
+            { date: "2018-06-04", mileage: "90424", project: "Replace O2 Sensor, Voltage Regulator, H7 Battery, Battery Bracket", description: "Replace O2 Sensor, Voltage Regulator, H7 Battery, Battery Bracket", cost: "$1,038", vendor: "Makellos Classics" },
+            { date: "2017-11-28", mileage: "85699", project: "Replace Brake Pads and Rotors", description: "Replace Brake Pads and Rotors", cost: "$1,679", vendor: "Makellos Classics" },
+            { date: "2017-10-30", mileage: "84813", project: "New Battery", description: "New Battery", cost: "$229", vendor: "Pep Boys" },
+            { date: "2017-08-24", mileage: "83180", project: "Replace O2 Sensor, Oil Pressure Send Unit, Lube, Oil and Filter Service", description: "Replace O2 Sensor, Oil Pressure Send Unit, Lube, Oil and Filter Service", cost: "$1,441", vendor: "Makellos Classics" },
+            { date: "2016-10-31", mileage: "76337", project: "Replace Steering Lock Assembly", description: "Replace Steering Lock Assembly", cost: "$732", vendor: "Makellos Classics" },
+            { date: "2016-10-17", mileage: "76079", project: "Lube, Oil and Filter Service", description: "Lube, Oil and Filter Service", cost: "$249", vendor: "Makellos Classics" },
+            { date: "2016-06-14", mileage: "74866", project: "Replace Engine Mounts", description: "Replace Engine Mounts", cost: "$520", vendor: "Makellos Classics" },
+            { date: "2016-04-28", mileage: "72422", project: "Replace Wheel Bearing & CV Boot", description: "Replace Wheel Bearing & CV Boot", cost: "$735", vendor: "Makellos Classics" },
+            { date: "2016-03-24", mileage: "71645", project: "Replace with Factory Clutch and Factory Single Mass Flywheel", description: "Replace with Factory Clutch and Factory Single Mass Flywheel", cost: "$2,029", vendor: "Hoehn Porsche" },
+            { date: "2016-01-16", mileage: "69098", project: "Replace Engine Harness", description: "Replace Engine Harness", cost: "$1,653", vendor: "Konig Motorsport" },
+            { date: "2015-12-18", mileage: "69098", project: "Ignition Coil", description: "Ignition Coil", cost: "$463", vendor: "Konig Motorsport" },
+            { date: "2015-11-17", mileage: "69098", project: "Transmission Oil", description: "Transmission Oil", cost: "$154", vendor: "Konig Motorsport" },
+            { date: "2015-11-14", mileage: "68985", project: "IMS Bearing w/Oiling Kit, Rear Main Seal, Flywheel, Clutch, Timing Chain Tensioner, Oil and Rear Crank Seal, Oil Separator", description: "IMS Bearing w/Oiling Kit, Rear Main Seal, Flywheel, Clutch, Timing Chain Tensioner, Oil and Rear Crank Seal, Oil Separator", cost: "$6,918", vendor: "Konig Motorsport" }
+        ];
+
+        // Load completed services from localStorage or initialize with the spreadsheet data
+        let completedServices = JSON.parse(localStorage.getItem('completedServices'));
+        if (!completedServices || completedServices.length === 0) {
+            completedServices = initialCompletedServices;
+            localStorage.setItem('completedServices', JSON.stringify(completedServices));
+        }
+
+        // Load car photo and display completed services on page load
+        window.onload = function() {
+            displayCompletedServices();
+            updateUpcomingServices();
+            // Check completed services against upcoming services on load
+            completedServices.forEach(service => {
+                const completedMileage = parseInt(service.mileage);
+                const project = service.project;
+                const matchingRows = document.querySelectorAll(`#upcomingTable tr[data-project="${project}"]`);
+                matchingRows.forEach(row => {
+                    const upcomingMileage = parseInt(row.cells[2].textContent.replace(/,/g, ''));
+                    if (completedMileage >= upcomingMileage) {
+                        row.remove();
+                    }
+                });
+            });
+            // Load car photo if it exists
+            const savedPhoto = localStorage.getItem('carPhoto');
+            if (savedPhoto) {
+                document.getElementById('carPhoto').src = savedPhoto;
+                document.getElementById('carPhoto').classList.remove('hidden');
+            }
+            // Set initial tab
+            openTab('maintenance');
+        };
+
+        // Tab Navigation
+        function openTab(tabName) {
+            const tabs = document.getElementsByClassName('tab-content');
+            for (let i = 0; i < tabs.length; i++) {
+                tabs[i].classList.add('hidden');
+            }
+            document.getElementById(tabName).classList.remove('hidden');
+
+            const tabButtons = document.querySelectorAll('ul li button');
+            tabButtons.forEach(button => {
+                button.classList.remove('bg-white', 'text-blue-500');
+                button.classList.add('bg-gray-200', 'text-gray-700');
+            });
+            document.getElementById(`${tabName}Tab`).classList.add('bg-white', 'text-blue-500');
+        }
+
+        function uploadCarPhoto() {
+            const fileInput = document.getElementById('carPhotoInput');
+            const file = fileInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const photoData = e.target.result;
+                    localStorage.setItem('carPhoto', photoData);
+                    document.getElementById('carPhoto').src = photoData;
+                    document.getElementById('carPhoto').classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                alert('Please select a photo to upload.');
+            }
+        }
+
+        function updateMileage() {
+            const mileageInput = document.getElementById('mileageInput').value;
+            if (mileageInput && !isNaN(mileageInput) && mileageInput >= 0) {
+                currentMileage = parseInt(mileageInput);
+                document.getElementById('currentMileage').textContent = currentMileage.toLocaleString();
+                updateUpcomingServices();
+            } else {
+                alert('Please enter a valid mileage.');
+            }
+        }
+
+        function updateUpcomingServices() {
+            const rows = document.querySelectorAll('#upcomingTable tr');
+            rows.forEach(row => {
+                const mileageCell = row.cells[2];
+                const mileage = parseInt(mileageCell.textContent.replace(/,/g, ''));
+                if (currentMileage >= mileage) {
+                    row.classList.add('bg-yellow-100'); // Highlight overdue services
+                } else {
+                    row.classList.remove('bg-yellow-100');
+                }
+            });
+        }
+
+        function addUpcomingService() {
+            const type = document.getElementById('upcomingType').value;
+            const date = document.getElementById('upcomingDate').value;
+            const mileage = document.getElementById('upcomingMileage').value;
+            const project = document.getElementById('upcomingProject').value;
+            const description = document.getElementById('upcomingDescription').value;
+            const oilChange = document.getElementById('upcomingOilChange').value;
+            const sparkPlug = document.getElementById('upcomingSparkPlug').value;
+            const brake = document.getElementById('upcomingBrake').value;
+            const cost = document.getElementById('upcomingCost').value;
+
+            if (type && date && mileage && project && description && oilChange && sparkPlug && brake && cost) {
+                const tableBody = document.getElementById('upcomingTable');
+                const row = document.createElement('tr');
+                row.setAttribute('data-project', project);
+                row.innerHTML = `
+                    <td class="border p-2">${type}</td>
+                    <td class="border p-2">${date}</td>
+                    <td class="border p-2">${parseInt(mileage).toLocaleString()}</td>
+                    <td class="border p-2">${project}</td>
+                    <td class="border p-2">${description}</td>
+                    <td class="border p-2">${oilChange}</td>
+                    <td class="border p-2">${sparkPlug}</td>
+                    <td class="border p-2">${brake}</td>
+                    <td class="border p-2">${cost}</td>
+                    <td class="border p-2">
+                        <button onclick="editUpcomingService(this)" class="text-blue-500 hover:text-blue-700 mr-2">✏️</button>
+                        <button onclick="removeUpcomingService('${project}')" class="text-red-500 hover:text-red-700">✖</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+                updateUpcomingServices();
+
+                // Clear inputs
+                document.getElementById('upcomingType').value = '';
+                document.getElementById('upcomingDate').value = '';
+                document.getElementById('upcomingMileage').value = '';
+                document.getElementById('upcomingProject').value = '';
+                document.getElementById('upcomingDescription').value = '';
+                document.getElementById('upcomingOilChange').value = '';
+                document.getElementById('upcomingSparkPlug').value = '';
+                document.getElementById('upcomingBrake').value = '';
+                document.getElementById('upcomingCost').value = '';
+            } else {
+                alert('Please fill in all fields.');
+            }
+        }
+
+        function editUpcomingService(button) {
+            const row = button.parentElement.parentElement;
+            const cells = row.cells;
+
+            const type = prompt("Edit Type:", cells[0].textContent);
+            const date = prompt("Edit Date (YYYY-MM-DD):", cells[1].textContent);
+            const mileage = prompt("Edit Mileage:", cells[2].textContent.replace(/,/g, ''));
+            const project = prompt("Edit Project:", cells[3].textContent);
+            const description = prompt("Edit Description:", cells[4].textContent);
+            const oilChange = prompt("Edit Oil Change (Yes/No):", cells[5].textContent);
+            const sparkPlug = prompt("Edit Spark Plug (Yes/No):", cells[6].textContent);
+            const brake = prompt("Edit Brake (Yes/No):", cells[7].textContent);
+            const cost = prompt("Edit Projected Cost:", cells[8].textContent);
+
+            if (type && date && mileage && project && description && oilChange && sparkPlug && brake && cost) {
+                cells[0].textContent = type;
+                cells[1].textContent = date;
+                cells[2].textContent = parseInt(mileage).toLocaleString();
+                cells[3].textContent = project;
+                cells[4].textContent = description;
+                cells[5].textContent = oilChange;
+                cells[6].textContent = sparkPlug;
+                cells[7].textContent = brake;
+                cells[8].textContent = cost;
+                row.setAttribute('data-project', project);
+                updateUpcomingServices();
+            } else {
+                alert('All fields are required.');
+            }
+        }
+
+        function removeUpcomingService(project) {
+            const rows = document.querySelectorAll(`#upcomingTable tr[data-project="${project}"]`);
+            if (rows.length > 0) {
+                rows[0].remove();
+            }
+        }
+
+        function logService() {
+            const date = document.getElementById('completedDate').value;
+            const mileage = document.getElementById('completedMileage').value;
+            const project = document.getElementById('completedProject').value;
+            const description = document.getElementById('completedDescription').value;
+            const cost = document.getElementById('completedCost').value;
+            const vendor = document.getElementById('completedVendor').value;
+
+            if (date && mileage && project && description && cost && vendor) {
+                const service = { date, mileage, project, description, cost, vendor };
+                completedServices.push(service);
+                localStorage.setItem('completedServices', JSON.stringify(completedServices));
+                displayCompletedServices();
+
+                // Check if the completed service matches any upcoming service
+                const completedMileage = parseInt(mileage);
+                const matchingRows = document.querySelectorAll(`#upcomingTable tr[data-project="${project}"]`);
+                matchingRows.forEach(row => {
+                    const upcomingMileage = parseInt(row.cells[2].textContent.replace(/,/g, ''));
+                    if (completedMileage >= upcomingMileage) {
+                        row.remove();
+                    }
+                });
+
+                // Clear inputs
+                document.getElementById('completedDate').value = '';
+                document.getElementById('completedMileage').value = '';
+                document.getElementById('completedProject').value = '';
+                document.getElementById('completedDescription').value = '';
+                document.getElementById('completedCost').value = '';
+                document.getElementById('completedVendor').value = '';
+            } else {
+                alert('Please fill in all fields.');
+            }
+        }
+
+        function editCompletedService(index) {
+            const service = completedServices[index];
+            const date = prompt("Edit Date (YYYY-MM-DD):", service.date);
+            const mileage = prompt("Edit Mileage:", service.mileage);
+            const project = prompt("Edit Project:", service.project);
+            const description = prompt("Edit Description:", service.description);
+            const cost = prompt("Edit Actual Cost:", service.cost);
+            const vendor = prompt("Edit Vendor:", service.vendor);
+
+            if (date && mileage && project && description && cost && vendor) {
+                completedServices[index] = { date, mileage, project, description, cost, vendor };
+                localStorage.setItem('completedServices', JSON.stringify(completedServices));
+                displayCompletedServices();
+
+                // Check if the updated completed service matches any upcoming service
+                const completedMileage = parseInt(mileage);
+                const matchingRows = document.querySelectorAll(`#upcomingTable tr[data-project="${project}"]`);
+                matchingRows.forEach(row => {
+                    const upcomingMileage = parseInt(row.cells[2].textContent.replace(/,/g, ''));
+                    if (completedMileage >= upcomingMileage) {
+                        row.remove();
+                    }
+                });
+            } else {
+                alert('All fields are required.');
+            }
+        }
+
+        function deleteCompletedService(index) {
+            if (confirm('Are you sure you want to delete this completed service?')) {
+                completedServices.splice(index, 1);
+                localStorage.setItem('completedServices', JSON.stringify(completedServices));
+                displayCompletedServices();
+            }
+        }
+
+        function displayCompletedServices() {
+            const tableBody = document.getElementById('completedTable');
+            tableBody.innerHTML = '';
+            completedServices.forEach((service, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="border p-2">${service.date}</td>
+                    <td class="border p-2">${service.mileage}</td>
+                    <td class="border p-2">${service.project}</td>
+                    <td class="border p-2">${service.description}</td>
+                    <td class="border p-2">${service.cost}</td>
+                    <td class="border p-2">${service.vendor}</td>
+                    <td class="border p-2">
+                        <button onclick="editCompletedService(${index})" class="text-blue-500 hover:text-blue-700 mr-2">✏️</button>
+                        <button onclick="deleteCompletedService(${index})" class="text-red-500 hover:text-red-700">✖</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function calculateCarValue() {
+            const year = parseInt(document.getElementById('carYear').value);
+            const mileage = parseInt(document.getElementById('carMileage').value);
+            const condition = document.getElementById('carCondition').value;
+
+            // Base value for a high-mileage Carrera Cabriolet (adjusted for inflation to 2025)
+            let baseValue = 18053; // $17,000 in 2023, adjusted for 3% annual inflation to 2025
+
+            // Year adjustment: 996.2 models (2002-2004) are more desirable
+            let yearAdjustment = 0;
+            if (year >= 2002) {
+                yearAdjustment = 1000; // Add $1,000 for 996.2 models
+            }
+
+            // Mileage adjustment: Deduct $500 for every 10,000 miles over 60,000
+            let mileageAdjustment = 0;
+            if (mileage > 60000) {
+                const excessMiles = mileage - 60000;
+                mileageAdjustment = -Math.floor(excessMiles / 10000) * 500;
+            }
+
+            // Condition adjustment
+            let conditionAdjustment = 0;
+            switch (condition) {
+                case 'poor':
+                    conditionAdjustment = -3000;
+                    break;
+                case 'fair':
+                    conditionAdjustment = -1000;
+                    break;
+                case 'good':
+                    conditionAdjustment = 2000; // Assumes IMS bearing retrofit and good maintenance
+                    break;
+                case 'excellent':
+                    conditionAdjustment = 4000;
+                    break;
+            }
+
+            // Calculate total value
+            let estimatedValue = baseValue + yearAdjustment + mileageAdjustment + conditionAdjustment;
+            if (estimatedValue < 10000) estimatedValue = 10000; // Minimum value for a running 996
+
+            // Display the result
+            document.getElementById('estimatedValue').textContent = `$${estimatedValue.toLocaleString()}`;
+        }
+    </script>
+</body>
+</html>
