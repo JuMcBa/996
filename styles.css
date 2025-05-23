@@ -7,6 +7,10 @@
     --off-white: #F5F5F5;
     --fleetio-blue: #0055A5;
     --fleetio-gray: #666;
+    --fleetio-blue-hover: #003f7d;
+    --fleetio-gray-hover: #555;
+    --fleetio-red: #dc3545;
+    --fleetio-red-hover: #c82333;
 }
 
 body {
@@ -24,7 +28,7 @@ button, input, select {
     border-radius: 4px;
     background: #fff;
     padding: 6px 10px;
-    transition: border-color 0.3s ease;
+    transition: all 0.3s ease;
 }
 
 button:focus, input:focus, select:focus {
@@ -183,6 +187,11 @@ tr.overdue-row {
     background: rgba(198, 107, 61, 0.1);
 }
 
+tr:hover {
+    background: rgba(0, 0, 0, 0.03);
+    cursor: pointer;
+}
+
 td.miles-remaining,
 td.prominent-mileage,
 td.prominent-date {
@@ -190,19 +199,41 @@ td.prominent-date {
     color: var(--fleetio-blue);
 }
 
+th.project-col,
+td.project-col {
+    width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+td.date-col,
+td.mileage-col,
+td.vendor-col,
+td.cost-col {
+    white-space: nowrap;
+}
+
 button {
     background: var(--fleetio-blue);
     color: #fff;
     border: none;
-    border-radius: 4px;
-    padding: 6px 12px;
+    border-radius: 6px;
+    padding: 8px 16px;
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
+    transition: background 0.3s ease, transform 0.1s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 button:hover {
-    background: #004085;
+    background: var(--fleetio-blue-hover);
+    transform: translateY(-1px);
+}
+
+button:active {
+    transform: translateY(0);
 }
 
 button.secondary {
@@ -210,15 +241,47 @@ button.secondary {
 }
 
 button.secondary:hover {
-    background: #555;
+    background: var(--fleetio-gray-hover);
 }
 
 button.danger {
-    background: #dc3545;
+    background: var(--fleetio-red);
 }
 
 button.danger:hover {
-    background: #c82333;
+    background: var(--fleetio-red-hover);
+}
+
+input[type="checkbox"] {
+    appearance: none;
+    width: 40px;
+    height: 20px;
+    background: var(--soft-taupe);
+    border-radius: 10px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+input[type="checkbox"]:checked {
+    background: var(--fleetio-blue);
+}
+
+input[type="checkbox"]::before {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background: #fff;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.3s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+input[type="checkbox"]:checked::before {
+    transform: translateX(20px);
 }
 
 .filter-container {
