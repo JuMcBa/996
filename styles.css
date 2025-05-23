@@ -1,74 +1,74 @@
-/* Simplified Urban Chic Color Palette with Fleetio-inspired accents */
+/* Apple-inspired Color Palette and Design */
 :root {
-    --charcoal-gray: #333333;
-    --soft-taupe: #D4CFC9;
-    --muted-sage: #A9B5A4;
-    --slate-blue: #5D8296;
-    --off-white: #F5F5F5;
-    --fleetio-blue: #0055A5;
-    --fleetio-gray: #666;
-    --fleetio-blue-hover: #003f7d;
-    --fleetio-gray-hover: #555;
-    --fleetio-red: #dc3545;
-    --fleetio-red-hover: #c82333;
+    --apple-gray: #1C2526; /* Dark gray for text */
+    --apple-light-gray: #8E8E93; /* Light gray for secondary text */
+    --apple-bg: #F5F5F7; /* Light background */
+    --apple-white: #FFFFFF; /* Pure white for elements */
+    --apple-blue: #007AFF; /* Apple blue for interactive elements */
+    --apple-blue-hover: #005BB5; /* Darker blue for hover */
+    --apple-gray-bg: rgba(142, 142, 147, 0.1); /* Subtle gray background for rows */
+    --apple-red: #FF3B30; /* Red for destructive actions */
+    --apple-red-hover: #D32F2F; /* Darker red for hover */
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    background-color: var(--off-white);
-    color: var(--charcoal-gray);
+    font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: var(--apple-bg);
+    color: var(--apple-gray);
     margin: 0;
     padding: 0;
     line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
 }
 
 button, input, select {
     font-size: 14px;
-    border: 1px solid var(--soft-taupe);
-    border-radius: 4px;
-    background: #fff;
-    padding: 6px 10px;
+    border: none;
+    border-radius: 8px;
+    background: var(--apple-white);
+    padding: 8px 12px;
     transition: all 0.3s ease;
+    font-family: inherit;
 }
 
 button:focus, input:focus, select:focus {
     outline: none;
-    border-color: var(--fleetio-blue);
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.3);
 }
 
 h1 {
-    font-size: 22px;
-    font-weight: 500;
-    color: var(--charcoal-gray);
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--apple-gray);
 }
 
 h2 {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 500;
-    color: var(--charcoal-gray);
+    color: var(--apple-gray);
 }
 
 .container {
     max-width: 1280px;
     margin: 0 auto;
-    padding: 15px;
+    padding: 20px;
 }
 
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 15px;
-    background: #fff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    margin-bottom: 15px;
+    padding: 12px 20px;
+    background: var(--apple-white);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
 }
 
 .qr-icon {
     width: 20px;
     height: 20px;
     cursor: pointer;
-    color: var(--slate-blue);
+    color: var(--apple-blue);
 }
 
 .qr-code-large {
@@ -79,26 +79,30 @@ h2 {
 }
 
 .nav-bar {
-    background: #fff;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    padding: 8px 15px;
-    margin-bottom: 15px;
+    background: var(--apple-white);
+    padding: 10px 20px;
+    margin-bottom: 20px;
 }
 
 .tab-button {
     background: none;
     border: none;
-    padding: 8px 15px;
-    font-size: 14px;
+    padding: 10px 20px;
+    font-size: 16px;
     font-weight: 500;
-    color: var(--fleetio-gray);
+    color: var(--apple-light-gray);
     cursor: pointer;
     border-bottom: 2px solid transparent;
+    transition: color 0.3s ease;
 }
 
 .tab-button.active {
-    color: var(--fleetio-blue);
-    border-bottom: 2px solid var(--fleetio-blue);
+    color: var(--apple-gray);
+    border-bottom: 2px solid var(--apple-blue);
+}
+
+.tab-button:hover {
+    color: var(--apple-gray);
 }
 
 .tab-content {
@@ -110,11 +114,10 @@ h2 {
 }
 
 .panel {
-    background: #fff;
-    border-radius: 4px;
-    padding: 15px;
-    margin-bottom: 15px;
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    background: var(--apple-white);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
 }
 
 .modal {
@@ -126,49 +129,54 @@ h2 {
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: rgba(0, 0, 0, 0.3);
+    background-color: rgba(0, 0, 0, 0.4);
+    animation: fadeIn 0.3s ease;
 }
 
 .modal-content {
-    background: #fff;
+    background: var(--apple-white);
     margin: 5% auto;
-    padding: 15px;
+    padding: 20px;
     width: 90%;
     max-width: 600px;
-    border-radius: 4px;
+    border-radius: 12px;
+    animation: slideIn 0.3s ease;
 }
 
 .close {
-    color: var(--soft-taupe);
+    color: var(--apple-light-gray);
     float: right;
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 500;
     cursor: pointer;
 }
 
 .close:hover,
 .close:focus {
-    color: var(--charcoal-gray);
+    color: var(--apple-gray);
 }
 
 table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     font-size: 14px;
     margin-bottom: 10px;
 }
 
 th, td {
-    padding: 8px 10px;
+    padding: 12px 16px;
     text-align: left;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 th {
-    background: var(--off-white);
-    font-weight: 500;
-    color: var(--charcoal-gray);
+    background: var(--apple-bg);
+    font-weight: 600;
+    color: var(--apple-gray);
     cursor: pointer;
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }
 
 th:hover {
@@ -176,19 +184,19 @@ th:hover {
 }
 
 tr.upcoming-row {
-    background: rgba(93, 130, 150, 0.05);
+    background: rgba(0, 122, 255, 0.03);
 }
 
 tr.completed-row {
-    background: rgba(169, 181, 164, 0.05);
+    background: rgba(142, 142, 147, 0.03);
 }
 
 tr.overdue-row {
-    background: rgba(198, 107, 61, 0.1);
+    background: rgba(255, 59, 48, 0.05);
 }
 
 tr:hover {
-    background: rgba(0, 0, 0, 0.03);
+    background: var(--apple-gray-bg);
     cursor: pointer;
 }
 
@@ -196,7 +204,7 @@ td.miles-remaining,
 td.prominent-mileage,
 td.prominent-date {
     font-weight: 600;
-    color: var(--fleetio-blue);
+    color: var(--apple-blue);
 }
 
 th.project-col,
@@ -215,56 +223,56 @@ td.cost-col {
 }
 
 button {
-    background: var(--fleetio-blue);
+    background: var(--apple-blue);
     color: #fff;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     padding: 8px 16px;
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
-    transition: background 0.3s ease, transform 0.1s ease;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: background 0.3s ease, opacity 0.3s ease;
 }
 
 button:hover {
-    background: var(--fleetio-blue-hover);
-    transform: translateY(-1px);
+    background: var(--apple-blue-hover);
+    opacity: 0.9;
 }
 
 button:active {
-    transform: translateY(0);
+    opacity: 0.7;
 }
 
 button.secondary {
-    background: var(--fleetio-gray);
+    background: var(--apple-light-gray);
+    color: var(--apple-white);
 }
 
 button.secondary:hover {
-    background: var(--fleetio-gray-hover);
+    background: #6E6E73;
 }
 
 button.danger {
-    background: var(--fleetio-red);
+    background: var(--apple-red);
 }
 
 button.danger:hover {
-    background: var(--fleetio-red-hover);
+    background: var(--apple-red-hover);
 }
 
 input[type="checkbox"] {
     appearance: none;
-    width: 40px;
+    width: 36px;
     height: 20px;
-    background: var(--soft-taupe);
-    border-radius: 10px;
+    background: var(--apple-light-gray);
+    border-radius: 12px;
     position: relative;
     cursor: pointer;
     transition: background 0.3s ease;
 }
 
 input[type="checkbox"]:checked {
-    background: var(--fleetio-blue);
+    background: var(--apple-blue);
 }
 
 input[type="checkbox"]::before {
@@ -272,31 +280,40 @@ input[type="checkbox"]::before {
     position: absolute;
     width: 16px;
     height: 16px;
-    background: #fff;
+    background: var(--apple-white);
     border-radius: 50%;
     top: 2px;
     left: 2px;
     transition: transform 0.3s ease;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 input[type="checkbox"]:checked::before {
-    transform: translateX(20px);
+    transform: translateX(16px);
 }
 
 .filter-container {
     display: flex;
-    gap: 10px;
+    gap: 12px;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 }
 
 .filter-container label {
     font-size: 14px;
     font-weight: 500;
-    color: var(--charcoal-gray);
+    color: var(--apple-gray);
 }
 
 .hidden {
     display: none;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
 }
