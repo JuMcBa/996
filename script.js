@@ -2,6 +2,7 @@
  * v1.0: Initial version with basic service tracking
  * v1.1: Added Tesla-Apple aesthetic, updated sorting, added service history dashboard
  * v1.2: Split into separate files, converted to React for component-based rendering
+ * v1.3: Added filters for "Type" of Service, highlighted prominent fields, updated to minimalist Urban Chic theme
  */
 
 const { useState, useEffect } = React;
@@ -27,6 +28,8 @@ const App = () => {
     const [qrModal, setQrModal] = useState(false);
     const [upcomingSearch, setUpcomingSearch] = useState('');
     const [completedSearch, setCompletedSearch] = useState('');
+    const [upcomingTypeFilter, setUpcomingTypeFilter] = useState('all');
+    const [completedTypeFilter, setCompletedTypeFilter] = useState('all');
 
     const initialCompletedServices = [
         { date: "2020-05-24", mileage: 97069, project: "Replace Catalytic Converter", description: "Replace Catalytic Converter", cost: "$1,849", vendor: "Makellos Classics" },
@@ -112,13 +115,21 @@ const App = () => {
                 <h3>{service.project}</h3>
                 <p className="description">{service.description}</p>
                 <div className="details-grid">
-                    <p><span className="label">Type:</span> {service.type || 'N/A'}</p>
-                    <p><span className="label">Mileage:</span> {service.mileage.toLocaleString()}</p>
-                    <p><span className="label">Date:</span> {service.date}</p>
-                    <p>
-                        <span className="label">{type === 'upcoming' ? 'Miles Remaining' : 'Vendor'}:</span> 
-                        {type === 'upcoming' ? milesRemaining : service.vendor || 'N/A'}
-                    </p>
+                    {type === 'upcoming' ? (
+                        <>
+                            <p><span className="label">Type:</span> {service.type || 'N/A'}</p>
+                            <p><span className="label miles-remaining">Miles Remaining:</span> <span className="miles-remaining">{milesRemaining}</span></p>
+                            <p><span className="label">Mileage:</span> {service.mileage.toLocaleString()}</p>
+                            <p><span className="label">Date:</span> {service.date}</p>
+                        </>
+                    ) : (
+                        <>
+                            <p><span className="label prominent-date">Date:</span> <span className="prominent-date">{service.date}</span></p>
+                            <p><span className="label prominent-mileage">Mileage:</span> <span className="prominent-mileage">{service.mileage.toLocaleString()}</span></p>
+                            <p><span className="label">Vendor:</span> {service.vendor || 'N/A'}</p>
+                            <p></p>
+                        </>
+                    )}
                 </div>
                 <p className="cost">{type === 'upcoming' ? 'Projected Cost' : 'Actual Cost'}: {service.cost}</p>
             </li>
@@ -362,15 +373,17 @@ const App = () => {
         const filteredUpcoming = upcomingServices
             .sort((a, b) => a.mileage - b.mileage)
             .filter(service => 
-                service.project.toLowerCase().includes(upcomingSearch.toLowerCase()) ||
-                service.description.toLowerCase().includes(upcomingSearch.toLowerCase())
+                (upcomingTypeFilter === 'all' || service.type === upcomingTypeFilter) &&
+                (service.project.toLowerCase().includes(upcomingSearch.toLowerCase()) ||
+                 service.description.toLowerCase().includes(upcomingSearch.toLowerCase()))
             );
 
         const filteredCompleted = completedServices
             .sort((a, b) => b.mileage - a.mileage)
             .filter(service => 
-                service.project.toLowerCase().includes(completedSearch.toLowerCase()) ||
-                service.description.toLowerCase().includes(completedSearch.toLowerCase())
+                (completedTypeFilter === 'all' || (service.description.toLowerCase().includes(completedTypeFilter.toLowerCase()) && service.description.toLowerCase().includes('service'))) &&
+                (service.project.toLowerCase().includes(completedSearch.toLowerCase()) ||
+                 service.description.toLowerCase().includes(completedSearch.toLowerCase()))
             );
 
         return (
@@ -402,13 +415,25 @@ const App = () => {
                 <div className="panel">
                     <div className="flex justify-between items-center mb-2">
                         <h2 className="text-xl font-semibold">Upcoming Services</h2>
-                        <input 
-                            type="text" 
-                            value={upcomingSearch} 
-                            onChange={(e) => setUpcomingSearch(e.target.value)} 
-                            placeholder="Search Upcoming Services..." 
-                            className="border p-2 rounded w-full sm:w-1/3"
-                        />
+                        <div className="filter-container">
+                            <label>Filter by Type:</label>
+                            <select 
+                                value={upcomingTypeFilter} 
+                                onChange={(e) => setUpcomingTypeFilter(e.target.value)}
+                            >
+                                <option value="all">All</option>
+                                <option value="SERVICE">SERVICE</option>
+                                <option value="UPGRADE">UPGRADE</option>
+                                <option value="REPAIR">REPAIR</option>
+                            </select>
+                            <input 
+                                type="text" 
+                                value={upcomingSearch} 
+                                onChange={(e) => setUpcomingSearch(e.target.value)} 
+                                placeholder="Search..." 
+                                className="border p-2 rounded w-full sm:w-1/3"
+                            />
+                        </div>
                     </div>
                     <ul className="service-list">
                         {filteredUpcoming.map(service => (
@@ -426,13 +451,25 @@ const App = () => {
                 <div className="panel">
                     <div className="flex justify-between items-center mb-2">
                         <h2 className="text-xl font-semibold">Completed Services</h2>
-                        <input 
-                            type="text" 
-                            value={completedSearch} 
-                            onChange={(e) => setCompletedSearch(e.target.value)} 
-                            placeholder="Search Completed Services..." 
-                            className="border p-2 rounded w-full sm:w-1/3"
-                        />
+                        <div className="filter-container">
+                            <label>Filter by Type:</label>
+                            <select 
+                                value={completedTypeFilter} 
+                                onChange={(e) => setCompletedTypeFilter(e.target.value)}
+                            >
+                                <option value="all">All</option>
+                                <option value="SERVICE">SERVICE</option>
+                                <option value="UPGRADE">UPGRADE</option>
+                                <option value="REPAIR">REPAIR</option>
+                            </select>
+                            <input 
+                                type="text" 
+                                value={completedSearch} 
+                                onChange={(e) => setCompletedSearch(e.target.value)} 
+                                placeholder="Search..." 
+                                className="border p-2 rounded w-full sm:w-1/3"
+                            />
+                        </div>
                     </div>
                     <ul className="service-list">
                         {filteredCompleted.map(service => (
