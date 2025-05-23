@@ -3,6 +3,7 @@
  * v1.1: Added Tesla-Apple aesthetic, updated sorting, added service history dashboard
  * v1.2: Split into separate files, converted to React for component-based rendering
  * v1.3: Added filters for "Type" of Service, highlighted prominent fields, updated to minimalist Urban Chic theme
+ * v1.4: Fixed "Script error" by improving script loading and filtering logic
  */
 
 const { useState, useEffect } = React;
@@ -113,7 +114,7 @@ const App = () => {
                 onClick={() => onClick(service)}
             >
                 <h3>{service.project}</h3>
-                <p className="description">{service.description}</p>
+                <p className="description">{service.description || 'No description'}</p>
                 <div className="details-grid">
                     {type === 'upcoming' ? (
                         <>
@@ -370,21 +371,33 @@ const App = () => {
     };
 
     const MaintenanceTab = () => {
+        const inferServiceType = (description) => {
+            if (!description) return '';
+            const desc = description.toLowerCase();
+            if (desc.includes('oil change') || desc.includes('filter') || desc.includes('inspection') || desc.includes('fluid')) return 'SERVICE';
+            if (desc.includes('replace') || desc.includes('bearing') || desc.includes('clutch')) return 'UPGRADE';
+            if (desc.includes('repair') || desc.includes('fix')) return 'REPAIR';
+            return '';
+        };
+
         const filteredUpcoming = upcomingServices
             .sort((a, b) => a.mileage - b.mileage)
             .filter(service => 
                 (upcomingTypeFilter === 'all' || service.type === upcomingTypeFilter) &&
                 (service.project.toLowerCase().includes(upcomingSearch.toLowerCase()) ||
-                 service.description.toLowerCase().includes(upcomingSearch.toLowerCase()))
+                 (service.description || '').toLowerCase().includes(upcomingSearch.toLowerCase()))
             );
 
         const filteredCompleted = completedServices
             .sort((a, b) => b.mileage - a.mileage)
-            .filter(service => 
-                (completedTypeFilter === 'all' || (service.description.toLowerCase().includes(completedTypeFilter.toLowerCase()) && service.description.toLowerCase().includes('service'))) &&
-                (service.project.toLowerCase().includes(completedSearch.toLowerCase()) ||
-                 service.description.toLowerCase().includes(completedSearch.toLowerCase()))
-            );
+            .filter(service => {
+                const inferredType = inferServiceType(service.description);
+                return (
+                    (completedTypeFilter === 'all' || inferredType === completedTypeFilter) &&
+                    (service.project.toLowerCase().includes(completedSearch.toLowerCase()) ||
+                     (service.description || '').toLowerCase().includes(completedSearch.toLowerCase()))
+                );
+            });
 
         return (
             <div id="maintenance" className="tab-content active">
@@ -515,10 +528,10 @@ const App = () => {
                         const actualSpend = completed.reduce((sum, s) => sum + parseFloat(s.cost.replace('$', '').replace(',', '')), 0);
 
                         const oilChanges = completed
-                            .filter(s => s.description.toLowerCase().includes('oil change'))
+                            .filter(s => (s.description || '').toLowerCase().includes('oil change'))
                             .sort((a, b) => a.mileage - b.mileage);
                         const sparkPlugs = completed
-                            .filter(s => s.description.toLowerCase().includes('spark plug') || s.description.toLowerCase().includes('spark plugs'))
+                            .filter(s => (s.description || '').toLowerCase().includes('spark plug') || (s.description || '').toLowerCase().includes('spark plugs'))
                             .sort((a, b) => a.mileage - b.mileage);
 
                         const oilChangeIntervals = [];
