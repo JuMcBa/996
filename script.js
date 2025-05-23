@@ -3,6 +3,8 @@
  * v1.1: Fixed "Script error" by improving error handling and simplifying logic
  * v1.2: Simplified UI, switched to table format for service lists and dashboard
  * v1.3: Added hover effect for table rows, adjusted column sizes, modernized buttons and toggle switches
+ * v1.4: Updated UI to Apple Inc. style with SF Pro font, neutral colors, and subtle animations
+ * v1.5: Modified UI to flat design with solid colors, simple icons, soft edges, and ample white space
  */
 
 const { useState, useEffect } = React;
@@ -184,7 +186,7 @@ const App = () => {
                 <div className="modal-content">
                     <span className="close" onClick={onClose}>×</span>
                     <h2 className="text-xl font-semibold mb-4">Add Service</h2>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-2 gap-6">
                         <div>
                             <label className="block mb-1 text-sm">Service Status:</label>
                             <select 
@@ -294,7 +296,7 @@ const App = () => {
                             />
                         </div>
                     </div>
-                    <button onClick={handleSubmit} className="mt-4">Submit Service</button>
+                    <button onClick={handleSubmit} className="mt-6">Submit Service</button>
                 </div>
             </div>
         );
@@ -385,7 +387,7 @@ const App = () => {
         return (
             <div id="maintenance" className="tab-content active">
                 <div className="panel">
-                    <h2 className="text-xl font-semibold mb-2">Current Mileage</h2>
+                    <h2 className="text-xl font-semibold mb-4">Current Mileage</h2>
                     <input 
                         type="number" 
                         value={currentMileage} 
@@ -399,10 +401,10 @@ const App = () => {
                             }
                         }} 
                         placeholder="Enter current mileage"
-                        style={{ width: '200px', marginRight: '10px' }}
+                        style={{ width: '200px', marginRight: '12px' }}
                     />
                     <button onClick={() => setCurrentMileage(currentMileage)}>Update Mileage</button>
-                    <p className="mt-2 text-sm">Current Mileage: <span>{currentMileage.toLocaleString()}</span> miles</p>
+                    <p className="mt-4 text-sm">Current Mileage: <span>{currentMileage.toLocaleString()}</span> miles</p>
                 </div>
 
                 <div className="panel">
@@ -410,7 +412,7 @@ const App = () => {
                 </div>
 
                 <div className="panel">
-                    <div className="flex justify-between items-center mb-2">
+                    <div className="flex justify-between items-center mb-6">
                         <h2 className="text-xl font-semibold">Upcoming Services</h2>
                         <div className="filter-container">
                             <label>Filter by Type:</label>
@@ -474,7 +476,7 @@ const App = () => {
                 </div>
 
                 <div className="panel">
-                    <div className="flex justify-between items-center mb-2">
+                    <div className="flex justify-between items-center mb-6">
                         <h2 className="text-xl font-semibold">Completed Services</h2>
                         <div className="filter-container">
                             <label>Filter by Type:</label>
@@ -550,7 +552,7 @@ const App = () => {
         return (
             <div id="history" className="tab-content">
                 <div className="panel">
-                    <h2 className="text-xl font-semibold mb-4">Service History Dashboard</h2>
+                    <h2 className="text-xl font-semibold mb-6">Service History Dashboard</h2>
                     {years.map(year => {
                         const { upcoming, completed } = servicesByYear[year];
                         const projectedSpend = upcoming.reduce((sum, s) => sum + parseFloat(s.cost.replace('$', '').replace(',', '')), 0);
@@ -716,14 +718,12 @@ const App = () => {
             <div className="header">
                 <h1>Porsche 996 Maintenance Tracker</h1>
                 <div onClick={() => setQrModal(true)}>
-                    <svg className="qr-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <rect x="3" y="3" width="7" height="7" />
-                        <rect x="14" y="3" width="7" height="7" />
-                        <rect x="3" y="14" width="7" height="7" />
-                        <rect x="14" y="14" width="7" height="7" />
-                        <path d="M10 3h4v18h-4z" />
-                        <path d="M3 10h18v4H3z" />
-                        <path d="M10 10h4v4h-4z" />
+                    <svg className="qr-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <rect x="4" y="4" width="6" height="6" />
+                        <rect x="14" y="4" width="6" height="6" />
+                        <rect x="4" y="14" width="6" height="6" />
+                        <rect x="14" y="14" width="6" height="6" />
+                        <rect x="10" y="10" width="4" height="4" />
                     </svg>
                 </div>
             </div>
