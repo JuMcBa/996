@@ -1,4 +1,4 @@
-/* Urban Chic Color Palette */
+/* Urban Chic Color Palette with Fleetio-inspired accents */
 :root {
     --charcoal-gray: #333333;
     --soft-taupe: #D4CFC9;
@@ -6,6 +6,9 @@
     --slate-blue: #5D8296;
     --off-white: #F5F5F5;
     --warm-terracotta: #C66B3D;
+    --fleetio-blue: #0055A5;
+    --fleetio-gray: #666;
+    --fleetio-green: #28A745;
 }
 
 body {
@@ -18,28 +21,27 @@ body {
 }
 
 button, input, select {
-    min-height: 40px;
     font-size: 14px;
     border: none;
     background: transparent;
-    padding: 8px;
+    padding: 8px 12px;
     transition: all 0.3s ease;
 }
 
 h1 {
-    font-size: 1.75rem;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--charcoal-gray);
+}
+
+h2 {
+    font-size: 20px;
     font-weight: 500;
     color: var(--charcoal-gray);
 }
 
-@media (min-width: 640px) {
-    h1 {
-        font-size: 2rem;
-    }
-}
-
 .container {
-    max-width: 1100px;
+    max-width: 1280px;
     margin: 0 auto;
     padding: 20px;
 }
@@ -48,7 +50,10 @@ h1 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
+    padding: 10px 20px;
+    background: #fff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
 }
 
 .qr-icon {
@@ -70,12 +75,48 @@ h1 {
     display: block;
 }
 
+.nav-bar {
+    background: #fff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 10px 20px;
+    margin-bottom: 20px;
+}
+
+.tab-button {
+    background: none;
+    border: none;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--fleetio-gray);
+    cursor: pointer;
+    transition: color 0.3s ease, border-bottom 0.3s ease;
+    border-bottom: 2px solid transparent;
+}
+
+.tab-button.active {
+    color: var(--fleetio-blue);
+    border-bottom: 2px solid var(--fleetio-blue);
+}
+
+.tab-button:hover {
+    color: var(--fleetio-blue);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
 .panel {
     background: #fff;
-    border-radius: 12px;
+    border-radius: 8px;
     padding: 20px;
     margin-bottom: 20px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .modal {
@@ -95,8 +136,8 @@ h1 {
     margin: 5% auto;
     padding: 20px;
     width: 90%;
-    max-width: 500px;
-    border-radius: 12px;
+    max-width: 600px;
+    border-radius: 8px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
@@ -113,34 +154,6 @@ h1 {
     color: var(--charcoal-gray);
 }
 
-.tab-button {
-    background: none;
-    border: none;
-    padding: 8px 16px;
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--soft-taupe);
-    cursor: pointer;
-    transition: color 0.3s ease;
-}
-
-.tab-button.active {
-    color: var(--charcoal-gray);
-    border-bottom: 2px solid var(--slate-blue);
-}
-
-.tab-button:hover {
-    color: var(--charcoal-gray);
-}
-
-.tab-content {
-    display: none;
-}
-
-.tab-content.active {
-    display: block;
-}
-
 .service-list {
     list-style: none;
     padding: 0;
@@ -148,17 +161,16 @@ h1 {
 
 .service-item {
     background: #fff;
-    border-radius: 10px;
+    border-radius: 8px;
     padding: 12px 16px;
-    margin-bottom: 12px;
-    transition: transform 0.2s ease, box-shadow 0.3s ease;
-    cursor: pointer;
+    margin-bottom: 10px;
     border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.3s ease;
+    cursor: pointer;
 }
 
 .service-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .upcoming-item {
@@ -174,23 +186,23 @@ h1 {
 }
 
 .service-item h3 {
-    font-size: 1rem;
+    font-size: 16px;
     font-weight: 500;
     margin-bottom: 6px;
     color: var(--charcoal-gray);
 }
 
 .service-item .description {
-    font-size: 0.85rem;
-    color: var(--soft-taupe);
+    font-size: 14px;
+    color: var(--fleetio-gray);
     margin-bottom: 6px;
 }
 
 .service-item .details-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px;
-    font-size: 0.85rem;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    font-size: 14px;
 }
 
 .service-item .label {
@@ -199,19 +211,17 @@ h1 {
 }
 
 .service-item .cost {
-    font-size: 0.85rem;
+    font-size: 14px;
     font-weight: 500;
-    text-align: right;
-    margin-top: 6px;
     color: var(--charcoal-gray);
 }
 
 .service-item .miles-remaining,
 .service-item .prominent-mileage,
 .service-item .prominent-date {
-    font-size: 1rem;
+    font-size: 16px;
     font-weight: 600;
-    color: var(--slate-blue);
+    color: var(--fleetio-blue);
 }
 
 input[type="number"],
@@ -230,15 +240,15 @@ select {
 input:focus,
 select:focus {
     outline: none;
-    border-color: var(--slate-blue);
+    border-color: var(--fleetio-blue);
     box-shadow: 0 0 0 2px rgba(93, 130, 150, 0.1);
 }
 
 button {
-    background: var(--warm-terracotta);
+    background: var(--fleetio-blue);
     color: #fff;
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
     padding: 8px 16px;
     font-size: 14px;
     font-weight: 500;
@@ -247,15 +257,31 @@ button {
 }
 
 button:hover {
-    background: #a55832;
+    background: #004085;
+}
+
+button.secondary {
+    background: var(--fleetio-gray);
+}
+
+button.secondary:hover {
+    background: #555;
+}
+
+button.danger {
+    background: #dc3545;
+}
+
+button.danger:hover {
+    background: #c82333;
 }
 
 .dashboard-section {
-    margin-bottom: 24px;
+    margin-bottom: 20px;
 }
 
 .dashboard-section h3 {
-    font-size: 1.25rem;
+    font-size: 18px;
     font-weight: 500;
     margin-bottom: 12px;
     color: var(--charcoal-gray);
@@ -263,51 +289,16 @@ button:hover {
 
 .dashboard-grid {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 16px;
 }
 
 .dashboard-card {
     background: #fff;
-    border-radius: 10px;
+    border-radius: 8px;
     padding: 12px;
-    font-size: 0.875rem;
+    font-size: 14px;
     border: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-@media (min-width: 640px) {
-    .dashboard-grid {
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    }
-}
-
-.event-item {
-    margin-bottom: 16px;
-}
-
-.event-item h3 {
-    font-size: 1.125rem;
-    font-weight: 500;
-    margin-bottom: 4px;
-    color: var(--charcoal-gray);
-}
-
-.event-item p {
-    font-size: 0.875rem;
-    color: var(--soft-taupe);
-}
-
-.event-item a {
-    color: var(--slate-blue);
-    text-decoration: underline;
-}
-
-.event-item a:hover {
-    color: var(--warm-terracotta);
-}
-
-.hidden {
-    display: none;
 }
 
 .filter-container {
@@ -321,4 +312,8 @@ button:hover {
     font-size: 14px;
     font-weight: 500;
     color: var(--charcoal-gray);
+}
+
+.hidden {
+    display: none;
 }
