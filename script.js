@@ -1,5 +1,6 @@
 /* Changelog:
  * v1.0: Rewritten application for laptop use, removed Upcoming Events and Car Value, inspired by Fleetio design
+ * v1.1: Fixed "Script error" by improving error handling and simplifying logic
  */
 
 const { useState, useEffect } = React;
@@ -78,18 +79,18 @@ const App = () => {
             if (storedMileage) {
                 setCurrentMileage(parseInt(storedMileage));
             }
+
+            const updatedUpcoming = upcomingServices.filter(upcoming => {
+                return !completedServices.some(completed => 
+                    completed.project === upcoming.project && completed.mileage >= upcoming.mileage
+                );
+            });
+            setUpcomingServices(updatedUpcoming);
         } catch (error) {
             console.error('Error initializing data:', error);
             setCompletedServices(initialCompletedServices.sort((a, b) => b.mileage - a.mileage));
             localStorage.setItem('completedServices', JSON.stringify(initialCompletedServices));
         }
-
-        const updatedUpcoming = upcomingServices.filter(upcoming => {
-            return !completedServices.some(completed => 
-                completed.project === upcoming.project && completed.mileage >= upcoming.mileage
-            );
-        });
-        setUpcomingServices(updatedUpcoming);
     }, []);
 
     const ServiceItem = ({ service, type, currentMileage, onClick }) => {
@@ -728,4 +729,9 @@ const App = () => {
     );
 };
 
-ReactDOM.render(<App />, document.getElementById('root'));
+try {
+    ReactDOM.render(<App />, document.getElementById('root'));
+} catch (error) {
+    console.error('Error rendering React app:', error);
+    document.getElementById('root').innerHTML = '<p>Error: Failed to render the application. Please check the console for details.</p>';
+}
