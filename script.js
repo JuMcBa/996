@@ -2,6 +2,7 @@
  * v1.0: Rewritten application for laptop use, removed Upcoming Events and Car Value, inspired by Fleetio design
  * v1.1: Fixed "Script error" by improving error handling and simplifying logic
  * v1.2: Simplified UI, switched to table format for service lists and dashboard
+ * v1.3: Added hover effect for table rows, adjusted column sizes, modernized buttons and toggle switches
  */
 
 const { useState, useEffect } = React;
@@ -274,7 +275,6 @@ const App = () => {
                                 type="checkbox" 
                                 checked={addServiceModal.oilChange} 
                                 onChange={(e) => setAddServiceModal({ ...addServiceModal, oilChange: e.target.checked })}
-                                className="h-5 w-5"
                             />
                         </div>
                         <div className={addServiceModal.status === 'completed' ? 'hidden' : ''}>
@@ -283,7 +283,6 @@ const App = () => {
                                 type="checkbox" 
                                 checked={addServiceModal.sparkPlug} 
                                 onChange={(e) => setAddServiceModal({ ...addServiceModal, sparkPlug: e.target.checked })}
-                                className="h-5 w-5"
                             />
                         </div>
                         <div className={addServiceModal.status === 'completed' ? 'hidden' : ''}>
@@ -292,7 +291,6 @@ const App = () => {
                                 type="checkbox" 
                                 checked={addServiceModal.brake} 
                                 onChange={(e) => setAddServiceModal({ ...addServiceModal, brake: e.target.checked })}
-                                className="h-5 w-5"
                             />
                         </div>
                     </div>
@@ -437,7 +435,7 @@ const App = () => {
                     <table>
                         <thead>
                             <tr>
-                                <th onClick={() => handleSortUpcoming('project')}>Project</th>
+                                <th className="project-col" onClick={() => handleSortUpcoming('project')}>Project</th>
                                 <th onClick={() => handleSortUpcoming('type')}>Type</th>
                                 <th onClick={() => handleSortUpcoming('date')}>Date</th>
                                 <th onClick={() => handleSortUpcoming('mileage')}>Mileage</th>
@@ -458,7 +456,7 @@ const App = () => {
                                         className={`upcoming-row ${isOverdue ? 'overdue-row' : ''}`}
                                         onClick={() => setModal({ visible: true, type: 'upcoming', data: service })}
                                     >
-                                        <td>{service.project}</td>
+                                        <td className="project-col">{service.project}</td>
                                         <td>{service.type}</td>
                                         <td>{service.date}</td>
                                         <td>{service.mileage.toLocaleString()}</td>
@@ -501,7 +499,7 @@ const App = () => {
                     <table>
                         <thead>
                             <tr>
-                                <th onClick={() => handleSortCompleted('project')}>Project</th>
+                                <th className="project-col" onClick={() => handleSortCompleted('project')}>Project</th>
                                 <th onClick={() => handleSortCompleted('date')}>Date</th>
                                 <th onClick={() => handleSortCompleted('mileage')}>Mileage</th>
                                 <th onClick={() => handleSortCompleted('vendor')}>Vendor</th>
@@ -516,11 +514,11 @@ const App = () => {
                                     className="completed-row"
                                     onClick={() => setModal({ visible: true, type: 'completed', data: service })}
                                 >
-                                    <td>{service.project}</td>
-                                    <td className="prominent-date">{service.date}</td>
-                                    <td className="prominent-mileage">{service.mileage.toLocaleString()}</td>
-                                    <td>{service.vendor || 'N/A'}</td>
-                                    <td>{service.cost}</td>
+                                    <td className="project-col">{service.project}</td>
+                                    <td className="date-col prominent-date">{service.date}</td>
+                                    <td className="mileage-col prominent-mileage">{service.mileage.toLocaleString()}</td>
+                                    <td className="vendor-col">{service.vendor || 'N/A'}</td>
+                                    <td className="cost-col">{service.cost}</td>
                                     <td>{service.description || 'No description'}</td>
                                 </tr>
                             ))}
