@@ -1,74 +1,75 @@
-/* Apple-inspired Color Palette and Design */
+/* Flat Design Color Palette */
 :root {
-    --apple-gray: #1C2526; /* Dark gray for text */
-    --apple-light-gray: #8E8E93; /* Light gray for secondary text */
-    --apple-bg: #F5F5F7; /* Light background */
-    --apple-white: #FFFFFF; /* Pure white for elements */
-    --apple-blue: #007AFF; /* Apple blue for interactive elements */
-    --apple-blue-hover: #005BB5; /* Darker blue for hover */
-    --apple-gray-bg: rgba(142, 142, 147, 0.1); /* Subtle gray background for rows */
-    --apple-red: #FF3B30; /* Red for destructive actions */
-    --apple-red-hover: #D32F2F; /* Darker red for hover */
+    --flat-dark-gray: #333333; /* Primary text color */
+    --flat-light-gray: #999999; /* Secondary text color */
+    --flat-bg: #F5F5F5; /* Light background */
+    --flat-white: #FFFFFF; /* Pure white for elements */
+    --flat-blue: #1E90FF; /* Bright blue for interactive elements */
+    --flat-blue-hover: #1C86EE; /* Slightly darker blue for hover */
+    --flat-red: #FF4444; /* Red for destructive actions */
+    --flat-red-hover: #EE3333; /* Darker red for hover */
+    --flat-row-bg: #E8F0FE; /* Light blue for upcoming rows */
+    --flat-row-alt-bg: #F0F0F0; /* Light gray for completed rows */
+    --flat-row-overdue-bg: #FFEBEE; /* Light red for overdue rows */
+    --flat-row-hover: #E0E0E0; /* Light gray for hover */
 }
 
 body {
-    font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    background-color: var(--apple-bg);
-    color: var(--apple-gray);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: var(--flat-bg);
+    color: var(--flat-dark-gray);
     margin: 0;
     padding: 0;
-    line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
+    line-height: 1.6;
 }
 
 button, input, select {
     font-size: 14px;
     border: none;
-    border-radius: 8px;
-    background: var(--apple-white);
+    border-radius: 6px;
+    background: var(--flat-white);
     padding: 8px 12px;
-    transition: all 0.3s ease;
+    transition: background 0.3s ease;
     font-family: inherit;
 }
 
 button:focus, input:focus, select:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.3);
+    background: var(--flat-row-hover);
 }
 
 h1 {
     font-size: 24px;
-    font-weight: 600;
-    color: var(--apple-gray);
+    font-weight: 500;
+    color: var(--flat-dark-gray);
 }
 
 h2 {
     font-size: 20px;
     font-weight: 500;
-    color: var(--apple-gray);
+    color: var(--flat-dark-gray);
 }
 
 .container {
     max-width: 1280px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 30px;
 }
 
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 20px;
-    background: var(--apple-white);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    margin-bottom: 20px;
+    padding: 15px 20px;
+    background: var(--flat-white);
+    margin-bottom: 30px;
 }
 
 .qr-icon {
     width: 20px;
     height: 20px;
     cursor: pointer;
-    color: var(--apple-blue);
+    color: var(--flat-blue);
 }
 
 .qr-code-large {
@@ -79,9 +80,9 @@ h2 {
 }
 
 .nav-bar {
-    background: var(--apple-white);
+    background: var(--flat-white);
     padding: 10px 20px;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
 }
 
 .tab-button {
@@ -90,19 +91,19 @@ h2 {
     padding: 10px 20px;
     font-size: 16px;
     font-weight: 500;
-    color: var(--apple-light-gray);
+    color: var(--flat-light-gray);
     cursor: pointer;
     border-bottom: 2px solid transparent;
     transition: color 0.3s ease;
 }
 
 .tab-button.active {
-    color: var(--apple-gray);
-    border-bottom: 2px solid var(--apple-blue);
+    color: var(--flat-dark-gray);
+    border-bottom: 2px solid var(--flat-blue);
 }
 
 .tab-button:hover {
-    color: var(--apple-gray);
+    color: var(--flat-dark-gray);
 }
 
 .tab-content {
@@ -114,10 +115,10 @@ h2 {
 }
 
 .panel {
-    background: var(--apple-white);
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 20px;
+    background: var(--flat-white);
+    border-radius: 8px;
+    padding: 25px;
+    margin-bottom: 30px;
 }
 
 .modal {
@@ -130,21 +131,19 @@ h2 {
     height: 100%;
     overflow: auto;
     background-color: rgba(0, 0, 0, 0.4);
-    animation: fadeIn 0.3s ease;
 }
 
 .modal-content {
-    background: var(--apple-white);
+    background: var(--flat-white);
     margin: 5% auto;
-    padding: 20px;
+    padding: 25px;
     width: 90%;
     max-width: 600px;
-    border-radius: 12px;
-    animation: slideIn 0.3s ease;
+    border-radius: 8px;
 }
 
 .close {
-    color: var(--apple-light-gray);
+    color: var(--flat-light-gray);
     float: right;
     font-size: 24px;
     font-weight: 500;
@@ -153,7 +152,7 @@ h2 {
 
 .close:hover,
 .close:focus {
-    color: var(--apple-gray);
+    color: var(--flat-dark-gray);
 }
 
 table {
@@ -161,7 +160,7 @@ table {
     border-collapse: separate;
     border-spacing: 0;
     font-size: 14px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 th, td {
@@ -170,33 +169,30 @@ th, td {
 }
 
 th {
-    background: var(--apple-bg);
-    font-weight: 600;
-    color: var(--apple-gray);
+    background: var(--flat-bg);
+    font-weight: 500;
+    color: var(--flat-dark-gray);
     cursor: pointer;
-    position: sticky;
-    top: 0;
-    z-index: 1;
 }
 
 th:hover {
-    background: rgba(0, 0, 0, 0.02);
+    background: var(--flat-row-hover);
 }
 
 tr.upcoming-row {
-    background: rgba(0, 122, 255, 0.03);
+    background: var(--flat-row-bg);
 }
 
 tr.completed-row {
-    background: rgba(142, 142, 147, 0.03);
+    background: var(--flat-row-alt-bg);
 }
 
 tr.overdue-row {
-    background: rgba(255, 59, 48, 0.05);
+    background: var(--flat-row-overdue-bg);
 }
 
 tr:hover {
-    background: var(--apple-gray-bg);
+    background: var(--flat-row-hover);
     cursor: pointer;
 }
 
@@ -204,7 +200,7 @@ td.miles-remaining,
 td.prominent-mileage,
 td.prominent-date {
     font-weight: 600;
-    color: var(--apple-blue);
+    color: var(--flat-blue);
 }
 
 th.project-col,
@@ -223,48 +219,43 @@ td.cost-col {
 }
 
 button {
-    background: var(--apple-blue);
+    background: var(--flat-blue);
     color: #fff;
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
     padding: 8px 16px;
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
-    transition: background 0.3s ease, opacity 0.3s ease;
+    transition: background 0.3s ease;
 }
 
 button:hover {
-    background: var(--apple-blue-hover);
-    opacity: 0.9;
-}
-
-button:active {
-    opacity: 0.7;
+    background: var(--flat-blue-hover);
 }
 
 button.secondary {
-    background: var(--apple-light-gray);
-    color: var(--apple-white);
+    background: var(--flat-light-gray);
+    color: #fff;
 }
 
 button.secondary:hover {
-    background: #6E6E73;
+    background: #888888;
 }
 
 button.danger {
-    background: var(--apple-red);
+    background: var(--flat-red);
 }
 
 button.danger:hover {
-    background: var(--apple-red-hover);
+    background: var(--flat-red-hover);
 }
 
 input[type="checkbox"] {
     appearance: none;
     width: 36px;
     height: 20px;
-    background: var(--apple-light-gray);
+    background: var(--flat-light-gray);
     border-radius: 12px;
     position: relative;
     cursor: pointer;
@@ -272,7 +263,7 @@ input[type="checkbox"] {
 }
 
 input[type="checkbox"]:checked {
-    background: var(--apple-blue);
+    background: var(--flat-blue);
 }
 
 input[type="checkbox"]::before {
@@ -280,7 +271,7 @@ input[type="checkbox"]::before {
     position: absolute;
     width: 16px;
     height: 16px;
-    background: var(--apple-white);
+    background: var(--flat-white);
     border-radius: 50%;
     top: 2px;
     left: 2px;
@@ -295,25 +286,15 @@ input[type="checkbox"]:checked::before {
     display: flex;
     gap: 12px;
     align-items: center;
-    margin-bottom: 12px;
+    margin-bottom: 20px;
 }
 
 .filter-container label {
     font-size: 14px;
     font-weight: 500;
-    color: var(--apple-gray);
+    color: var(--flat-dark-gray);
 }
 
 .hidden {
     display: none;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-@keyframes slideIn {
-    from { transform: translateY(20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
 }
