@@ -1,9 +1,5 @@
 /* Changelog:
- * v1.0: Initial version with basic service tracking
- * v1.1: Added Tesla-Apple aesthetic, updated sorting, added service history dashboard
- * v1.2: Split into separate files, converted to React for component-based rendering
- * v1.3: Added filters for "Type" of Service, highlighted prominent fields, updated to minimalist Urban Chic theme
- * v1.4: Fixed "Script error" by improving script loading and filtering logic
+ * v1.0: Rewritten application with all features, using React, split into separate files
  */
 
 const { useState, useEffect } = React;
@@ -88,8 +84,12 @@ const App = () => {
                 setCompletedServices(initialCompletedServices.sort((a, b) => b.mileage - a.mileage));
                 localStorage.setItem('completedServices', JSON.stringify(initialCompletedServices));
             }
+            const storedMileage = localStorage.getItem('currentMileage');
+            if (storedMileage) {
+                setCurrentMileage(parseInt(storedMileage));
+            }
         } catch (error) {
-            console.error('Error initializing completedServices:', error);
+            console.error('Error initializing data:', error);
             setCompletedServices(initialCompletedServices.sort((a, b) => b.mileage - a.mileage));
             localStorage.setItem('completedServices', JSON.stringify(initialCompletedServices));
         }
