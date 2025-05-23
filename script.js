@@ -1,5 +1,5 @@
 /* Changelog:
- * v1.0: Rewritten application with all features, using React, split into separate files
+ * v1.0: Rewritten application for laptop use, removed Upcoming Events and Car Value, inspired by Fleetio design
  */
 
 const { useState, useEffect } = React;
@@ -65,16 +65,6 @@ const App = () => {
         { date: "2016-10-31", mileage: 76337, project: "Replace Steering Lock Assembly", description: "Replace Steering Lock Assembly", cost: "$732", vendor: "Makellos Classics" }
     ];
 
-    const eventsData = [
-        { date: "May 23, 2025 – Fremont, CA", event: "Friday Night Grill n Chill Cruise Night", description: "A weekly cruise night for car enthusiasts, including Porsche owners, at the Flying A Service Station.", link: "https://norcalcarculture.com" },
-        { date: "May 24, 2025 – Concord, CA", event: "Hot Concord Nights Cruise-In", description: "A Saturday evening cruise-in event welcoming all car makes, including Porsches, at Los Tacos de Pancho.", link: "https://norcalcarculture.com" },
-        { date: "May 25, 2025 – Santa Rosa, CA", event: "Hot Rods & Burgers", description: "A Sunday event featuring classic cars, including Porsches, at Machado Burgers.", link: "https://norcalcarculture.com" },
-        { date: "May 25-29, 2025 – Watkins Glen, NY (Co-hosted by Metro NY and Niagara PCA)", event: "Watkins Glen HPDE (High Performance Drivers Education)", description: "A fully instructed High Performance Drivers Education event at Watkins Glen International, co-hosted by Metro NY and Niagara PCA, offering Bay Area PCA members a chance to participate.", link: "https://www.pca.org" },
-        { date: "June 15, 2025 – Santa Cruz, CA", event: "Forest Bathing in the Redwoods Tour", description: "A tour through the Santa Cruz Mountains' redwoods, inspired by Shinrin-yoku, organized by the Loma Prieta Region PCA, starting in Santa Cruz and ending in Loma Mar.", link: "https://lprpca.org" },
-        { date: "July 6-12, 2025 – Monterey Bay Region", event: "2025 Porsche Parade", description: "The 69th Porsche Parade, a major PCA event, held at the Omni Oklahoma City Hotel, relevant for Monterey Bay Region PCA members to attend or follow.", link: "https://mby.pca.org" },
-        { date: "August 15, 2025 – Monterey, CA", event: "2025 Werks Reunion Monterey", description: "A significant Porsche event during Monterey Car Week, showcasing a curated selection of Porsches at Monterey Pines Golf Course.", link: "https://mby.pca.org" }
-    ];
-
     useEffect(() => {
         try {
             const storedServices = localStorage.getItem('completedServices');
@@ -128,11 +118,10 @@ const App = () => {
                             <p><span className="label prominent-date">Date:</span> <span className="prominent-date">{service.date}</span></p>
                             <p><span className="label prominent-mileage">Mileage:</span> <span className="prominent-mileage">{service.mileage.toLocaleString()}</span></p>
                             <p><span className="label">Vendor:</span> {service.vendor || 'N/A'}</p>
-                            <p></p>
+                            <p className="cost">Actual Cost: {service.cost}</p>
                         </>
                     )}
                 </div>
-                <p className="cost">{type === 'upcoming' ? 'Projected Cost' : 'Actual Cost'}: {service.cost}</p>
             </li>
         );
     };
@@ -168,8 +157,8 @@ const App = () => {
                         <p><span className="label">Description:</span> {data.description}</p>
                     </div>
                     <div className="flex justify-end gap-2 mt-4">
-                        <button onClick={onEdit} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Edit</button>
-                        <button onClick={onDelete} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Delete</button>
+                        <button onClick={onEdit}>Edit</button>
+                        <button onClick={onDelete} className="danger">Delete</button>
                     </div>
                 </div>
             </div>
@@ -224,7 +213,7 @@ const App = () => {
                 <div className="modal-content">
                     <span className="close" onClick={onClose}>×</span>
                     <h2 className="text-xl font-semibold mb-4">Add Service</h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-2 gap-4">
                         <div>
                             <label className="block mb-1 text-sm">Service Status:</label>
                             <select 
@@ -416,8 +405,9 @@ const App = () => {
                             }
                         }} 
                         placeholder="Enter current mileage"
+                        style={{ width: '200px', marginRight: '10px' }}
                     />
-                    <button onClick={() => setCurrentMileage(currentMileage)} className="mt-2">Update Mileage</button>
+                    <button onClick={() => setCurrentMileage(currentMileage)}>Update Mileage</button>
                     <p className="mt-2 text-sm">Current Mileage: <span>{currentMileage.toLocaleString()}</span> miles</p>
                 </div>
 
@@ -444,7 +434,7 @@ const App = () => {
                                 value={upcomingSearch} 
                                 onChange={(e) => setUpcomingSearch(e.target.value)} 
                                 placeholder="Search..." 
-                                className="border p-2 rounded w-full sm:w-1/3"
+                                style={{ width: '200px' }}
                             />
                         </div>
                     </div>
@@ -480,7 +470,7 @@ const App = () => {
                                 value={completedSearch} 
                                 onChange={(e) => setCompletedSearch(e.target.value)} 
                                 placeholder="Search..." 
-                                className="border p-2 rounded w-full sm:w-1/3"
+                                style={{ width: '200px' }}
                             />
                         </div>
                     </div>
@@ -564,114 +554,6 @@ const App = () => {
                             </div>
                         );
                     })}
-                </div>
-            </div>
-        );
-    };
-
-    const CarValueTab = () => {
-        const [carYear, setCarYear] = useState(2003);
-        const [carMileage, setCarMileage] = useState(136000);
-        const [carCondition, setCarCondition] = useState('good');
-        const [estimatedValue, setEstimatedValue] = useState(17250);
-
-        const calculateCarValue = () => {
-            let baseValue = 18053;
-            let yearAdjustment = 0;
-            if (carYear >= 2002) {
-                yearAdjustment = 1000;
-            }
-            let mileageAdjustment = 0;
-            if (carMileage > 60000) {
-                const excessMiles = carMileage - 60000;
-                mileageAdjustment = -Math.floor(excessMiles / 10000) * 500;
-            }
-            let conditionAdjustment = 0;
-            switch (carCondition) {
-                case 'poor':
-                    conditionAdjustment = -3000;
-                    break;
-                case 'fair':
-                    conditionAdjustment = -1000;
-                    break;
-                case 'good':
-                    conditionAdjustment = 2000;
-                    break;
-                case 'excellent':
-                    conditionAdjustment = 4000;
-                    break;
-            }
-            let value = baseValue + yearAdjustment + mileageAdjustment + conditionAdjustment;
-            if (value < 10000) value = 10000;
-            setEstimatedValue(value);
-        };
-
-        return (
-            <div id="value" className="tab-content">
-                <div className="panel">
-                    <h2 className="text-xl font-semibold mb-2">Estimate Your Porsche 996's Value</h2>
-                    <p className="mb-4 text-sm">Enter your car's details to estimate its current market value based on recent sales data.</p>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
-                        <div>
-                            <label className="block mb-1 text-sm">Year:</label>
-                            <select value={carYear} onChange={(e) => setCarYear(parseInt(e.target.value))}>
-                                <option value="1998">1998</option>
-                                <option value="1999">1999</option>
-                                <option value="2000">2000</option>
-                                <option value="2001">2001</option>
-                                <option value="2002">2002</option>
-                                <option value="2003">2003</option>
-                                <option value="2004">2004</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label className="block mb-1 text-sm">Mileage:</label>
-                            <input 
-                                type="number" 
-                                value={carMileage} 
-                                onChange={(e) => setCarMileage(parseInt(e.target.value))} 
-                                placeholder="Enter mileage"
-                            />
-                        </div>
-                        <div>
-                            <label className="block mb-1 text-sm">Condition:</label>
-                            <select value={carCondition} onChange={(e) => setCarCondition(e.target.value)}>
-                                <option value="poor">Poor</option>
-                                <option value="fair">Fair</option>
-                                <option value="good">Good</option>
-                                <option value="excellent">Excellent</option>
-                            </select>
-                        </div>
-                    </div>
-                    <button onClick={calculateCarValue}>Calculate Value</button>
-                    <div className="mt-4 text-sm">
-                        <p>Estimated Value: <span>${estimatedValue.toLocaleString()}</span></p>
-                        <p className="text-gray-600">Note: This is an estimate based on recent market data for Porsche 996 Carrera Cabriolets. Actual value may vary depending on specific features, location, and market conditions.</p>
-                    </div>
-                </div>
-            </div>
-        );
-    };
-
-    const EventsTab = () => {
-        return (
-            <div id="events" className="tab-content">
-                <div className="panel">
-                    <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-xl font-semibold">Upcoming Porsche Events</h2>
-                        <button onClick={() => {}}>Refresh Events</button>
-                    </div>
-                    <p className="mb-4 text-sm">Porsche car events in the Bay Area and around Carmel, CA, from May 22, 2025, to August 22, 2025.</p>
-                    <div className="space-y-4">
-                        {eventsData.map((event, index) => (
-                            <div key={index} className="event-item">
-                                <h3 className="text-lg font-medium">{event.date}</h3>
-                                <p className="text-sm"><strong>Event:</strong> {event.event}</p>
-                                <p className="text-sm"><strong>Description:</strong> {event.description}</p>
-                                <p className="text-sm"><strong>Link:</strong> <a href={event.link} target="_blank">{event.link}</a></p>
-                            </div>
-                        ))}
-                    </div>
                 </div>
             </div>
         );
@@ -799,9 +681,9 @@ const App = () => {
                 </div>
             </div>
 
-            <div className="mb-4 border-b border-gray-200">
-                <ul className="flex flex-wrap">
-                    <li className="mr-1">
+            <div className="nav-bar">
+                <ul className="flex">
+                    <li>
                         <button 
                             className={`tab-button ${activeTab === 'maintenance' ? 'active' : ''}`} 
                             onClick={() => setActiveTab('maintenance')}
@@ -809,7 +691,7 @@ const App = () => {
                             Maintenance
                         </button>
                     </li>
-                    <li className="mr-1">
+                    <li>
                         <button 
                             className={`tab-button ${activeTab === 'history' ? 'active' : ''}`} 
                             onClick={() => setActiveTab('history')}
@@ -817,29 +699,11 @@ const App = () => {
                             Service History
                         </button>
                     </li>
-                    <li className="mr-1">
-                        <button 
-                            className={`tab-button ${activeTab === 'value' ? 'active' : ''}`} 
-                            onClick={() => setActiveTab('value')}
-                        >
-                            Car Value
-                        </button>
-                    </li>
-                    <li className="mr-1">
-                        <button 
-                            className={`tab-button ${activeTab === 'events' ? 'active' : ''}`} 
-                            onClick={() => setActiveTab('events')}
-                        >
-                            Upcoming Events
-                        </button>
-                    </li>
                 </ul>
             </div>
 
             {activeTab === 'maintenance' && <MaintenanceTab />}
             {activeTab === 'history' && <ServiceHistoryTab />}
-            {activeTab === 'value' && <CarValueTab />}
-            {activeTab === 'events' && <EventsTab />}
 
             <ServiceDetailsModal 
                 visible={modal.visible} 
