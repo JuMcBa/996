@@ -14,7 +14,7 @@
 </head>
 <body>
     <div id="root"></div>
-    <script type="text/babel" src="script.js" onerror="alert('Failed to load script.js. Please ensure the file exists and is accessible.');"></script>
+    <script type="text/babel" src="script.js" onerror="document.getElementById('root').innerHTML = '<p>Error: Failed to load or transpile script.js. Please check the console for details and ensure the file exists.</p>';"></script>
     <script>
         if (typeof React === 'undefined' || typeof ReactDOM === 'undefined') {
             document.getElementById('root').innerHTML = '<p>Error: Unable to load React or ReactDOM. Please check your internet connection and refresh the page.</p>';
