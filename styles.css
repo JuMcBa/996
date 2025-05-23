@@ -1,14 +1,12 @@
-/* Urban Chic Color Palette with Fleetio-inspired accents */
+/* Simplified Urban Chic Color Palette with Fleetio-inspired accents */
 :root {
     --charcoal-gray: #333333;
     --soft-taupe: #D4CFC9;
     --muted-sage: #A9B5A4;
     --slate-blue: #5D8296;
     --off-white: #F5F5F5;
-    --warm-terracotta: #C66B3D;
     --fleetio-blue: #0055A5;
     --fleetio-gray: #666;
-    --fleetio-green: #28A745;
 }
 
 body {
@@ -17,25 +15,31 @@ body {
     color: var(--charcoal-gray);
     margin: 0;
     padding: 0;
-    line-height: 1.6;
+    line-height: 1.5;
 }
 
 button, input, select {
     font-size: 14px;
-    border: none;
-    background: transparent;
-    padding: 8px 12px;
-    transition: all 0.3s ease;
+    border: 1px solid var(--soft-taupe);
+    border-radius: 4px;
+    background: #fff;
+    padding: 6px 10px;
+    transition: border-color 0.3s ease;
+}
+
+button:focus, input:focus, select:focus {
+    outline: none;
+    border-color: var(--fleetio-blue);
 }
 
 h1 {
-    font-size: 24px;
-    font-weight: 600;
+    font-size: 22px;
+    font-weight: 500;
     color: var(--charcoal-gray);
 }
 
 h2 {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 500;
     color: var(--charcoal-gray);
 }
@@ -43,34 +47,29 @@ h2 {
 .container {
     max-width: 1280px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 15px;
 }
 
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 20px;
+    padding: 10px 15px;
     background: #fff;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .qr-icon {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
     cursor: pointer;
     color: var(--slate-blue);
-    transition: color 0.3s ease;
-}
-
-.qr-icon:hover {
-    color: var(--warm-terracotta);
 }
 
 .qr-code-large {
-    width: 180px;
-    height: 180px;
+    width: 150px;
+    height: 150px;
     margin: 0 auto;
     display: block;
 }
@@ -78,29 +77,24 @@ h2 {
 .nav-bar {
     background: #fff;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    padding: 10px 20px;
-    margin-bottom: 20px;
+    padding: 8px 15px;
+    margin-bottom: 15px;
 }
 
 .tab-button {
     background: none;
     border: none;
-    padding: 10px 20px;
+    padding: 8px 15px;
     font-size: 14px;
     font-weight: 500;
     color: var(--fleetio-gray);
     cursor: pointer;
-    transition: color 0.3s ease, border-bottom 0.3s ease;
     border-bottom: 2px solid transparent;
 }
 
 .tab-button.active {
     color: var(--fleetio-blue);
     border-bottom: 2px solid var(--fleetio-blue);
-}
-
-.tab-button:hover {
-    color: var(--fleetio-blue);
 }
 
 .tab-content {
@@ -113,10 +107,10 @@ h2 {
 
 .panel {
     background: #fff;
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    padding: 15px;
+    margin-bottom: 15px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .modal {
@@ -134,17 +128,16 @@ h2 {
 .modal-content {
     background: #fff;
     margin: 5% auto;
-    padding: 20px;
+    padding: 15px;
     width: 90%;
     max-width: 600px;
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
 }
 
 .close {
     color: var(--soft-taupe);
     float: right;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 500;
     cursor: pointer;
 }
@@ -154,106 +147,58 @@ h2 {
     color: var(--charcoal-gray);
 }
 
-.service-list {
-    list-style: none;
-    padding: 0;
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin-bottom: 10px;
 }
 
-.service-item {
-    background: #fff;
-    border-radius: 8px;
-    padding: 12px 16px;
-    margin-bottom: 10px;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    transition: box-shadow 0.3s ease;
+th, td {
+    padding: 8px 10px;
+    text-align: left;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+th {
+    background: var(--off-white);
+    font-weight: 500;
+    color: var(--charcoal-gray);
     cursor: pointer;
 }
 
-.service-item:hover {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+th:hover {
+    background: rgba(0, 0, 0, 0.02);
 }
 
-.upcoming-item {
+tr.upcoming-row {
     background: rgba(93, 130, 150, 0.05);
 }
 
-.completed-item {
+tr.completed-row {
     background: rgba(169, 181, 164, 0.05);
 }
 
-.overdue-item {
+tr.overdue-row {
     background: rgba(198, 107, 61, 0.1);
 }
 
-.service-item h3 {
-    font-size: 16px;
-    font-weight: 500;
-    margin-bottom: 6px;
-    color: var(--charcoal-gray);
-}
-
-.service-item .description {
-    font-size: 14px;
-    color: var(--fleetio-gray);
-    margin-bottom: 6px;
-}
-
-.service-item .details-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-    font-size: 14px;
-}
-
-.service-item .label {
-    font-weight: 500;
-    color: var(--muted-sage);
-}
-
-.service-item .cost {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--charcoal-gray);
-}
-
-.service-item .miles-remaining,
-.service-item .prominent-mileage,
-.service-item .prominent-date {
-    font-size: 16px;
+td.miles-remaining,
+td.prominent-mileage,
+td.prominent-date {
     font-weight: 600;
     color: var(--fleetio-blue);
-}
-
-input[type="number"],
-input[type="text"],
-input[type="date"],
-select {
-    border: 1px solid var(--soft-taupe);
-    border-radius: 6px;
-    background: #fff;
-    padding: 8px;
-    font-size: 14px;
-    width: 100%;
-    transition: border-color 0.3s ease;
-}
-
-input:focus,
-select:focus {
-    outline: none;
-    border-color: var(--fleetio-blue);
-    box-shadow: 0 0 0 2px rgba(93, 130, 150, 0.1);
 }
 
 button {
     background: var(--fleetio-blue);
     color: #fff;
     border: none;
-    border-radius: 6px;
-    padding: 8px 16px;
+    border-radius: 4px;
+    padding: 6px 12px;
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
-    transition: background 0.3s ease;
 }
 
 button:hover {
@@ -276,36 +221,11 @@ button.danger:hover {
     background: #c82333;
 }
 
-.dashboard-section {
-    margin-bottom: 20px;
-}
-
-.dashboard-section h3 {
-    font-size: 18px;
-    font-weight: 500;
-    margin-bottom: 12px;
-    color: var(--charcoal-gray);
-}
-
-.dashboard-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 16px;
-}
-
-.dashboard-card {
-    background: #fff;
-    border-radius: 8px;
-    padding: 12px;
-    font-size: 14px;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-}
-
 .filter-container {
     display: flex;
-    gap: 12px;
+    gap: 10px;
     align-items: center;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
 }
 
 .filter-container label {
