@@ -1,6 +1,7 @@
 /* Changelog:
  * v1.0: Rewritten application for laptop use, removed Upcoming Events and Car Value, inspired by Fleetio design
  * v1.1: Fixed "Script error" by improving error handling and simplifying logic
+ * v1.2: Simplified UI, switched to table format for service lists and dashboard
  */
 
 const { useState, useEffect } = React;
@@ -28,6 +29,8 @@ const App = () => {
     const [completedSearch, setCompletedSearch] = useState('');
     const [upcomingTypeFilter, setUpcomingTypeFilter] = useState('all');
     const [completedTypeFilter, setCompletedTypeFilter] = useState('all');
+    const [upcomingSort, setUpcomingSort] = useState({ field: 'mileage', direction: 'asc' });
+    const [completedSort, setCompletedSort] = useState({ field: 'mileage', direction: 'desc' });
 
     const initialCompletedServices = [
         { date: "2020-05-24", mileage: 97069, project: "Replace Catalytic Converter", description: "Replace Catalytic Converter", cost: "$1,849", vendor: "Makellos Classics" },
@@ -92,40 +95,6 @@ const App = () => {
             localStorage.setItem('completedServices', JSON.stringify(initialCompletedServices));
         }
     }, []);
-
-    const ServiceItem = ({ service, type, currentMileage, onClick }) => {
-        const milesRemaining = type === 'upcoming' ? (service.mileage - currentMileage).toLocaleString() : '';
-        const isOverdue = type === 'upcoming' && currentMileage >= service.mileage;
-
-        return (
-            <li 
-                className={`service-item ${type}-item ${isOverdue ? 'overdue-item' : ''}`} 
-                data-project={service.project} 
-                data-mileage={service.mileage} 
-                onClick={() => onClick(service)}
-            >
-                <h3>{service.project}</h3>
-                <p className="description">{service.description || 'No description'}</p>
-                <div className="details-grid">
-                    {type === 'upcoming' ? (
-                        <>
-                            <p><span className="label">Type:</span> {service.type || 'N/A'}</p>
-                            <p><span className="label miles-remaining">Miles Remaining:</span> <span className="miles-remaining">{milesRemaining}</span></p>
-                            <p><span className="label">Mileage:</span> {service.mileage.toLocaleString()}</p>
-                            <p><span className="label">Date:</span> {service.date}</p>
-                        </>
-                    ) : (
-                        <>
-                            <p><span className="label prominent-date">Date:</span> <span className="prominent-date">{service.date}</span></p>
-                            <p><span className="label prominent-mileage">Mileage:</span> <span className="prominent-mileage">{service.mileage.toLocaleString()}</span></p>
-                            <p><span className="label">Vendor:</span> {service.vendor || 'N/A'}</p>
-                            <p className="cost">Actual Cost: {service.cost}</p>
-                        </>
-                    )}
-                </div>
-            </li>
-        );
-    };
 
     const ServiceDetailsModal = ({ visible, type, data, onClose, onEdit, onDelete }) => {
         if (!visible || !data) return null;
@@ -371,15 +340,20 @@ const App = () => {
         };
 
         const filteredUpcoming = upcomingServices
-            .sort((a, b) => a.mileage - b.mileage)
             .filter(service => 
                 (upcomingTypeFilter === 'all' || service.type === upcomingTypeFilter) &&
                 (service.project.toLowerCase().includes(upcomingSearch.toLowerCase()) ||
                  (service.description || '').toLowerCase().includes(upcomingSearch.toLowerCase()))
-            );
+            )
+            .sort((a, b) => {
+                const field = upcomingSort.field;
+                const direction = upcomingSort.direction;
+                const aValue = field === 'mileage' ? a[field] : field === 'date' ? new Date(a[field]) : a[field].toLowerCase();
+                const bValue = field === 'mileage' ? b[field] : field === 'date' ? new Date(b[field]) : b[field].toLowerCase();
+                return direction === 'asc' ? (aValue > bValue ? 1 : -1) : (aValue < bValue ? 1 : -1);
+            });
 
         const filteredCompleted = completedServices
-            .sort((a, b) => b.mileage - a.mileage)
             .filter(service => {
                 const inferredType = inferServiceType(service.description);
                 return (
@@ -387,7 +361,28 @@ const App = () => {
                     (service.project.toLowerCase().includes(completedSearch.toLowerCase()) ||
                      (service.description || '').toLowerCase().includes(completedSearch.toLowerCase()))
                 );
+            })
+            .sort((a, b) => {
+                const field = completedSort.field;
+                const direction = completedSort.direction;
+                const aValue = field === 'mileage' ? a[field] : field === 'date' ? new Date(a[field]) : a[field].toLowerCase();
+                const bValue = field === 'mileage' ? b[field] : field === 'date' ? new Date(b[field]) : b[field].toLowerCase();
+                return direction === 'asc' ? (aValue > bValue ? 1 : -1) : (aValue < bValue ? 1 : -1);
             });
+
+        const handleSortUpcoming = (field) => {
+            setUpcomingSort({
+                field,
+                direction: upcomingSort.field === field && upcomingSort.direction === 'asc' ? 'desc' : 'asc'
+            });
+        };
+
+        const handleSortCompleted = (field) => {
+            setCompletedSort({
+                field,
+                direction: completedSort.field === field && completedSort.direction === 'asc' ? 'desc' : 'asc'
+            });
+        };
 
         return (
             <div id="maintenance" className="tab-content active">
@@ -439,17 +434,45 @@ const App = () => {
                             />
                         </div>
                     </div>
-                    <ul className="service-list">
-                        {filteredUpcoming.map(service => (
-                            <ServiceItem 
-                                key={`${service.project}-${service.mileage}`} 
-                                service={service} 
-                                type="upcoming" 
-                                currentMileage={currentMileage} 
-                                onClick={(data) => setModal({ visible: true, type: 'upcoming', data })}
-                            />
-                        ))}
-                    </ul>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th onClick={() => handleSortUpcoming('project')}>Project</th>
+                                <th onClick={() => handleSortUpcoming('type')}>Type</th>
+                                <th onClick={() => handleSortUpcoming('date')}>Date</th>
+                                <th onClick={() => handleSortUpcoming('mileage')}>Mileage</th>
+                                <th>Miles Remaining</th>
+                                <th>Oil Change</th>
+                                <th>Spark Plug</th>
+                                <th>Brake Service</th>
+                                <th>Projected Cost</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {filteredUpcoming.map(service => {
+                                const isOverdue = service.mileage <= currentMileage;
+                                return (
+                                    <tr 
+                                        key={`${service.project}-${service.mileage}`} 
+                                        className={`upcoming-row ${isOverdue ? 'overdue-row' : ''}`}
+                                        onClick={() => setModal({ visible: true, type: 'upcoming', data: service })}
+                                    >
+                                        <td>{service.project}</td>
+                                        <td>{service.type}</td>
+                                        <td>{service.date}</td>
+                                        <td>{service.mileage.toLocaleString()}</td>
+                                        <td className="miles-remaining">{(service.mileage - currentMileage).toLocaleString()}</td>
+                                        <td>{service.oilChange}</td>
+                                        <td>{service.sparkPlug}</td>
+                                        <td>{service.brake}</td>
+                                        <td>{service.cost}</td>
+                                        <td>{service.description || 'No description'}</td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
                 </div>
 
                 <div className="panel">
@@ -475,17 +498,34 @@ const App = () => {
                             />
                         </div>
                     </div>
-                    <ul className="service-list">
-                        {filteredCompleted.map(service => (
-                            <ServiceItem 
-                                key={`${service.project}-${service.mileage}`} 
-                                service={service} 
-                                type="completed" 
-                                currentMileage={currentMileage} 
-                                onClick={(data) => setModal({ visible: true, type: 'completed', data })}
-                            />
-                        ))}
-                    </ul>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th onClick={() => handleSortCompleted('project')}>Project</th>
+                                <th onClick={() => handleSortCompleted('date')}>Date</th>
+                                <th onClick={() => handleSortCompleted('mileage')}>Mileage</th>
+                                <th onClick={() => handleSortCompleted('vendor')}>Vendor</th>
+                                <th>Actual Cost</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {filteredCompleted.map(service => (
+                                <tr 
+                                    key={`${service.project}-${service.mileage}`} 
+                                    className="completed-row"
+                                    onClick={() => setModal({ visible: true, type: 'completed', data: service })}
+                                >
+                                    <td>{service.project}</td>
+                                    <td className="prominent-date">{service.date}</td>
+                                    <td className="prominent-mileage">{service.mileage.toLocaleString()}</td>
+                                    <td>{service.vendor || 'N/A'}</td>
+                                    <td>{service.cost}</td>
+                                    <td>{service.description || 'No description'}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         );
@@ -542,16 +582,24 @@ const App = () => {
                         return (
                             <div key={year} className="dashboard-section">
                                 <h3>{year}</h3>
-                                <div className="dashboard-grid">
-                                    <div className="dashboard-card">
-                                        <p><span className="label">Projected Spend:</span> ${projectedSpend.toLocaleString()}</p>
-                                        <p><span className="label">Actual Spend:</span> ${actualSpend.toLocaleString()}</p>
-                                    </div>
-                                    <div className="dashboard-card">
-                                        <p><span className="label">Avg. Miles Between Oil Changes:</span> {avgOilChangeInterval === 'N/A' ? 'N/A' : avgOilChangeInterval + ' miles'}</p>
-                                        <p><span className="label">Avg. Miles Between Spark Plugs:</span> {avgSparkPlugInterval === 'N/A' ? 'N/A' : avgSparkPlugInterval + ' miles'}</p>
-                                    </div>
-                                </div>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Projected Spend</th>
+                                            <th>Actual Spend</th>
+                                            <th>Avg. Miles Between Oil Changes</th>
+                                            <th>Avg. Miles Between Spark Plugs</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>${projectedSpend.toLocaleString()}</td>
+                                            <td>${actualSpend.toLocaleString()}</td>
+                                            <td>{avgOilChangeInterval === 'N/A' ? 'N/A' : avgOilChangeInterval + ' miles'}</td>
+                                            <td>{avgSparkPlugInterval === 'N/A' ? 'N/A' : avgSparkPlugInterval + ' miles'}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         );
                     })}
