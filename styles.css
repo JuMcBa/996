@@ -1,64 +1,79 @@
-/* Apple-Inspired Design */
+/* Material Design Theme with Teal Accent */
 :root {
-    --apple-white: #FFFFFF; /* Primary background */
-    --apple-gray-light: #E0E0E0; /* Borders and subtle accents */
-    --apple-gray-medium: #8E8E93; /* Secondary text */
-    --apple-black: #1C2526; /* Headings and primary text */
-    --apple-green: #34C759; /* Completed status */
-    --apple-red: #FF3B30; /* Emergency/overdue status */
-    --apple-blue: #007AFF; /* Interactive elements */
-    --apple-blue-hover: #005BB5; /* Hover state for interactive elements */
-    --apple-gray-bg: #F5F5F7; /* Light gray background */
+    --md-white: #FFFFFF; /* Primary background */
+    --md-gray-light: #E0E0E0; /* Borders */
+    --md-gray-medium: #757575; /* Secondary text */
+    --md-black: #212121; /* Headings and primary text */
+    --md-teal: #26A69A; /* Teal accent for interactive elements */
+    --md-teal-hover: #00897B; /* Teal hover state */
+    --md-green: #4CAF50; /* Completed status */
+    --md-red: #F44336; /* Emergency/overdue status */
+    --md-gray-bg: #FAFAFA; /* Light gray background */
+    --md-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Card shadow */
 }
 
 body {
-    font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    background-color: var(--apple-gray-bg);
-    color: var(--apple-black);
+    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: var(--md-gray-bg);
+    color: var(--md-black);
     margin: 0;
     padding: 0;
     line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
 }
 
 button, input, select {
     font-size: 14px;
-    border: 1px solid var(--apple-gray-light);
-    border-radius: 8px;
-    background: var(--apple-white);
+    border: 1px solid var(--md-gray-light);
+    border-radius: 4px;
+    background: var(--md-white);
     padding: 8px 12px;
-    transition: border-color 0.3s ease, background 0.3s ease;
+    transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
     font-family: inherit;
 }
 
 button:focus, input:focus, select:focus {
     outline: none;
-    border-color: var(--apple-blue);
-    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.3);
+    border-color: var(--md-teal);
+    box-shadow: 0 0 0 3px rgba(38, 166, 154, 0.3);
 }
 
 h1 {
     font-size: 24px;
-    font-weight: 600;
-    color: var(--apple-black);
+    font-weight: 500;
+    color: var(--md-black);
 }
 
 h2 {
     font-size: 20px;
-    font-weight: 600;
-    color: var(--apple-black);
+    font-weight: 500;
+    color: var(--md-black);
 }
 
 h3 {
     font-size: 16px;
-    font-weight: 600;
-    color: var(--apple-black);
+    font-weight: 500;
+    color: var(--md-black);
 }
 
 .container {
-    max-width: 1280px;
-    margin: 0 auto;
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 240px;
+    background: var(--md-white);
+    border-right: 1px solid var(--md-gray-light);
+    padding: 16px;
+    position: fixed;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.main-content {
+    margin-left: 240px;
     padding: 24px;
+    flex-grow: 1;
 }
 
 .header {
@@ -66,16 +81,16 @@ h3 {
     justify-content: space-between;
     align-items: center;
     padding: 16px 24px;
-    background: var(--apple-white);
-    border-bottom: 1px solid var(--apple-gray-light);
+    background: var(--md-white);
+    border-bottom: 1px solid var(--md-gray-light);
     margin-bottom: 24px;
 }
 
 .qr-icon {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
     cursor: pointer;
-    color: var(--apple-blue);
+    color: var(--md-teal);
 }
 
 .qr-code-large {
@@ -85,32 +100,26 @@ h3 {
     display: block;
 }
 
-.nav-bar {
-    background: var(--apple-white);
-    padding: 12px 24px;
-    margin-bottom: 24px;
-    border-bottom: 1px solid var(--apple-gray-light);
-}
-
-.tab-button {
-    background: none;
-    border: none;
-    padding: 12px 24px;
+.nav-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
     font-size: 16px;
     font-weight: 500;
-    color: var(--apple-gray-medium);
+    color: var(--md-gray-medium);
     cursor: pointer;
-    border-bottom: 2px solid transparent;
-    transition: color 0.3s ease, border-bottom 0.3s ease;
+    border-radius: 4px;
+    transition: background 0.3s ease, color 0.3s ease;
 }
 
-.tab-button.active {
-    color: var(--apple-black);
-    border-bottom: 2px solid var(--apple-blue);
+.nav-item.active {
+    background: var(--md-teal);
+    color: var(--md-white);
 }
 
-.tab-button:hover {
-    color: var(--apple-black);
+.nav-item:hover {
+    background: var(--md-gray-bg);
+    color: var(--md-black);
 }
 
 .tab-content {
@@ -122,11 +131,56 @@ h3 {
 }
 
 .panel {
-    background: var(--apple-white);
-    padding: 24px;
     margin-bottom: 24px;
-    border: 1px solid var(--apple-gray-light);
+}
+
+.card {
+    background: var(--md-white);
+    border: 1px solid var(--md-gray-light);
     border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: var(--md-shadow);
+    transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.card.completed .status-indicator {
+    color: var(--md-green);
+    font-weight: 500;
+}
+
+.card.overdue .status-indicator {
+    color: var(--md-red);
+    font-weight: 500;
+}
+
+.card-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.card-details {
+    flex-grow: 1;
+}
+
+.card-meta {
+    margin-top: 8px;
+}
+
+.tag {
+    display: inline-block;
+    background: var(--md-gray-bg);
+    color: var(--md-gray-medium);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 8px;
+    margin: 2px 4px 2px 0;
+    border-radius: 12px;
 }
 
 .modal {
@@ -143,18 +197,18 @@ h3 {
 }
 
 .modal-content {
-    background: var(--apple-white);
+    background: var(--md-white);
     margin: 5% auto;
     padding: 24px;
     width: 90%;
     max-width: 600px;
-    border: 1px solid var(--apple-gray-light);
-    border-radius: 12px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     animation: slideIn 0.3s ease;
 }
 
 .close {
-    color: var(--apple-gray-medium);
+    color: var(--md-gray-medium);
     float: right;
     font-size: 24px;
     font-weight: 500;
@@ -163,114 +217,40 @@ h3 {
 
 .close:hover,
 .close:focus {
-    color: var(--apple-black);
-}
-
-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    font-size: 14px;
-    margin-bottom: 16px;
-}
-
-th, td {
-    padding: 12px 16px;
-    text-align: left;
-    border-bottom: 1px solid var(--apple-gray-light);
-}
-
-th {
-    background: var(--apple-white);
-    font-weight: 600;
-    color: var(--apple-black);
-    cursor: pointer;
-}
-
-/* Align columns across tables */
-th.project-col, td.project-col {
-    width: 150px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-th.date-col, td.date-col {
-    width: 120px;
-}
-
-th.mileage-col, td.mileage-col {
-    width: 100px;
-}
-
-th.cost-col, td.cost-col {
-    width: 100px;
-}
-
-th.description-col, td.description-col {
-    width: auto;
-}
-
-th.status-col, td.status-col {
-    width: 120px;
-}
-
-tr.completed-row .status-indicator {
-    color: var(--apple-green);
-    font-weight: 500;
-}
-
-tr.overdue-row .status-indicator {
-    color: var(--apple-red);
-    font-weight: 500;
-}
-
-tr:hover {
-    background: var(--apple-gray-bg);
-    cursor: pointer;
-}
-
-.tag {
-    display: inline-block;
-    background: var(--apple-gray-bg);
-    color: var(--apple-gray-medium);
-    font-size: 12px;
-    font-weight: 500;
-    padding: 4px 8px;
-    margin: 2px 4px 2px 0;
-    border-radius: 12px;
+    color: var(--md-black);
 }
 
 button {
-    background: var(--apple-blue);
+    background: var(--md-teal);
     color: #fff;
     border: none;
-    border-radius: 8px;
+    border-radius: 4px;
     padding: 8px 16px;
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
-    transition: background 0.3s ease, opacity 0.3s ease;
+    transition: background 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
 
 button:hover {
-    background: var(--apple-blue-hover);
-    opacity: 0.9;
+    background: var(--md-teal-hover);
 }
 
 button.danger {
-    background: var(--apple-red);
+    background: var(--md-red);
 }
 
 button.danger:hover {
-    background: #C62828;
+    background: #D32F2F;
 }
 
 input[type="checkbox"] {
     appearance: none;
     width: 36px;
     height: 20px;
-    background: var(--apple-gray-light);
+    background: var(--md-gray-light);
     border-radius: 12px;
     position: relative;
     cursor: pointer;
@@ -278,7 +258,7 @@ input[type="checkbox"] {
 }
 
 input[type="checkbox"]:checked {
-    background: var(--apple-blue);
+    background: var(--md-teal);
 }
 
 input[type="checkbox"]::before {
@@ -286,7 +266,7 @@ input[type="checkbox"]::before {
     position: absolute;
     width: 16px;
     height: 16px;
-    background: var(--apple-white);
+    background: var(--md-white);
     border-radius: 50%;
     top: 2px;
     left: 2px;
@@ -308,7 +288,7 @@ input[type="checkbox"]:checked::before {
 .filter-container label {
     font-size: 14px;
     font-weight: 500;
-    color: var(--apple-black);
+    color: var(--md-black);
 }
 
 .hidden {
@@ -317,7 +297,7 @@ input[type="checkbox"]:checked::before {
 
 .label {
     font-weight: 500;
-    color: var(--apple-gray-medium);
+    color: var(--md-gray-medium);
 }
 
 @keyframes fadeIn {
