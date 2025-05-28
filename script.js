@@ -7,6 +7,7 @@
  * v1.5: Modified UI to flat design with solid colors, simple icons, soft edges, and ample white space
  * v1.6: Refined flat design with vibrant colors, improved typography, subtle borders, and polished inputs/buttons
  * v1.7: Added error boundary to catch runtime script errors
+ * v1.8: Redesigned UI with a clean, minimalistic, and functional theme using a light palette, bold headings, and color-coded indicators
  */
 
 const { useState, useEffect } = React;
@@ -127,7 +128,7 @@ const App = () => {
             <div className="modal" style={{ display: 'block' }}>
                 <div className="modal-content">
                     <span className="close" onClick={onClose}>×</span>
-                    <h2 className="text-xl font-semibold mb-4">Service Details</h2>
+                    <h2>Service Details</h2>
                     <div>
                         <p><span className="label">Project:</span> {data.project}</p>
                         {type === 'upcoming' && <p><span className="label">Type:</span> {data.type}</p>}
@@ -206,7 +207,7 @@ const App = () => {
             <div className="modal" style={{ display: 'block' }}>
                 <div className="modal-content">
                     <span className="close" onClick={onClose}>×</span>
-                    <h2 className="text-xl font-semibold mb-4">Add Service</h2>
+                    <h2>Add Service</h2>
                     <div className="grid grid-cols-2 gap-6">
                         <div>
                             <label className="block mb-1 text-sm">Service Status:</label>
@@ -330,7 +331,7 @@ const App = () => {
             <div className="modal" style={{ display: 'block' }}>
                 <div className="modal-content">
                     <span className="close" onClick={onClose}>×</span>
-                    <h2 className="text-xl font-semibold mb-4 text-center">Scan to Visit</h2>
+                    <h2>Scan to Visit</h2>
                     <svg className="qr-code-large" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="2">
                         <rect x="10" y="10" width="30" height="30" fill="black"/>
                         <rect x="60" y="10" width="30" height="30" fill="black"/>
@@ -408,7 +409,7 @@ const App = () => {
         return (
             <div id="maintenance" className="tab-content active">
                 <div className="panel">
-                    <h2 className="text-xl font-semibold mb-4">Current Mileage</h2>
+                    <h2>Current Mileage</h2>
                     <input 
                         type="number" 
                         value={currentMileage} 
@@ -434,7 +435,7 @@ const App = () => {
 
                 <div className="panel">
                     <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-xl font-semibold">Upcoming Services</h2>
+                        <h2>Upcoming Services</h2>
                         <div className="filter-container">
                             <label>Filter by Type:</label>
                             <select 
@@ -467,6 +468,7 @@ const App = () => {
                                 <th>Spark Plug</th>
                                 <th>Brake Service</th>
                                 <th>Projected Cost</th>
+                                <th>Status</th>
                                 <th>Description</th>
                             </tr>
                         </thead>
@@ -476,18 +478,19 @@ const App = () => {
                                 return (
                                     <tr 
                                         key={`${service.project}-${service.mileage}`} 
-                                        className={`upcoming-row ${isOverdue ? 'overdue-row' : ''}`}
+                                        className={isOverdue ? 'overdue-row' : ''}
                                         onClick={() => setModal({ visible: true, type: 'upcoming', data: service })}
                                     >
                                         <td className="project-col">{service.project}</td>
                                         <td>{service.type}</td>
                                         <td>{service.date}</td>
                                         <td>{service.mileage.toLocaleString()}</td>
-                                        <td className="miles-remaining">{(service.mileage - currentMileage).toLocaleString()}</td>
+                                        <td>{(service.mileage - currentMileage).toLocaleString()}</td>
                                         <td>{service.oilChange}</td>
                                         <td>{service.sparkPlug}</td>
                                         <td>{service.brake}</td>
                                         <td>{service.cost}</td>
+                                        <td className="status-indicator">{isOverdue ? 'Emergency' : 'Pending'}</td>
                                         <td>{service.description || 'No description'}</td>
                                     </tr>
                                 );
@@ -498,7 +501,7 @@ const App = () => {
 
                 <div className="panel">
                     <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-xl font-semibold">Completed Services</h2>
+                        <h2>Completed Services</h2>
                         <div className="filter-container">
                             <label>Filter by Type:</label>
                             <select 
@@ -527,6 +530,7 @@ const App = () => {
                                 <th onClick={() => handleSortCompleted('mileage')}>Mileage</th>
                                 <th onClick={() => handleSortCompleted('vendor')}>Vendor</th>
                                 <th>Actual Cost</th>
+                                <th>Status</th>
                                 <th>Description</th>
                             </tr>
                         </thead>
@@ -538,10 +542,11 @@ const App = () => {
                                     onClick={() => setModal({ visible: true, type: 'completed', data: service })}
                                 >
                                     <td className="project-col">{service.project}</td>
-                                    <td className="date-col prominent-date">{service.date}</td>
-                                    <td className="mileage-col prominent-mileage">{service.mileage.toLocaleString()}</td>
+                                    <td className="date-col">{service.date}</td>
+                                    <td className="mileage-col">{service.mileage.toLocaleString()}</td>
                                     <td className="vendor-col">{service.vendor || 'N/A'}</td>
                                     <td className="cost-col">{service.cost}</td>
+                                    <td className="status-indicator">Completed</td>
                                     <td>{service.description || 'No description'}</td>
                                 </tr>
                             ))}
@@ -573,7 +578,7 @@ const App = () => {
         return (
             <div id="history" className="tab-content">
                 <div className="panel">
-                    <h2 className="text-xl font-semibold mb-6">Service History Dashboard</h2>
+                    <h2>Service History Dashboard</h2>
                     {years.map(year => {
                         const { upcoming, completed } = servicesByYear[year];
                         const projectedSpend = upcoming.reduce((sum, s) => sum + parseFloat(s.cost.replace('$', '').replace(',', '')), 0);
