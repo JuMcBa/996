@@ -1,24 +1,19 @@
-/* Updated Flat Design Color Palette */
+/* Clean, Minimalistic, and Functional Design */
 :root {
-    --flat-dark-gray: #212121; /* Deep gray for primary text */
-    --flat-light-gray: #757575; /* Softer gray for secondary text */
-    --flat-bg: #FAFAFA; /* Very light gray background */
-    --flat-white: #FFFFFF; /* Pure white for elements */
-    --flat-primary: #0288D1; /* Vibrant blue for interactive elements */
-    --flat-primary-hover: #0277BD; /* Slightly darker blue for hover */
-    --flat-danger: #D32F2F; /* Red for destructive actions */
-    --flat-danger-hover: #C62828; /* Darker red for hover */
-    --flat-row-bg: #E1F5FE; /* Light blue for upcoming rows */
-    --flat-row-alt-bg: #EEEEEE; /* Light gray for completed rows */
-    --flat-row-overdue-bg: #FFEBEE; /* Light red for overdue rows */
-    --flat-row-hover: #E0E0E0; /* Light gray for hover */
-    --flat-border: #E0E0E0; /* Light gray for subtle borders */
+    --white: #FFFFFF; /* Primary background */
+    --gray-light: #E0E0E0; /* Borders and subtle accents */
+    --gray-medium: #666666; /* Secondary text */
+    --black: #000000; /* Headings and primary text */
+    --green: #4CAF50; /* Completed status */
+    --red: #D32F2F; /* Emergency/overdue status */
+    --blue: #1976D2; /* Interactive elements */
+    --blue-hover: #1565C0; /* Hover state for interactive elements */
 }
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    background-color: var(--flat-bg);
-    color: var(--flat-dark-gray);
+    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: var(--white);
+    color: var(--black);
     margin: 0;
     padding: 0;
     line-height: 1.6;
@@ -26,36 +21,41 @@ body {
 
 button, input, select {
     font-size: 14px;
-    border: 1px solid var(--flat-border);
-    border-radius: 6px;
-    background: var(--flat-white);
+    border: 1px solid var(--gray-light);
+    border-radius: 4px;
+    background: var(--white);
     padding: 8px 12px;
-    transition: background 0.3s ease, border-color 0.3s ease;
+    transition: border-color 0.3s ease, background 0.3s ease;
     font-family: inherit;
 }
 
 button:focus, input:focus, select:focus {
     outline: none;
-    border-color: var(--flat-primary);
-    background: var(--flat-row-hover);
+    border-color: var(--blue);
 }
 
 h1 {
     font-size: 24px;
-    font-weight: 600;
-    color: var(--flat-dark-gray);
+    font-weight: 700;
+    color: var(--black);
 }
 
 h2 {
     font-size: 20px;
-    font-weight: 500;
-    color: var(--flat-dark-gray);
+    font-weight: 700;
+    color: var(--black);
+}
+
+h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--black);
 }
 
 .container {
     max-width: 1280px;
     margin: 0 auto;
-    padding: 32px;
+    padding: 24px;
 }
 
 .header {
@@ -63,16 +63,16 @@ h2 {
     justify-content: space-between;
     align-items: center;
     padding: 16px 24px;
-    background: var(--flat-white);
-    border-bottom: 1px solid var(--flat-border);
-    margin-bottom: 32px;
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-light);
+    margin-bottom: 24px;
 }
 
 .qr-icon {
     width: 20px;
     height: 20px;
     cursor: pointer;
-    color: var(--flat-primary);
+    color: var(--blue);
 }
 
 .qr-code-large {
@@ -83,10 +83,10 @@ h2 {
 }
 
 .nav-bar {
-    background: var(--flat-white);
+    background: var(--white);
     padding: 12px 24px;
-    margin-bottom: 32px;
-    border-bottom: 1px solid var(--flat-border);
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--gray-light);
 }
 
 .tab-button {
@@ -95,19 +95,19 @@ h2 {
     padding: 12px 24px;
     font-size: 16px;
     font-weight: 500;
-    color: var(--flat-light-gray);
+    color: var(--gray-medium);
     cursor: pointer;
     border-bottom: 2px solid transparent;
     transition: color 0.3s ease, border-bottom 0.3s ease;
 }
 
 .tab-button.active {
-    color: var(--flat-dark-gray);
-    border-bottom: 2px solid var(--flat-primary);
+    color: var(--black);
+    border-bottom: 2px solid var(--blue);
 }
 
 .tab-button:hover {
-    color: var(--flat-dark-gray);
+    color: var(--black);
 }
 
 .tab-content {
@@ -119,11 +119,11 @@ h2 {
 }
 
 .panel {
-    background: var(--flat-white);
-    border-radius: 8px;
+    background: var(--white);
     padding: 24px;
-    margin-bottom: 32px;
-    border: 1px solid var(--flat-border);
+    margin-bottom: 24px;
+    border: 1px solid var(--gray-light);
+    border-radius: 4px;
 }
 
 .modal {
@@ -139,17 +139,17 @@ h2 {
 }
 
 .modal-content {
-    background: var(--flat-white);
+    background: var(--white);
     margin: 5% auto;
     padding: 24px;
     width: 90%;
     max-width: 600px;
-    border-radius: 8px;
-    border: 1px solid var(--flat-border);
+    border: 1px solid var(--gray-light);
+    border-radius: 4px;
 }
 
 .close {
-    color: var(--flat-light-gray);
+    color: var(--gray-medium);
     float: right;
     font-size: 24px;
     font-weight: 500;
@@ -158,7 +158,7 @@ h2 {
 
 .close:hover,
 .close:focus {
-    color: var(--flat-dark-gray);
+    color: var(--black);
 }
 
 table {
@@ -172,42 +172,29 @@ table {
 th, td {
     padding: 12px 16px;
     text-align: left;
-    border-bottom: 1px solid var(--flat-border);
+    border-bottom: 1px solid var(--gray-light);
 }
 
 th {
-    background: var(--flat-bg);
-    font-weight: 500;
-    color: var(--flat-dark-gray);
+    background: var(--white);
+    font-weight: 700;
+    color: var(--black);
     cursor: pointer;
 }
 
-th:hover {
-    background: var(--flat-row-hover);
+tr.completed-row .status-indicator {
+    color: var(--green);
+    font-weight: 500;
 }
 
-tr.upcoming-row {
-    background: var(--flat-row-bg);
-}
-
-tr.completed-row {
-    background: var(--flat-row-alt-bg);
-}
-
-tr.overdue-row {
-    background: var(--flat-row-overdue-bg);
+tr.overdue-row .status-indicator {
+    color: var(--red);
+    font-weight: 500;
 }
 
 tr:hover {
-    background: var(--flat-row-hover);
+    background: #F5F5F5;
     cursor: pointer;
-}
-
-td.miles-remaining,
-td.prominent-mileage,
-td.prominent-date {
-    font-weight: 600;
-    color: var(--flat-primary);
 }
 
 th.project-col,
@@ -226,10 +213,10 @@ td.cost-col {
 }
 
 button {
-    background: var(--flat-primary);
+    background: var(--blue);
     color: #fff;
     border: none;
-    border-radius: 6px;
+    border-radius: 4px;
     padding: 8px 16px;
     font-size: 14px;
     font-weight: 500;
@@ -238,31 +225,22 @@ button {
 }
 
 button:hover {
-    background: var(--flat-primary-hover);
-}
-
-button.secondary {
-    background: var(--flat-light-gray);
-    color: #fff;
-}
-
-button.secondary:hover {
-    background: #666666;
+    background: var(--blue-hover);
 }
 
 button.danger {
-    background: var(--flat-danger);
+    background: var(--red);
 }
 
 button.danger:hover {
-    background: var(--flat-danger-hover);
+    background: #C62828;
 }
 
 input[type="checkbox"] {
     appearance: none;
     width: 36px;
     height: 20px;
-    background: var(--flat-light-gray);
+    background: var(--gray-light);
     border-radius: 12px;
     position: relative;
     cursor: pointer;
@@ -270,7 +248,7 @@ input[type="checkbox"] {
 }
 
 input[type="checkbox"]:checked {
-    background: var(--flat-primary);
+    background: var(--blue);
 }
 
 input[type="checkbox"]::before {
@@ -278,7 +256,7 @@ input[type="checkbox"]::before {
     position: absolute;
     width: 16px;
     height: 16px;
-    background: var(--flat-white);
+    background: var(--white);
     border-radius: 50%;
     top: 2px;
     left: 2px;
@@ -299,9 +277,14 @@ input[type="checkbox"]:checked::before {
 .filter-container label {
     font-size: 14px;
     font-weight: 500;
-    color: var(--flat-dark-gray);
+    color: var(--black);
 }
 
 .hidden {
     display: none;
+}
+
+.label {
+    font-weight: 500;
+    color: var(--gray-medium);
 }
