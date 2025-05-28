@@ -5,6 +5,7 @@
  * v1.3: Added hover effect for table rows, adjusted column sizes, modernized buttons and toggle switches
  * v1.4: Updated UI to Apple Inc. style with SF Pro font, neutral colors, and subtle animations
  * v1.5: Modified UI to flat design with solid colors, simple icons, soft edges, and ample white space
+ * v1.6: Refined flat design with vibrant colors, improved typography, subtle borders, and polished inputs/buttons
  */
 
 const { useState, useEffect } = React;
