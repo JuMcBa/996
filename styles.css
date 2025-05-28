@@ -1,21 +1,22 @@
-/* Flat Design Color Palette */
+/* Updated Flat Design Color Palette */
 :root {
-    --flat-dark-gray: #333333; /* Primary text color */
-    --flat-light-gray: #999999; /* Secondary text color */
-    --flat-bg: #F5F5F5; /* Light background */
+    --flat-dark-gray: #212121; /* Deep gray for primary text */
+    --flat-light-gray: #757575; /* Softer gray for secondary text */
+    --flat-bg: #FAFAFA; /* Very light gray background */
     --flat-white: #FFFFFF; /* Pure white for elements */
-    --flat-blue: #1E90FF; /* Bright blue for interactive elements */
-    --flat-blue-hover: #1C86EE; /* Slightly darker blue for hover */
-    --flat-red: #FF4444; /* Red for destructive actions */
-    --flat-red-hover: #EE3333; /* Darker red for hover */
-    --flat-row-bg: #E8F0FE; /* Light blue for upcoming rows */
-    --flat-row-alt-bg: #F0F0F0; /* Light gray for completed rows */
+    --flat-primary: #0288D1; /* Vibrant blue for interactive elements */
+    --flat-primary-hover: #0277BD; /* Slightly darker blue for hover */
+    --flat-danger: #D32F2F; /* Red for destructive actions */
+    --flat-danger-hover: #C62828; /* Darker red for hover */
+    --flat-row-bg: #E1F5FE; /* Light blue for upcoming rows */
+    --flat-row-alt-bg: #EEEEEE; /* Light gray for completed rows */
     --flat-row-overdue-bg: #FFEBEE; /* Light red for overdue rows */
     --flat-row-hover: #E0E0E0; /* Light gray for hover */
+    --flat-border: #E0E0E0; /* Light gray for subtle borders */
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     background-color: var(--flat-bg);
     color: var(--flat-dark-gray);
     margin: 0;
@@ -25,22 +26,23 @@ body {
 
 button, input, select {
     font-size: 14px;
-    border: none;
+    border: 1px solid var(--flat-border);
     border-radius: 6px;
     background: var(--flat-white);
     padding: 8px 12px;
-    transition: background 0.3s ease;
+    transition: background 0.3s ease, border-color 0.3s ease;
     font-family: inherit;
 }
 
 button:focus, input:focus, select:focus {
     outline: none;
+    border-color: var(--flat-primary);
     background: var(--flat-row-hover);
 }
 
 h1 {
     font-size: 24px;
-    font-weight: 500;
+    font-weight: 600;
     color: var(--flat-dark-gray);
 }
 
@@ -53,23 +55,24 @@ h2 {
 .container {
     max-width: 1280px;
     margin: 0 auto;
-    padding: 30px;
+    padding: 32px;
 }
 
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 20px;
+    padding: 16px 24px;
     background: var(--flat-white);
-    margin-bottom: 30px;
+    border-bottom: 1px solid var(--flat-border);
+    margin-bottom: 32px;
 }
 
 .qr-icon {
     width: 20px;
     height: 20px;
     cursor: pointer;
-    color: var(--flat-blue);
+    color: var(--flat-primary);
 }
 
 .qr-code-large {
@@ -81,25 +84,26 @@ h2 {
 
 .nav-bar {
     background: var(--flat-white);
-    padding: 10px 20px;
-    margin-bottom: 30px;
+    padding: 12px 24px;
+    margin-bottom: 32px;
+    border-bottom: 1px solid var(--flat-border);
 }
 
 .tab-button {
     background: none;
     border: none;
-    padding: 10px 20px;
+    padding: 12px 24px;
     font-size: 16px;
     font-weight: 500;
     color: var(--flat-light-gray);
     cursor: pointer;
     border-bottom: 2px solid transparent;
-    transition: color 0.3s ease;
+    transition: color 0.3s ease, border-bottom 0.3s ease;
 }
 
 .tab-button.active {
     color: var(--flat-dark-gray);
-    border-bottom: 2px solid var(--flat-blue);
+    border-bottom: 2px solid var(--flat-primary);
 }
 
 .tab-button:hover {
@@ -117,8 +121,9 @@ h2 {
 .panel {
     background: var(--flat-white);
     border-radius: 8px;
-    padding: 25px;
-    margin-bottom: 30px;
+    padding: 24px;
+    margin-bottom: 32px;
+    border: 1px solid var(--flat-border);
 }
 
 .modal {
@@ -136,10 +141,11 @@ h2 {
 .modal-content {
     background: var(--flat-white);
     margin: 5% auto;
-    padding: 25px;
+    padding: 24px;
     width: 90%;
     max-width: 600px;
     border-radius: 8px;
+    border: 1px solid var(--flat-border);
 }
 
 .close {
@@ -160,12 +166,13 @@ table {
     border-collapse: separate;
     border-spacing: 0;
     font-size: 14px;
-    margin-bottom: 15px;
+    margin-bottom: 16px;
 }
 
 th, td {
     padding: 12px 16px;
     text-align: left;
+    border-bottom: 1px solid var(--flat-border);
 }
 
 th {
@@ -200,7 +207,7 @@ td.miles-remaining,
 td.prominent-mileage,
 td.prominent-date {
     font-weight: 600;
-    color: var(--flat-blue);
+    color: var(--flat-primary);
 }
 
 th.project-col,
@@ -219,7 +226,7 @@ td.cost-col {
 }
 
 button {
-    background: var(--flat-blue);
+    background: var(--flat-primary);
     color: #fff;
     border: none;
     border-radius: 6px;
@@ -231,7 +238,7 @@ button {
 }
 
 button:hover {
-    background: var(--flat-blue-hover);
+    background: var(--flat-primary-hover);
 }
 
 button.secondary {
@@ -240,15 +247,15 @@ button.secondary {
 }
 
 button.secondary:hover {
-    background: #888888;
+    background: #666666;
 }
 
 button.danger {
-    background: var(--flat-red);
+    background: var(--flat-danger);
 }
 
 button.danger:hover {
-    background: var(--flat-red-hover);
+    background: var(--flat-danger-hover);
 }
 
 input[type="checkbox"] {
@@ -263,7 +270,7 @@ input[type="checkbox"] {
 }
 
 input[type="checkbox"]:checked {
-    background: var(--flat-blue);
+    background: var(--flat-primary);
 }
 
 input[type="checkbox"]::before {
@@ -284,9 +291,9 @@ input[type="checkbox"]:checked::before {
 
 .filter-container {
     display: flex;
-    gap: 12px;
+    gap: 16px;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
 }
 
 .filter-container label {
