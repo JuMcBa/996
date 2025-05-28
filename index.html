@@ -1,24 +1,335 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Porsche 996 Maintenance Tracker</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.development.js" onerror="alert('Failed to load React. Please check your internet connection.');"></script>
-    <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.development.js" onerror="alert('Failed to load ReactDOM. Please check your internet connection.');"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.22.9/babel.min.js" onerror="alert('Failed to load Babel. Please check your internet connection.');"></script>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Car Maintenance Tracker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    table th, table td { 
+      white-space: nowrap; 
+      overflow: hidden; 
+      text-overflow: ellipsis; 
+    }
+    .task-col { width: 150px; }
+    .name-col { width: 120px; }
+    .date-col { width: 80px; }
+    tr:hover { 
+      background-color: #f1f5f9; 
+      cursor: pointer; 
+    }
+    #popup {
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+    }
+    #popup.show {
+      opacity: 1;
+    }
+    .preview-img {
+      max-width: 80px;
+      max-height: 80px;
+      object-fit: cover;
+      margin: 4px;
+      border: 1px solid #e5e7eb;
+      border-radius: 4px;
+    }
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .detail-row:last-child {
+      border-bottom: none;
+    }
+    .detail-label {
+      font-weight: 600;
+      width: 40%;
+    }
+    .detail-value {
+      width: 60%;
+      text-align: right;
+    }
+    .edit-field {
+      margin-bottom: 8px;
+    }
+    .edit-field label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    .edit-field input[type="text"] {
+      width: 100%;
+      padding: 4px 8px;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+    }
+    .edit-field input[type="file"] {
+      width: 100%;
+      padding: 4px 0;
+    }
+  </style>
 </head>
-<body>
-    <div id="root"></div>
-    <script type="text/babel" src="script.js" onerror="document.getElementById('root').innerHTML = '<p>Error: Failed to load or transpile script.js. Please check the console for details and ensure the file exists.</p>';"></script>
-    <script>
-        if (typeof React === 'undefined' || typeof ReactDOM === 'undefined') {
-            document.getElementById('root').innerHTML = '<p>Error: Unable to load React or ReactDOM. Please check your internet connection and refresh the page.</p>';
+<body class="bg-gray-100 font-sans text-gray-700">
+  <div class="flex h-screen">
+    <!-- Sidebar -->
+    <div class="bg-purple-800 text-white w-12 flex flex-col items-center py-2">
+      <button class="mb-3"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12h18M3 6h18M3 18h18"></path></svg></button>
+      <button class="mb-3"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></button>
+      <button><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l-4-4m0 0l4-4m-4 4h14"></path></svg></button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 p-4">
+      <div class="flex justify-between items-center mb-3">
+        <div></div>
+        <div class="text-gray-700 text-sm">May 27, 2025</div>
+        <div></div>
+      </div>
+
+      <!-- Filters and Search -->
+      <div class="mb-3">
+        <h2 class="text-base font-semibold text-gray-700">Car Maintenance Tracker</h2>
+        <div class="flex space-x-1 my-1">
+          <button class="px-3 py-1 border rounded text-gray-700 text-sm" onclick="filterTasks('All')">All</button>
+          <button class="px-3 py-1 border rounded text-gray-700 text-sm" onclick="filterTasks('Scheduled')">Scheduled</button>
+          <button class="px-3 py-1 border rounded text-gray-700 text-sm" onclick="filterTasks('In Progress')">In Progress</button>
+          <button class="px-3 py-1 border rounded text-gray-700 text-sm" onclick="filterTasks('Completed')">Completed</button>
+        </div>
+        <input type="text" id="searchInput" class="border rounded px-2 py-1 w- dezvolt48 text-sm" placeholder="Search..." onkeyup="searchTasks()">
+      </div>
+
+      <!-- Table -->
+      <div class="bg-white shadow rounded">
+        <table class="w-full text-left text-sm">
+          <thead>
+            <tr class="bg-gray-200">
+              <th class="p-2">Status</th>
+              <th class="p-2">ID</th>
+              <th class="p-2 task-col">Task</th>
+              <th class="p-2 name-col">Requester</th>
+              <th class="p-2 date-col">Scheduled</th>
+              <th class="p- resizing2 date-col">Completed</th>
+              <th class="p-2">Category</th>
+              <th class="p-2 name-col">Assigned Mechanic</th>
+            </tr>
+          </thead>
+          <tbody id="taskTable">
+            <tr onclick="showPopup(this)">
+              <td class="p-2"><span class="bg-orange-500 text-white px-2 py-1 rounded text-xs">Scheduled</span></td>
+              <td class="p-2">#001</td>
+              <td class="p-2 task-col">Oil Change</td>
+              <td class="p-2 name-col">Erik Johnson</td>
+              <td class="p-2 date-col">03/28</td>
+              <td class="p-2 date-col">04/15</td>
+              <td class="p-2">Routine</td>
+              <td class="p-2 name-col">Leia Anderson</td>
+            </tr>
+            <tr onclick="showPopup(this)">
+              <td class="p-2"><span class="bg-green-500 text-white px-2 py-1 rounded text-xs">In Progress</span></td>
+              <td class="p-2">#002</td>
+              <td class="p-2 task-col">Tire Rotation</td>
+              <td class="p-2 name-col">Josh White</td>
+              <td class="p-2 date-col">02/21</td>
+              <td class="p-2 date-col">04/12</td>
+              <td class="p-2">Routine</td>
+              <td class="p-2 name-col">Leia Anderson</td>
+            </tr>
+            <tr onclick="showPopup(this)">
+              <td class="p-2"><span class="bg-purple-500 text-white px-2 py-1 rounded text-xs">Completed</span></td>
+              <td class="p-2">#003</td>
+              <td class="p-2 task-col">Brake Inspection</td>
+              <td class="p-2 name-col">Steven McAdams</td>
+              <td class="p-2 date-col">01/20</td>
+              <td class="p-2 date-col">03/22</td>
+              <td class="p-2">Safety</td>
+              <td class="p-2 name-col">Leia Anderson</td>
+            </tr>
+            <tr onclick="showPopup(this)">
+              <td class="p-2"><span class="bg-green-500 text-white px-2 py-1 rounded text-xs">In Progress</span></td>
+              <td class="p-2">#004</td>
+              <td class="p-2 task-col">Battery Check</td>
+              <td class="p-2 name-col">Lara Lane</td>
+              <td class="p-2 date-col">03/22</td>
+              <td class="p-2 date-col">03/25</td>
+              <td class="p-2">Electrical</td>
+              <td class="p-2 name-col">Gabriella Jones</td>
+            </tr>
+            <tr onclick="showPopup(this)">
+              <td class="p-2"><span class="bg-orange-500 text-white px-2 py-1 rounded text-xs">Scheduled</span></td>
+              <td class="p-2">#005</td>
+              <td class="p-2 task-col">Oil Change</td>
+              <td class="p-2 name-col">Coraline Monroe</td>
+              <td class="p-2 date-col">04/14</td>
+              <td class="p-2 date-col">04/16</td>
+              <td class="p-2">Routine</td>
+              <td class="p-2 name-col">Mark Williams</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Popup -->
+      <div id="popup" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg shadow-lg p-6 w-96">
+          <h3 class="text-base font-semibold text-gray-700 mb-4">Task Details</h3>
+          <div id="popupContent" class="text-sm text-gray-700 mb-4">
+            <!-- Details will be populated here -->
+          </div>
+          <div id="editFields" class="hidden text-sm text-gray-700 mb-4">
+            <!-- Editable fields will be populated here -->
+          </div>
+          <div class="flex space-x-2 justify-end">
+            <button id="editBtn" class="px-3 py-1 bg-gray-200 rounded text-gray-700 text-sm hover:bg-gray-300 transition" onclick="editDetails()">Edit</button>
+            <button id="saveBtn" class="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 transition hidden" onclick="saveEdits()">Save</button>
+            <button class="px-3 py-1 bg-gray-200 rounded text-gray-700 text-sm hover:bg-gray-300 transition" onclick="closePopup()">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let selectedRow = null;
+    let photos = [];
+    let receipts = [];
+
+    function showPopup(row) {
+      selectedRow = row;
+      const popup = document.getElementById('popup');
+      const popupContent = document.getElementById('popupContent');
+      const cells = row.cells;
+
+      popupContent.innerHTML = `
+        <div class="detail-row"><span class="detail-label">Status</span><span class="detail-value">${cells[0].textContent}</span></div>
+        <div class="detail-row"><span class="detail-label">ID</span><span class="detail-value">${cells[1].textContent}</span></div>
+        <div class="detail-row"><span class="detail-label">Task</span><span class="detail-value">${cells[2].textContent}</span></div>
+        <div class="detail-row"><span class="detail-label">Requester</span><span class="detail-value">${cells[3].textContent}</span></div>
+        <div class="detail-row"><span class="detail-label">Scheduled</span><span class="detail-value">${cells[4].textContent}</span></div>
+        <div class="detail-row"><span class="detail-label">Completed</span><span class="detail-value">${cells[5].textContent}</span></div>
+        <div class="detail-row"><span class="detail-label">Category</span><span class="detail-value">${cells[6].textContent}</span></div>
+        <div class="detail-row"><span class="detail-label">Assigned Mechanic</span><span class="detail-value">${cells[7].textContent}</span></div>
+        <div class="detail-row"><span class="detail-label">Photos</span><span class="detail-value" id="photoPreview">${
+          photos.length ? photos.map((_, i) => `<img src="" class="preview-img" id="photo${i}">`).join('') : 'None'
+        }</span></div>
+        <div class="detail-row"><span class="detail-label">Receipts</span><span class="detail-value" id="receiptPreview">${
+          receipts.length ? receipts.map((_, i) => `<img src="" class="preview-img" id="receipt${i}">`).join('') : 'None'
+        }</span></div>
+      `;
+
+      // Update image previews if any
+      photos.forEach((photo, i) => {
+        const img = document.getElementById(`photo${i}`);
+        if (img) img.src = photo;
+      });
+      receipts.forEach((receipt, i) => {
+        const img = document.getElementById(`receipt${i}`);
+        if (img) img.src = receipt;
+      });
+
+      document.getElementById('editBtn').classList.remove('hidden');
+      document.getElementById('saveBtn').classList.add('hidden');
+      document.getElementById('editFields').classList.add('hidden');
+      popupContent.classList.remove('hidden');
+      popup.classList.remove('hidden');
+      popup.classList.add('show');
+    }
+
+    function editDetails() {
+      const cells = selectedRow.cells;
+      const editFields = document.getElementById('editFields');
+      editFields.innerHTML = `
+        <div class="edit-field"><label>Status</label><input id="editStatus" type="text" class="text-sm" value="${cells[0].textContent}"></div>
+        <div class="edit-field"><label>Task</label><input id="editTask" type="text" class="text-sm" value="${cells[2].textContent}"></div>
+        <div class="edit-field"><label>Requester</label><input id="editRequester" type="text" class="text-sm" value="${cells[3].textContent}"></div>
+        <div class="edit-field"><label>Scheduled</label><input id="editScheduled" type="text" class="text-sm" value="${cells[4].textContent}"></div>
+        <div class="edit-field"><label>Completed</label><input id="editCompleted" type="text" class="text-sm" value="${cells[5].textContent}"></div>
+        <div class="edit-field"><label>Category</label><input id="editCategory" type="text" class="text-sm" value="${cells[6].textContent}"></div>
+        <div class="edit-field"><label>Assigned Mechanic</label><input id="editMechanic" type="text" class="text-sm" value="${cells[7].textContent}"></div>
+        <div class="edit-field"><label>Photos</label><input type="file" id="editPhotos" class="text-sm" accept="image/*" multiple></div>
+        <div class="edit-field"><label>Receipts</label><input type="file" id="editReceipts" class="text-sm" accept="image/*" multiple></div>
+      `;
+
+      document.getElementById('popupContent').classList.add('hidden');
+      document.getElementById('editFields').classList.remove('hidden');
+      document.getElementById('saveBtn').classList.remove('hidden');
+
+      // Handle file uploads
+      document.getElementById('editPhotos').addEventListener('change', (e) => {
+        photos = [];
+        Array.from(e.target.files).forEach(file => {
+          const reader = new FileReader();
+          reader.onload = (event) => photos.push(event.target.result);
+          reader.readAsDataURL(file);
+        });
+      });
+
+      document.getElementById('editReceipts').addEventListener('change', (e) => {
+        receipts = [];
+        Array.from(e.target.files).forEach(file => {
+          const reader = new FileReader();
+          reader.onload = (event) => receipts.push(event.target.result);
+          reader.readAsDataURL(file);
+        });
+      });
+    }
+
+    function saveEdits() {
+      const cells = selectedRow.cells;
+      const newStatus = document.getElementById('editStatus').value;
+      const newTask = document.getElementById('editTask').value;
+      const newRequester = document.getElementById('editRequester').value;
+      const newScheduled = document.getElementById('editScheduled').value;
+      const newCompleted = document.getElementById('editCompleted').value;
+      const newCategory = document.getElementById('editCategory').value;
+      const newMechanic = document.getElementById('editMechanic').value;
+
+      let statusColor = 'bg-orange-500';
+      if (newStatus === 'In Progress') statusColor = 'bg-green-500';
+      if (newStatus === 'Completed') statusColor = 'bg-purple-500';
+
+      cells[0].innerHTML = `<span class="${statusColor} text-white px-2 py-1 rounded text-xs">${newStatus}</span>`;
+      cells[2].textContent = newTask;
+      cells[3].textContent = newRequester;
+      cells[4].textContent = newScheduled;
+      cells[5].textContent = newCompleted;
+      cells[6].textContent = newCategory;
+      cells[7].textContent = newMechanic;
+
+      // Refresh popup content to show updated details and images
+      showPopup(selectedRow);
+    }
+
+    function closePopup() {
+      const popup = document.getElementById('popup');
+      popup.classList.remove('show');
+      setTimeout(() => popup.classList.add('hidden'), 300);
+    }
+
+    function filterTasks(status) {
+      const rows = document.querySelectorAll('#taskTable tr');
+      rows.forEach(row => {
+        const statusCell = row.cells[0].textContent;
+        if (status === 'All' || statusCell === status) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
         }
-    </script>
+      });
+    }
+
+    function searchTasks() {
+      const input = document.getElementById('searchInput').value.toLowerCase();
+      const rows = document.querySelectorAll('#taskTable tr');
+      rows.forEach(row => {
+        const task = row.cells[2].textContent.toLowerCase();
+        if (task.includes(input)) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+  </script>
 </body>
 </html>
