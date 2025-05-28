@@ -8,6 +8,7 @@
  * v1.6: Refined flat design with vibrant colors, improved typography, subtle borders, and polished inputs/buttons
  * v1.7: Added error boundary to catch runtime script errors
  * v1.8: Redesigned UI with a clean, minimalistic, and functional theme using a light palette, bold headings, and color-coded indicators
+ * v1.9: Enhanced Apple Inc. design cues, displayed Type/Oil Change/Spark Plug/Brake Service as tags, added filters, aligned columns
  */
 
 const { useState, useEffect } = React;
@@ -54,6 +55,9 @@ const App = () => {
     const [completedSearch, setCompletedSearch] = useState('');
     const [upcomingTypeFilter, setUpcomingTypeFilter] = useState('all');
     const [completedTypeFilter, setCompletedTypeFilter] = useState('all');
+    const [upcomingOilChangeFilter, setUpcomingOilChangeFilter] = useState('all');
+    const [upcomingSparkPlugFilter, setUpcomingSparkPlugFilter] = useState('all');
+    const [upcomingBrakeFilter, setUpcomingBrakeFilter] = useState('all');
     const [upcomingSort, setUpcomingSort] = useState({ field: 'mileage', direction: 'asc' });
     const [completedSort, setCompletedSort] = useState({ field: 'mileage', direction: 'desc' });
 
@@ -145,7 +149,7 @@ const App = () => {
                         )}
                         {type === 'completed' && (
                             <>
-                                <p><span className="label">Actual Cost:</span> {data.cost}</p>
+                                <p><span className="label">Cost:</span> {data.cost}</p>
                                 <p><span className="label">Vendor:</span> {data.vendor}</p>
                             </>
                         )}
@@ -276,12 +280,12 @@ const App = () => {
                             />
                         </div>
                         <div className={addServiceModal.status === 'upcoming' ? 'hidden' : ''}>
-                            <label className="block mb-1 text-sm">Actual Cost:</label>
+                            <label className="block mb-1 text-sm">Cost:</label>
                             <input 
                                 type="text" 
                                 value={addServiceModal.actualCost} 
                                 onChange={(e) => setAddServiceModal({ ...addServiceModal, actualCost: e.target.value })}
-                                placeholder="Actual Cost"
+                                placeholder="Cost"
                             />
                         </div>
                         <div className={addServiceModal.status === 'upcoming' ? 'hidden' : ''}>
@@ -364,6 +368,9 @@ const App = () => {
         const filteredUpcoming = upcomingServices
             .filter(service => 
                 (upcomingTypeFilter === 'all' || service.type === upcomingTypeFilter) &&
+                (upcomingOilChangeFilter === 'all' || service.oilChange === upcomingOilChangeFilter) &&
+                (upcomingSparkPlugFilter === 'all' || service.sparkPlug === upcomingSparkPlugFilter) &&
+                (upcomingBrakeFilter === 'all' || service.brake === upcomingBrakeFilter) &&
                 (service.project.toLowerCase().includes(upcomingSearch.toLowerCase()) ||
                  (service.description || '').toLowerCase().includes(upcomingSearch.toLowerCase()))
             )
@@ -437,7 +444,7 @@ const App = () => {
                     <div className="flex justify-between items-center mb-6">
                         <h2>Upcoming Services</h2>
                         <div className="filter-container">
-                            <label>Filter by Type:</label>
+                            <label>Type:</label>
                             <select 
                                 value={upcomingTypeFilter} 
                                 onChange={(e) => setUpcomingTypeFilter(e.target.value)}
@@ -446,6 +453,33 @@ const App = () => {
                                 <option value="SERVICE">SERVICE</option>
                                 <option value="UPGRADE">UPGRADE</option>
                                 <option value="REPAIR">REPAIR</option>
+                            </select>
+                            <label>Oil Change:</label>
+                            <select 
+                                value={upcomingOilChangeFilter} 
+                                onChange={(e) => setUpcomingOilChangeFilter(e.target.value)}
+                            >
+                                <option value="all">All</option>
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
+                            </select>
+                            <label>Spark Plug:</label>
+                            <select 
+                                value={upcomingSparkPlugFilter} 
+                                onChange={(e) => setUpcomingSparkPlugFilter(e.target.value)}
+                            >
+                                <option value="all">All</option>
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
+                            </select>
+                            <label>Brake Service:</label>
+                            <select 
+                                value={upcomingBrakeFilter} 
+                                onChange={(e) => setUpcomingBrakeFilter(e.target.value)}
+                            >
+                                <option value="all">All</option>
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
                             </select>
                             <input 
                                 type="text" 
@@ -460,16 +494,11 @@ const App = () => {
                         <thead>
                             <tr>
                                 <th className="project-col" onClick={() => handleSortUpcoming('project')}>Project</th>
-                                <th onClick={() => handleSortUpcoming('type')}>Type</th>
-                                <th onClick={() => handleSortUpcoming('date')}>Date</th>
-                                <th onClick={() => handleSortUpcoming('mileage')}>Mileage</th>
-                                <th>Miles Remaining</th>
-                                <th>Oil Change</th>
-                                <th>Spark Plug</th>
-                                <th>Brake Service</th>
-                                <th>Projected Cost</th>
-                                <th>Status</th>
-                                <th>Description</th>
+                                <th className="date-col" onClick={() => handleSortUpcoming('date')}>Date</th>
+                                <th className="mileage-col" onClick={() => handleSortUpcoming('mileage')}>Mileage</th>
+                                <th className="cost-col">Cost</th>
+                                <th className="status-col">Status</th>
+                                <th className="description-col">Description</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -481,17 +510,20 @@ const App = () => {
                                         className={isOverdue ? 'overdue-row' : ''}
                                         onClick={() => setModal({ visible: true, type: 'upcoming', data: service })}
                                     >
-                                        <td className="project-col">{service.project}</td>
-                                        <td>{service.type}</td>
-                                        <td>{service.date}</td>
-                                        <td>{service.mileage.toLocaleString()}</td>
-                                        <td>{(service.mileage - currentMileage).toLocaleString()}</td>
-                                        <td>{service.oilChange}</td>
-                                        <td>{service.sparkPlug}</td>
-                                        <td>{service.brake}</td>
-                                        <td>{service.cost}</td>
-                                        <td className="status-indicator">{isOverdue ? 'Emergency' : 'Pending'}</td>
-                                        <td>{service.description || 'No description'}</td>
+                                        <td className="project-col">
+                                            {service.project}
+                                            <div>
+                                                <span className="tag">{service.type}</span>
+                                                {service.oilChange === 'Yes' && <span className="tag">Oil Change</span>}
+                                                {service.sparkPlug === 'Yes' && <span className="tag">Spark Plug</span>}
+                                                {service.brake === 'Yes' && <span className="tag">Brake Service</span>}
+                                            </div>
+                                        </td>
+                                        <td className="date-col">{service.date}</td>
+                                        <td className="mileage-col">{service.mileage.toLocaleString()}</td>
+                                        <td className="cost-col">{service.cost}</td>
+                                        <td className="status-col status-indicator">{isOverdue ? 'Emergency' : 'Pending'}</td>
+                                        <td className="description-col">{service.description || 'No description'}</td>
                                     </tr>
                                 );
                             })}
@@ -526,12 +558,11 @@ const App = () => {
                         <thead>
                             <tr>
                                 <th className="project-col" onClick={() => handleSortCompleted('project')}>Project</th>
-                                <th onClick={() => handleSortCompleted('date')}>Date</th>
-                                <th onClick={() => handleSortCompleted('mileage')}>Mileage</th>
-                                <th onClick={() => handleSortCompleted('vendor')}>Vendor</th>
-                                <th>Actual Cost</th>
-                                <th>Status</th>
-                                <th>Description</th>
+                                <th className="date-col" onClick={() => handleSortCompleted('date')}>Date</th>
+                                <th className="mileage-col" onClick={() => handleSortCompleted('mileage')}>Mileage</th>
+                                <th className="cost-col">Cost</th>
+                                <th className="status-col">Status</th>
+                                <th className="description-col">Description</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -544,10 +575,9 @@ const App = () => {
                                     <td className="project-col">{service.project}</td>
                                     <td className="date-col">{service.date}</td>
                                     <td className="mileage-col">{service.mileage.toLocaleString()}</td>
-                                    <td className="vendor-col">{service.vendor || 'N/A'}</td>
                                     <td className="cost-col">{service.cost}</td>
-                                    <td className="status-indicator">Completed</td>
-                                    <td>{service.description || 'No description'}</td>
+                                    <td className="status-col status-indicator">Completed</td>
+                                    <td className="description-col">{service.description || 'No description'}</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -673,7 +703,7 @@ const App = () => {
             const mileage = prompt("Edit Mileage:", service.mileage);
             const project = prompt("Edit Project:", service.project);
             const description = prompt("Edit Description:", service.description);
-            const cost = prompt("Edit Actual Cost:", service.cost);
+            const cost = prompt("Edit Cost:", service.cost);
             const vendor = prompt("Edit Vendor:", service.vendor);
 
             if (date && mileage && project && description && cost && vendor) {
