@@ -12,26 +12,33 @@
       border-collapse: collapse;
     }
     table thead tr {
-      height: 2.5rem; /* Force header row to a single fixed height */
+      height: 2.5rem;
     }
     table th, table td { 
-      padding: 0.5rem; /* Reduced padding to fit within fixed height */
+      padding: 0.5rem;
       text-align: left;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
       border: 1px solid #e5e7eb;
       vertical-align: middle;
-      height: 2.5rem; /* Ensure consistent height */
-      box-sizing: border-box; /* Include padding and borders in width/height */
-      display: table-cell; /* Enforce table cell behavior */
-      line-height: 1rem; /* Control line height to prevent expansion */
+      height: 2.5rem;
+      box-sizing: border-box;
+      display: table-cell;
+      line-height: 1rem;
     }
-    .status-col { width: 120px; }
-    .subtasks-col { width: 80px; }
-    .task-col { width: 150px; }
-    .date-col { width: 120px; }
-    .mileage-col { width: 100px; }
+    /* Define column widths explicitly with colgroup */
+    col.status-col { width: 120px; }
+    col.subtasks-col { width: 80px; }
+    col.task-col { width: 150px; }
+    col.date-col { width: 120px; }
+    col.mileage-col { width: 100px; }
+    /* Ensure headers and cells align with colgroup widths */
+    th.status-col, td.status-col { width: 120px; }
+    th.subtasks-col, td.subtasks-col { width: 80px; }
+    th.task-col, td.task-col { width: 150px; }
+    th.date-col, td.date-col { width: 120px; }
+    th.mileage-col, td.mileage-col { width: 100px; }
     tr:hover { 
       background-color: #f1f5f9; 
       cursor: pointer; 
@@ -160,21 +167,24 @@
       margin-right: 0.5rem;
     }
     .sort-header {
-      display: inline-flex;
-      align-items: center;
       cursor: pointer;
-      line-height: normal;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: inline-block;
+      width: calc(100% - 1rem); /* Adjust for the arrow */
     }
-    .sort-header svg {
-      margin-left: 0.25rem;
+    .sort-arrow {
+      display: inline-block;
       width: 1rem;
       height: 1rem;
+      vertical-align: middle;
       transition: transform 0.3s ease;
     }
-    .sort-header.asc svg {
+    .sort-header.asc .sort-arrow {
       transform: rotate(180deg);
     }
-    .sort-header.desc svg {
+    .sort-header.desc .sort-arrow {
       transform: rotate(0deg);
     }
   </style>
@@ -229,24 +239,31 @@
         <!-- Table -->
         <div class="bg-white shadow rounded">
           <table class="w-full text-left text-sm">
+            <colgroup>
+              <col class="status-col">
+              <col class="subtasks-col">
+              <col class="task-col">
+              <col class="date-col">
+              <col class="mileage-col">
+            </colgroup>
             <thead>
               <tr class="bg-gray-200">
-                <th class="p-2 status-col sort-header" onclick="sortTable(0, 'status')">
-                  Status
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                <th class="p-2 status-col" onclick="sortTable(0, 'status')">
+                  <span class="sort-header">Status</span>
+                  <svg class="sort-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </th>
                 <th class="p-2 subtasks-col">Subtasks</th>
-                <th class="p-2 task-col sort-header" onclick="sortTable(2, 'task')">
-                  Task
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                <th class="p-2 task-col" onclick="sortTable(2, 'task')">
+                  <span class="sort-header">Task</span>
+                  <svg class="sort-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </th>
-                <th class="p-2 date-col sort-header" onclick="sortTable(3, 'serviceDate')">
-                  Service Date
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                <th class="p-2 date-col" onclick="sortTable(3, 'serviceDate')">
+                  <span class="sort-header">Service Date</span>
+                  <svg class="sort-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </th>
-                <th class="p-2 mileage-col sort-header" onclick="sortTable(4, 'mileage')">
-                  Mileage
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                <th class="p-2 mileage-col" onclick="sortTable(4, 'mileage')">
+                  <span class="sort-header">Mileage</span>
+                  <svg class="sort-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </th>
               </tr>
             </thead>
@@ -445,10 +462,10 @@
 
     // Sort table
     function sortTable(columnIndex, columnType) {
-      const headers = document.querySelectorAll('.sort-header');
+      const headers = document.querySelectorAll('th[onclick]');
       headers.forEach(header => {
         header.classList.remove('asc', 'desc');
-        const svg = header.querySelector('svg');
+        const svg = header.querySelector('.sort-arrow');
         if (svg) svg.style.transform = 'rotate(0deg)';
       });
 
@@ -461,7 +478,7 @@
 
       const header = headers[columnIndex];
       header.classList.add(sortDirection);
-      const svg = header.querySelector('svg');
+      const svg = header.querySelector('.sort-arrow');
       if (svg) svg.style.transform = sortDirection === 'asc' ? 'rotate(180deg)' : 'rotate(0deg)';
 
       const rows = Array.from(document.querySelectorAll('#taskTable tr'));
