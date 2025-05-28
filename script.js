@@ -6,9 +6,29 @@
  * v1.4: Updated UI to Apple Inc. style with SF Pro font, neutral colors, and subtle animations
  * v1.5: Modified UI to flat design with solid colors, simple icons, soft edges, and ample white space
  * v1.6: Refined flat design with vibrant colors, improved typography, subtle borders, and polished inputs/buttons
+ * v1.7: Added error boundary to catch runtime script errors
  */
 
 const { useState, useEffect } = React;
+
+// Error Boundary Component
+class ErrorBoundary extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { hasError: false };
+    }
+
+    static getDerivedStateFromError(error) {
+        return { hasError: true };
+    }
+
+    render() {
+        if (this.state.hasError) {
+            return <p>Error: Something went wrong in the application. Please refresh the page and try again.</p>;
+        }
+        return this.props.children;
+    }
+}
 
 const App = () => {
     const [currentMileage, setCurrentMileage] = useState(136000);
@@ -715,64 +735,66 @@ const App = () => {
     };
 
     return (
-        <div className="container">
-            <div className="header">
-                <h1>Porsche 996 Maintenance Tracker</h1>
-                <div onClick={() => setQrModal(true)}>
-                    <svg className="qr-icon" viewBox="0 0 24 24" fill="currentColor">
-                        <rect x="4" y="4" width="6" height="6" />
-                        <rect x="14" y="4" width="6" height="6" />
-                        <rect x="4" y="14" width="6" height="6" />
-                        <rect x="14" y="14" width="6" height="6" />
-                        <rect x="10" y="10" width="4" height="4" />
-                    </svg>
+        <ErrorBoundary>
+            <div className="container">
+                <div className="header">
+                    <h1>Porsche 996 Maintenance Tracker</h1>
+                    <div onClick={() => setQrModal(true)}>
+                        <svg className="qr-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <rect x="4" y="4" width="6" height="6" />
+                            <rect x="14" y="4" width="6" height="6" />
+                            <rect x="4" y="14" width="6" height="6" />
+                            <rect x="14" y="14" width="6" height="6" />
+                            <rect x="10" y="10" width="4" height="4" />
+                        </svg>
+                    </div>
                 </div>
+
+                <div className="nav-bar">
+                    <ul className="flex">
+                        <li>
+                            <button 
+                                className={`tab-button ${activeTab === 'maintenance' ? 'active' : ''}`} 
+                                onClick={() => setActiveTab('maintenance')}
+                            >
+                                Maintenance
+                            </button>
+                        </li>
+                        <li>
+                            <button 
+                                className={`tab-button ${activeTab === 'history' ? 'active' : ''}`} 
+                                onClick={() => setActiveTab('history')}
+                            >
+                                Service History
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+
+                {activeTab === 'maintenance' && <MaintenanceTab />}
+                {activeTab === 'history' && <ServiceHistoryTab />}
+
+                <ServiceDetailsModal 
+                    visible={modal.visible} 
+                    type={modal.type} 
+                    data={modal.data} 
+                    onClose={() => setModal({ visible: false, type: '', data: null })}
+                    onEdit={() => handleEditService(modal.data, modal.type)}
+                    onDelete={() => handleDeleteService(modal.data, modal.type)}
+                />
+
+                <AddServiceModal 
+                    visible={addServiceModal.visible} 
+                    onClose={() => setAddServiceModal({ ...addServiceModal, visible: false })}
+                    onSubmit={handleAddService}
+                />
+
+                <QRModal 
+                    visible={qrModal} 
+                    onClose={() => setQrModal(false)}
+                />
             </div>
-
-            <div className="nav-bar">
-                <ul className="flex">
-                    <li>
-                        <button 
-                            className={`tab-button ${activeTab === 'maintenance' ? 'active' : ''}`} 
-                            onClick={() => setActiveTab('maintenance')}
-                        >
-                            Maintenance
-                        </button>
-                    </li>
-                    <li>
-                        <button 
-                            className={`tab-button ${activeTab === 'history' ? 'active' : ''}`} 
-                            onClick={() => setActiveTab('history')}
-                        >
-                            Service History
-                        </button>
-                    </li>
-                </ul>
-            </div>
-
-            {activeTab === 'maintenance' && <MaintenanceTab />}
-            {activeTab === 'history' && <ServiceHistoryTab />}
-
-            <ServiceDetailsModal 
-                visible={modal.visible} 
-                type={modal.type} 
-                data={modal.data} 
-                onClose={() => setModal({ visible: false, type: '', data: null })}
-                onEdit={() => handleEditService(modal.data, modal.type)}
-                onDelete={() => handleDeleteService(modal.data, modal.type)}
-            />
-
-            <AddServiceModal 
-                visible={addServiceModal.visible} 
-                onClose={() => setAddServiceModal({ ...addServiceModal, visible: false })}
-                onSubmit={handleAddService}
-            />
-
-            <QRModal 
-                visible={qrModal} 
-                onClose={() => setQrModal(false)}
-            />
-        </div>
+        </ErrorBoundary>
     );
 };
 
