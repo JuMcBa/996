@@ -1,29 +1,31 @@
-/* Clean, Minimalistic, and Functional Design */
+/* Apple-Inspired Design */
 :root {
-    --white: #FFFFFF; /* Primary background */
-    --gray-light: #E0E0E0; /* Borders and subtle accents */
-    --gray-medium: #666666; /* Secondary text */
-    --black: #000000; /* Headings and primary text */
-    --green: #4CAF50; /* Completed status */
-    --red: #D32F2F; /* Emergency/overdue status */
-    --blue: #1976D2; /* Interactive elements */
-    --blue-hover: #1565C0; /* Hover state for interactive elements */
+    --apple-white: #FFFFFF; /* Primary background */
+    --apple-gray-light: #E0E0E0; /* Borders and subtle accents */
+    --apple-gray-medium: #8E8E93; /* Secondary text */
+    --apple-black: #1C2526; /* Headings and primary text */
+    --apple-green: #34C759; /* Completed status */
+    --apple-red: #FF3B30; /* Emergency/overdue status */
+    --apple-blue: #007AFF; /* Interactive elements */
+    --apple-blue-hover: #005BB5; /* Hover state for interactive elements */
+    --apple-gray-bg: #F5F5F7; /* Light gray background */
 }
 
 body {
-    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    background-color: var(--white);
-    color: var(--black);
+    font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: var(--apple-gray-bg);
+    color: var(--apple-black);
     margin: 0;
     padding: 0;
     line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
 }
 
 button, input, select {
     font-size: 14px;
-    border: 1px solid var(--gray-light);
-    border-radius: 4px;
-    background: var(--white);
+    border: 1px solid var(--apple-gray-light);
+    border-radius: 8px;
+    background: var(--apple-white);
     padding: 8px 12px;
     transition: border-color 0.3s ease, background 0.3s ease;
     font-family: inherit;
@@ -31,25 +33,26 @@ button, input, select {
 
 button:focus, input:focus, select:focus {
     outline: none;
-    border-color: var(--blue);
+    border-color: var(--apple-blue);
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.3);
 }
 
 h1 {
     font-size: 24px;
-    font-weight: 700;
-    color: var(--black);
+    font-weight: 600;
+    color: var(--apple-black);
 }
 
 h2 {
     font-size: 20px;
-    font-weight: 700;
-    color: var(--black);
+    font-weight: 600;
+    color: var(--apple-black);
 }
 
 h3 {
     font-size: 16px;
-    font-weight: 700;
-    color: var(--black);
+    font-weight: 600;
+    color: var(--apple-black);
 }
 
 .container {
@@ -63,8 +66,8 @@ h3 {
     justify-content: space-between;
     align-items: center;
     padding: 16px 24px;
-    background: var(--white);
-    border-bottom: 1px solid var(--gray-light);
+    background: var(--apple-white);
+    border-bottom: 1px solid var(--apple-gray-light);
     margin-bottom: 24px;
 }
 
@@ -72,7 +75,7 @@ h3 {
     width: 20px;
     height: 20px;
     cursor: pointer;
-    color: var(--blue);
+    color: var(--apple-blue);
 }
 
 .qr-code-large {
@@ -83,10 +86,10 @@ h3 {
 }
 
 .nav-bar {
-    background: var(--white);
+    background: var(--apple-white);
     padding: 12px 24px;
     margin-bottom: 24px;
-    border-bottom: 1px solid var(--gray-light);
+    border-bottom: 1px solid var(--apple-gray-light);
 }
 
 .tab-button {
@@ -95,19 +98,19 @@ h3 {
     padding: 12px 24px;
     font-size: 16px;
     font-weight: 500;
-    color: var(--gray-medium);
+    color: var(--apple-gray-medium);
     cursor: pointer;
     border-bottom: 2px solid transparent;
     transition: color 0.3s ease, border-bottom 0.3s ease;
 }
 
 .tab-button.active {
-    color: var(--black);
-    border-bottom: 2px solid var(--blue);
+    color: var(--apple-black);
+    border-bottom: 2px solid var(--apple-blue);
 }
 
 .tab-button:hover {
-    color: var(--black);
+    color: var(--apple-black);
 }
 
 .tab-content {
@@ -119,11 +122,11 @@ h3 {
 }
 
 .panel {
-    background: var(--white);
+    background: var(--apple-white);
     padding: 24px;
     margin-bottom: 24px;
-    border: 1px solid var(--gray-light);
-    border-radius: 4px;
+    border: 1px solid var(--apple-gray-light);
+    border-radius: 8px;
 }
 
 .modal {
@@ -136,20 +139,22 @@ h3 {
     height: 100%;
     overflow: auto;
     background-color: rgba(0, 0, 0, 0.4);
+    animation: fadeIn 0.3s ease;
 }
 
 .modal-content {
-    background: var(--white);
+    background: var(--apple-white);
     margin: 5% auto;
     padding: 24px;
     width: 90%;
     max-width: 600px;
-    border: 1px solid var(--gray-light);
-    border-radius: 4px;
+    border: 1px solid var(--apple-gray-light);
+    border-radius: 12px;
+    animation: slideIn 0.3s ease;
 }
 
 .close {
-    color: var(--gray-medium);
+    color: var(--apple-gray-medium);
     float: right;
     font-size: 24px;
     font-weight: 500;
@@ -158,7 +163,7 @@ h3 {
 
 .close:hover,
 .close:focus {
-    color: var(--black);
+    color: var(--apple-black);
 }
 
 table {
@@ -172,64 +177,89 @@ table {
 th, td {
     padding: 12px 16px;
     text-align: left;
-    border-bottom: 1px solid var(--gray-light);
+    border-bottom: 1px solid var(--apple-gray-light);
 }
 
 th {
-    background: var(--white);
-    font-weight: 700;
-    color: var(--black);
+    background: var(--apple-white);
+    font-weight: 600;
+    color: var(--apple-black);
     cursor: pointer;
 }
 
-tr.completed-row .status-indicator {
-    color: var(--green);
-    font-weight: 500;
-}
-
-tr.overdue-row .status-indicator {
-    color: var(--red);
-    font-weight: 500;
-}
-
-tr:hover {
-    background: #F5F5F5;
-    cursor: pointer;
-}
-
-th.project-col,
-td.project-col {
+/* Align columns across tables */
+th.project-col, td.project-col {
     width: 150px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-td.date-col,
-td.mileage-col,
-td.vendor-col,
-td.cost-col {
-    white-space: nowrap;
+th.date-col, td.date-col {
+    width: 120px;
+}
+
+th.mileage-col, td.mileage-col {
+    width: 100px;
+}
+
+th.cost-col, td.cost-col {
+    width: 100px;
+}
+
+th.description-col, td.description-col {
+    width: auto;
+}
+
+th.status-col, td.status-col {
+    width: 120px;
+}
+
+tr.completed-row .status-indicator {
+    color: var(--apple-green);
+    font-weight: 500;
+}
+
+tr.overdue-row .status-indicator {
+    color: var(--apple-red);
+    font-weight: 500;
+}
+
+tr:hover {
+    background: var(--apple-gray-bg);
+    cursor: pointer;
+}
+
+.tag {
+    display: inline-block;
+    background: var(--apple-gray-bg);
+    color: var(--apple-gray-medium);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 8px;
+    margin: 2px 4px 2px 0;
+    border-radius: 12px;
 }
 
 button {
-    background: var(--blue);
+    background: var(--apple-blue);
     color: #fff;
     border: none;
-    border-radius: 4px;
+    border-radius: 8px;
     padding: 8px 16px;
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
-    transition: background 0.3s ease;
+    transition: background 0.3s ease, opacity 0.3s ease;
 }
 
 button:hover {
-    background: var(--blue-hover);
+    background: var(--apple-blue-hover);
+    opacity: 0.9;
 }
 
 button.danger {
-    background: var(--red);
+    background: var(--apple-red);
 }
 
 button.danger:hover {
@@ -240,7 +270,7 @@ input[type="checkbox"] {
     appearance: none;
     width: 36px;
     height: 20px;
-    background: var(--gray-light);
+    background: var(--apple-gray-light);
     border-radius: 12px;
     position: relative;
     cursor: pointer;
@@ -248,7 +278,7 @@ input[type="checkbox"] {
 }
 
 input[type="checkbox"]:checked {
-    background: var(--blue);
+    background: var(--apple-blue);
 }
 
 input[type="checkbox"]::before {
@@ -256,7 +286,7 @@ input[type="checkbox"]::before {
     position: absolute;
     width: 16px;
     height: 16px;
-    background: var(--white);
+    background: var(--apple-white);
     border-radius: 50%;
     top: 2px;
     left: 2px;
@@ -269,6 +299,7 @@ input[type="checkbox"]:checked::before {
 
 .filter-container {
     display: flex;
+    flex-wrap: wrap;
     gap: 16px;
     align-items: center;
     margin-bottom: 24px;
@@ -277,7 +308,7 @@ input[type="checkbox"]:checked::before {
 .filter-container label {
     font-size: 14px;
     font-weight: 500;
-    color: var(--black);
+    color: var(--apple-black);
 }
 
 .hidden {
@@ -286,5 +317,15 @@ input[type="checkbox"]:checked::before {
 
 .label {
     font-weight: 500;
-    color: var(--gray-medium);
+    color: var(--apple-gray-medium);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
 }
