@@ -6,21 +6,41 @@
   <title>Car Maintenance Tracker</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    table th, table td { 
-      white-space: nowrap; 
-      overflow: hidden; 
-      text-overflow: ellipsis; 
+    table {
+      table-layout: fixed;
+      width: 100%;
+      border-collapse: collapse;
     }
+    table thead tr {
+      height: 2.5rem; /* Force header row to a single fixed height */
+    }
+    table th, table td { 
+      padding: 0.5rem; /* Reduced padding to fit within fixed height */
+      text-align: left;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      border: 1px solid #e5e7eb;
+      vertical-align: middle;
+      height: 2.5rem; /* Ensure consistent height */
+      box-sizing: border-box; /* Include padding and borders in width/height */
+      display: table-cell; /* Enforce table cell behavior */
+      line-height: 1rem; /* Control line height to prevent expansion */
+    }
+    .status-col { width: 120px; }
+    .subtasks-col { width: 80px; }
     .task-col { width: 150px; }
+    .date-col { width: 120px; }
+    .mileage-col { width: 100px; }
     tr:hover { 
       background-color: #f1f5f9; 
       cursor: pointer; 
     }
-    #popup, #subtaskPopup {
+    #popup, #subtaskPopup, #filterDropdown {
       opacity: 0;
       transition: opacity 0.3s ease-in-out;
     }
-    #popup.show, #subtaskPopup.show {
+    #popup.show, #subtaskPopup.show, #filterDropdown.show {
       opacity: 1;
     }
     .preview-img {
@@ -80,72 +100,82 @@
       text-decoration: line-through;
       color: #6b7280;
     }
-    .search-container {
+    .filter-container {
       position: relative;
       display: inline-block;
     }
-    .search-container input {
-      padding-left: 2.5rem;
+    .filter-button {
+      display: flex;
+      align-items: center;
+      padding: 0.5rem 1rem;
+      border: 1px solid #3b82f6;
+      border-radius: 0.5rem;
+      background-color: white;
+      cursor: pointer;
+      font-family: sans-serif;
+      font-size: 0.875rem;
+      color: #374151;
       transition: all 0.3s ease;
     }
-    .search-container input:focus {
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-      border-color: #3b82f6;
+    .filter-button:hover {
+      background-color: #eff6ff;
     }
-    .search-container svg {
-      position: absolute;
-      left: 0.75rem;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #6b7280;
-    }
-    .toggle-switch {
-      position: relative;
-      width: 40px;
-      height: 20px;
-      background-color: #d1d5db;
-      border-radius: 9999px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-    .toggle-switch::after {
-      content: '';
-      position: absolute;
-      width: 16px;
-      height: 16px;
-      background-color: white;
-      border-radius: 50%;
-      top: 2px;
-      left: 2px;
+    .filter-button svg {
+      margin-left: 0.5rem;
       transition: transform 0.3s ease;
     }
-    .toggle-switch.active {
-      background-color: #3b82f6;
+    .filter-button.active svg {
+      transform: rotate(180deg);
     }
-    .toggle-switch.active::after {
-      transform: translateX(20px);
+    .filter-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: white;
+      border: 1px solid #d1d5db;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      width: 300px;
+      padding: 1rem;
+      z-index: 10;
     }
-    .dark-mode {
-      background-color: #1f2937;
-      color: #d1d5db;
+    .filter-dropdown input[type="text"] {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.25rem;
+      margin-bottom: 0.5rem;
+      font-family: sans-serif;
+      font-size: 0.875rem;
     }
-    .dark-mode .bg-white {
-      background-color: #374151;
+    .filter-dropdown label {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.5rem;
+      font-family: sans-serif;
+      font-size: 0.875rem;
+      color: #374151;
     }
-    .dark-mode .bg-gray-200 {
-      background-color: #4b5563;
+    .filter-dropdown input[type="checkbox"] {
+      margin-right: 0.5rem;
     }
-    .dark-mode .text-gray-700 {
-      color: #d1d5db;
+    .sort-header {
+      display: inline-flex;
+      align-items: center;
+      cursor: pointer;
+      line-height: normal;
     }
-    .dark-mode .border-gray-200 {
-      border-color: #4b5563;
+    .sort-header svg {
+      margin-left: 0.25rem;
+      width: 1rem;
+      height: 1rem;
+      transition: transform 0.3s ease;
     }
-    .dark-mode .bg-gray-100 {
-      background-color: #111827;
+    .sort-header.asc svg {
+      transform: rotate(180deg);
     }
-    .dark-mode tr:hover {
-      background-color: #4b5563;
+    .sort-header.desc svg {
+      transform: rotate(0deg);
     }
   </style>
 </head>
@@ -172,22 +202,26 @@
         <div class="flex justify-between items-center mb-3">
           <div></div>
           <div class="text-gray-700 text-sm">May 27, 2025</div>
-          <div class="toggle-switch" onclick="toggleTheme()"></div>
+          <div></div>
         </div>
 
         <!-- Filters and Search -->
         <div class="mb-3">
           <h2 class="text-base font-semibold text-gray-700">Car Maintenance Tracker</h2>
-          <div class="flex space-x-3 my-1 items-center">
-            <select id="statusFilter" class="border rounded px-3 py-1 text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" onchange="filterTasks(this.value)">
-              <option value="All">All</option>
-              <option value="Scheduled">Scheduled</option>
-              <option value="In Progress">In Progress</option>
-              <option value="Completed">Completed</option>
-            </select>
-            <div class="search-container">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-              <input type="text" id="searchInput" class="border rounded px-3 py-1 w-64 text-sm focus:outline-none focus:border-blue-500 shadow-sm" placeholder="Search tasks..." onkeyup="searchTasks()">
+          <div class="my-1">
+            <div class="filter-container">
+              <button class="filter-button" onclick="toggleFilterDropdown()">
+                Search and Filter
+                <svg id="filterArrow" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+              </button>
+              <div id="filterDropdown" class="filter-dropdown hidden">
+                <input type="text" id="searchInput" class="text-sm" placeholder="Search tasks..." onkeyup="filterAndSearch()">
+                <div class="mt-2">
+                  <label><input type="checkbox" value="Scheduled" onchange="filterAndSearch()" checked> Scheduled</label>
+                  <label><input type="checkbox" value="In Progress" onchange="filterAndSearch()" checked> In Progress</label>
+                  <label><input type="checkbox" value="Completed" onchange="filterAndSearch()" checked> Completed</label>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -197,48 +231,60 @@
           <table class="w-full text-left text-sm">
             <thead>
               <tr class="bg-gray-200">
-                <th class="p-2">Status</th>
-                <th class="p-2">Subtasks</th>
-                <th class="p-2 task-col">Task</th>
-                <th class="p-2">Service Date</th>
-                <th class="p-2">Mileage</th>
+                <th class="p-2 status-col sort-header" onclick="sortTable(0, 'status')">
+                  Status
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </th>
+                <th class="p-2 subtasks-col">Subtasks</th>
+                <th class="p-2 task-col sort-header" onclick="sortTable(2, 'task')">
+                  Task
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </th>
+                <th class="p-2 date-col sort-header" onclick="sortTable(3, 'serviceDate')">
+                  Service Date
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </th>
+                <th class="p-2 mileage-col sort-header" onclick="sortTable(4, 'mileage')">
+                  Mileage
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </th>
               </tr>
             </thead>
             <tbody id="taskTable">
               <tr onclick="showPopup(this)" data-subtasks='[]' data-details="Check oil levels and replace filter" data-vendor="AutoFix Shop" data-projected-cost="$50" data-actual-cost="$45" data-vendors="AutoFix Shop, CarCare Center" data-metadata='{"oilChange": true, "sparkPlugs": false, "brakes": false}'>
-                <td class="p-2"><span class="bg-gray-500 text-white px-2 py-1 rounded text-xs">Scheduled</span></td>
-                <td class="p-2"><button onclick="showSubtaskPopup(this.parentElement.parentElement, event)"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg></button></td>
+                <td class="p-2 status-col"><span class="bg-gray-500 text-white px-2 py-1 rounded text-xs">Scheduled</span></td>
+                <td class="p-2 subtasks-col"><button onclick="showSubtaskPopup(this.parentElement.parentElement, event)"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg></button></td>
                 <td class="p-2 task-col">Oil Change</td>
-                <td class="p-2">03/28/2025</td>
-                <td class="p-2">120,000</td>
+                <td class="p-2 date-col">03/28/2025</td>
+                <td class="p-2 mileage-col">120,000</td>
               </tr>
               <tr onclick="showPopup(this)" data-subtasks='[]' data-details="Rotate tires and check pressure" data-vendor="Tire Pros" data-projected-cost="$30" data-actual-cost="$35" data-vendors="Tire Pros, QuickFix Garage" data-metadata='{"oilChange": false, "sparkPlugs": false, "brakes": false}'>
-                <td class="p-2"><span class="bg-green-500 text-white px-2 py-1 rounded text-xs">In Progress</span></td>
-                <td class="p-2"><button onclick="showSubtaskPopup(this.parentElement.parentElement, event)"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg></button></td>
+                <td class="p-2 status-col"><span class="bg-green-500 text-white px-2 py-1 rounded text-xs">In Progress</span></td>
+                <td class="p-2 subtasks-col"><button onclick="showSubtaskPopup(this.parentElement.parentElement, event)"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg></button></td>
                 <td class="p-2 task-col">Tire Rotation</td>
-                <td class="p-2">02/21/2025</td>
-                <td class="p-2">115,000</td>
+                <td class="p-2 date-col">02/21/2025</td>
+                <td class="p-2 mileage-col">115,000</td>
               </tr>
               <tr onclick="showPopup(this)" data-subtasks='[]' data-details="Inspect brake pads and rotors" data-vendor="Brake Masters" data-projected-cost="$150" data-actual-cost="$140" data-vendors="Brake Masters, AutoFix Shop" data-metadata='{"oilChange": false, "sparkPlugs": false, "brakes": true}'>
-                <td class="p-2"><span class="bg-blue-500 text-white px-2 py-1 rounded text-xs">Completed</span></td>
-                <td class="p-2"><button onclick="showSubtaskPopup(this.parentElement.parentElement, event)"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg></button></td>
+                <td class="p-2 status-col"><span class="bg-blue-500 text-white px-2 py-1 rounded text-xs">Completed</span></td>
+                <td class="p-2 subtasks-col"><button onclick="showSubtaskPopup(this.parentElement.parentElement, event)"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg></button></td>
                 <td class="p-2 task-col">Brake Inspection</td>
-                <td class="p-2">01/20/2025</td>
-                <td class="p-2">110,000</td>
+                <td class="p-2 date-col">01/20/2025</td>
+                <td class="p-2 mileage-col">110,000</td>
               </tr>
               <tr onclick="showPopup(this)" data-subtasks='[]' data-details="Test battery voltage and connections" data-vendor="AutoFix Shop" data-projected-cost="$20" data-actual-cost="$25" data-vendors="AutoFix Shop, Battery Plus" data-metadata='{"oilChange": false, "sparkPlugs": false, "brakes": false}'>
-                <td class="p-2"><span class="bg-green-500 text-white px-2 py-1 rounded text-xs">In Progress</span></td>
-                <td class="p-2"><button onclick="showSubtaskPopup(this.parentElement.parentElement, event)"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg></button></td>
+                <td class="p-2 status-col"><span class="bg-green-500 text-white px-2 py-1 rounded text-xs">In Progress</span></td>
+                <td class="p-2 subtasks-col"><button onclick="showSubtaskPopup(this.parentElement.parentElement, event)"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg></button></td>
                 <td class="p-2 task-col">Battery Check</td>
-                <td class="p-2">03/22/2025</td>
-                <td class="p-2">125,000</td>
+                <td class="p-2 date-col">03/22/2025</td>
+                <td class="p-2 mileage-col">125,000</td>
               </tr>
               <tr onclick="showPopup(this)" data-subtasks='[]' data-details="Replace spark plugs and inspect ignition" data-vendor="CarCare Center" data-projected-cost="$80" data-actual-cost="$90" data-vendors="CarCare Center, AutoFix Shop" data-metadata='{"oilChange": false, "sparkPlugs": true, "brakes": false}'>
-                <td class="p-2"><span class="bg-gray-500 text-white px-2 py-1 rounded text-xs">Scheduled</span></td>
-                <td class="p-2"><button onclick="showSubtaskPopup(this.parentElement.parentElement, event)"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg></button></td>
+                <td class="p-2 status-col"><span class="bg-gray-500 text-white px-2 py-1 rounded text-xs">Scheduled</span></td>
+                <td class="p-2 subtasks-col"><button onclick="showSubtaskPopup(this.parentElement.parentElement, event)"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg></button></td>
                 <td class="p-2 task-col">Spark Plug Replacement</td>
-                <td class="p-2">04/14/2025</td>
-                <td class="p-2">130,000</td>
+                <td class="p-2 date-col">04/14/2025</td>
+                <td class="p-2 mileage-col">130,000</td>
               </tr>
             </tbody>
           </table>
@@ -311,6 +357,8 @@
     let photos = [];
     let receipts = [];
     let currentSubtaskRow = null;
+    let sortColumn = null;
+    let sortDirection = 'asc';
 
     // Page navigation
     function showPage(page) {
@@ -342,12 +390,111 @@
       document.getElementById('completedCount').textContent = completedCount;
     }
 
-    // Theme toggle
-    function toggleTheme() {
-      const toggleSwitch = document.querySelector('.toggle-switch');
-      const body = document.body;
-      toggleSwitch.classList.toggle('active');
-      body.classList.toggle('dark-mode');
+    // Toggle filter dropdown
+    function toggleFilterDropdown() {
+      // Ensure the mainPage is visible and elements exist
+      if (document.getElementById('mainPage').classList.contains('hidden')) {
+        return; // Do nothing if mainPage is not visible
+      }
+
+      const dropdown = document.getElementById('filterDropdown');
+      const button = document.querySelector('.filter-button');
+
+      if (dropdown && button) {
+        dropdown.classList.toggle('hidden');
+        dropdown.classList.toggle('show');
+        button.classList.toggle('active');
+      }
+    }
+
+    // Combined filter and search
+    function filterAndSearch() {
+      const searchInput = document.getElementById('searchInput');
+      const checkboxes = document.querySelectorAll('#filterDropdown input[type="checkbox"]');
+
+      if (!searchInput || !checkboxes) return; // Exit if elements are not found
+
+      const searchValue = searchInput.value.toLowerCase();
+      const selectedStatuses = Array.from(checkboxes)
+        .filter(checkbox => checkbox.checked)
+        .map(checkbox => checkbox.value);
+
+      const rows = Array.from(document.querySelectorAll('#taskTable tr'));
+      const filteredRows = rows.filter(row => {
+        const task = row.cells[2].textContent.toLowerCase();
+        const status = row.cells[0].textContent;
+        const matchesSearch = task.includes(searchValue);
+        const matchesStatus = selectedStatuses.length === 0 || selectedStatuses.includes(status);
+        return matchesSearch && matchesStatus;
+      });
+
+      // Reapply sorting if a column is currently sorted
+      if (sortColumn !== null) {
+        const columnIndex = { 'status': 0, 'task': 2, 'serviceDate': 3, 'mileage': 4 }[sortColumn];
+        filteredRows.sort((a, b) => compareRows(a, b, columnIndex, sortColumn));
+      }
+
+      // Clear and re-append rows in the filtered and sorted order
+      const tbody = document.getElementById('taskTable');
+      tbody.innerHTML = '';
+      filteredRows.forEach(row => tbody.appendChild(row));
+
+      // Show all rows that passed the filter
+      filteredRows.forEach(row => row.style.display = '');
+    }
+
+    // Sort table
+    function sortTable(columnIndex, columnType) {
+      const headers = document.querySelectorAll('.sort-header');
+      headers.forEach(header => {
+        header.classList.remove('asc', 'desc');
+        const svg = header.querySelector('svg');
+        if (svg) svg.style.transform = 'rotate(0deg)';
+      });
+
+      if (sortColumn === columnType) {
+        sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+      } else {
+        sortColumn = columnType;
+        sortDirection = 'asc';
+      }
+
+      const header = headers[columnIndex];
+      header.classList.add(sortDirection);
+      const svg = header.querySelector('svg');
+      if (svg) svg.style.transform = sortDirection === 'asc' ? 'rotate(180deg)' : 'rotate(0deg)';
+
+      const rows = Array.from(document.querySelectorAll('#taskTable tr'));
+      const sortedRows = rows.sort((a, b) => compareRows(a, b, columnIndex, columnType));
+
+      const tbody = document.getElementById('taskTable');
+      tbody.innerHTML = '';
+      sortedRows.forEach(row => tbody.appendChild(row));
+
+      filterAndSearch(); // Reapply filters after sorting
+    }
+
+    function compareRows(a, b, columnIndex, columnType) {
+      let aValue = a.cells[columnIndex].textContent.trim();
+      let bValue = b.cells[columnIndex].textContent.trim();
+
+      if (columnType === 'status') {
+        const statusOrder = { 'Scheduled': 1, 'In Progress': 2, 'Completed': 3 };
+        aValue = statusOrder[aValue] || 0;
+        bValue = statusOrder[bValue] || 0;
+      } else if (columnType === 'serviceDate') {
+        aValue = new Date(aValue.split('/').reverse().join('-'));
+        bValue = new Date(bValue.split('/').reverse().join('-'));
+      } else if (columnType === 'mileage') {
+        aValue = parseInt(aValue.replace(/,/g, ''), 10);
+        bValue = parseInt(bValue.replace(/,/g, ''), 10);
+      }
+
+      if (sortDirection === 'asc') {
+        return aValue > bValue ? 1 : aValue < bValue ? -1 : 0;
+      } else {
+        return aValue < bValue ? 1 : aValue > bValue ? -1 : 0;
+      }
     }
 
     // Task Details Popup
@@ -509,31 +656,6 @@
       const subtaskPopup = document.getElementById('subtaskPopup');
       subtaskPopup.classList.remove('show');
       setTimeout(() => subtaskPopup.classList.add('hidden'), 300);
-    }
-
-    function filterTasks(status) {
-      const rows = document.querySelectorAll('#taskTable tr');
-      rows.forEach(row => {
-        const statusCell = row.cells[0].textContent;
-        if (status === 'All' || statusCell === status) {
-          row.style.display = '';
-        } else {
-          row.style.display = 'none';
-        }
-      });
-    }
-
-    function searchTasks() {
-      const input = document.getElementById('searchInput').value.toLowerCase();
-      const rows = document.querySelectorAll('#taskTable tr');
-      rows.forEach(row => {
-        const task = row.cells[2].textContent.toLowerCase();
-        if (task.includes(input)) {
-          row.style.display = '';
-        } else {
-          row.style.display = 'none';
-        }
-      });
     }
 
     // Initialize the page
