@@ -9,6 +9,7 @@
  * v1.7: Added error boundary to catch runtime script errors
  * v1.8: Redesigned UI with a clean, minimalistic, and functional theme using a light palette, bold headings, and color-coded indicators
  * v1.9: Enhanced Apple Inc. design cues, displayed Type/Oil Change/Spark Plug/Brake Service as tags, added filters, aligned columns
+ * v1.10: Applied Material Design theme with teal accent, card-based layouts, and left-side navigation
  */
 
 const { useState, useEffect } = React;
@@ -47,7 +48,7 @@ const App = () => {
         { project: "IMS Bearing/Clutch Check", type: "UPGRADE", date: "2029-05-15", mileage: 188985, description: "Inspect IMS Bearing, Clutch", oilChange: "No", sparkPlug: "No", brake: "No", cost: "$500" }
     ]);
     const [completedServices, setCompletedServices] = useState([]);
-    const [activeTab, setActiveTab] = useState('maintenance');
+    const [activeTab, setActiveTab] = useState('upcoming');
     const [modal, setModal] = useState({ visible: false, type: '', data: null });
     const [addServiceModal, setAddServiceModal] = useState({ visible: false, status: 'upcoming', type: 'SERVICE', date: '', mileage: '', project: '', description: '', oilChange: false, sparkPlug: false, brake: false, projectedCost: '', actualCost: '', vendor: '' });
     const [qrModal, setQrModal] = useState(false);
@@ -58,8 +59,6 @@ const App = () => {
     const [upcomingOilChangeFilter, setUpcomingOilChangeFilter] = useState('all');
     const [upcomingSparkPlugFilter, setUpcomingSparkPlugFilter] = useState('all');
     const [upcomingBrakeFilter, setUpcomingBrakeFilter] = useState('all');
-    const [upcomingSort, setUpcomingSort] = useState({ field: 'mileage', direction: 'asc' });
-    const [completedSort, setCompletedSort] = useState({ field: 'mileage', direction: 'desc' });
 
     const initialCompletedServices = [
         { date: "2020-05-24", mileage: 97069, project: "Replace Catalytic Converter", description: "Replace Catalytic Converter", cost: "$1,849", vendor: "Makellos Classics" },
@@ -102,9 +101,9 @@ const App = () => {
         try {
             const storedServices = localStorage.getItem('completedServices');
             if (storedServices) {
-                setCompletedServices(JSON.parse(storedServices).sort((a, b) => b.mileage - a.mileage));
+                setCompletedServices(JSON.parse(storedServices));
             } else {
-                setCompletedServices(initialCompletedServices.sort((a, b) => b.mileage - a.mileage));
+                setCompletedServices(initialCompletedServices);
                 localStorage.setItem('completedServices', JSON.stringify(initialCompletedServices));
             }
             const storedMileage = localStorage.getItem('currentMileage');
@@ -120,7 +119,7 @@ const App = () => {
             setUpcomingServices(updatedUpcoming);
         } catch (error) {
             console.error('Error initializing data:', error);
-            setCompletedServices(initialCompletedServices.sort((a, b) => b.mileage - a.mileage));
+            setCompletedServices(initialCompletedServices);
             localStorage.setItem('completedServices', JSON.stringify(initialCompletedServices));
         }
     }, []);
@@ -355,16 +354,7 @@ const App = () => {
         );
     };
 
-    const MaintenanceTab = () => {
-        const inferServiceType = (description) => {
-            if (!description) return '';
-            const desc = description.toLowerCase();
-            if (desc.includes('oil change') || desc.includes('filter') || desc.includes('inspection') || desc.includes('fluid')) return 'SERVICE';
-            if (desc.includes('replace') || desc.includes('bearing') || desc.includes('clutch')) return 'UPGRADE';
-            if (desc.includes('repair') || desc.includes('fix')) return 'REPAIR';
-            return '';
-        };
-
+    const UpcomingWorkTab = () => {
         const filteredUpcoming = upcomingServices
             .filter(service => 
                 (upcomingTypeFilter === 'all' || service.type === upcomingTypeFilter) &&
@@ -373,48 +363,10 @@ const App = () => {
                 (upcomingBrakeFilter === 'all' || service.brake === upcomingBrakeFilter) &&
                 (service.project.toLowerCase().includes(upcomingSearch.toLowerCase()) ||
                  (service.description || '').toLowerCase().includes(upcomingSearch.toLowerCase()))
-            )
-            .sort((a, b) => {
-                const field = upcomingSort.field;
-                const direction = upcomingSort.direction;
-                const aValue = field === 'mileage' ? a[field] : field === 'date' ? new Date(a[field]) : a[field].toLowerCase();
-                const bValue = field === 'mileage' ? b[field] : field === 'date' ? new Date(b[field]) : b[field].toLowerCase();
-                return direction === 'asc' ? (aValue > bValue ? 1 : -1) : (aValue < bValue ? 1 : -1);
-            });
-
-        const filteredCompleted = completedServices
-            .filter(service => {
-                const inferredType = inferServiceType(service.description);
-                return (
-                    (completedTypeFilter === 'all' || inferredType === completedTypeFilter) &&
-                    (service.project.toLowerCase().includes(completedSearch.toLowerCase()) ||
-                     (service.description || '').toLowerCase().includes(completedSearch.toLowerCase()))
-                );
-            })
-            .sort((a, b) => {
-                const field = completedSort.field;
-                const direction = completedSort.direction;
-                const aValue = field === 'mileage' ? a[field] : field === 'date' ? new Date(a[field]) : a[field].toLowerCase();
-                const bValue = field === 'mileage' ? b[field] : field === 'date' ? new Date(b[field]) : b[field].toLowerCase();
-                return direction === 'asc' ? (aValue > bValue ? 1 : -1) : (aValue < bValue ? 1 : -1);
-            });
-
-        const handleSortUpcoming = (field) => {
-            setUpcomingSort({
-                field,
-                direction: upcomingSort.field === field && upcomingSort.direction === 'asc' ? 'desc' : 'asc'
-            });
-        };
-
-        const handleSortCompleted = (field) => {
-            setCompletedSort({
-                field,
-                direction: completedSort.field === field && completedSort.direction === 'asc' ? 'desc' : 'asc'
-            });
-        };
+            );
 
         return (
-            <div id="maintenance" className="tab-content active">
+            <div id="upcoming" className="tab-content active">
                 <div className="panel">
                     <h2>Current Mileage</h2>
                     <input 
@@ -441,224 +393,149 @@ const App = () => {
                 </div>
 
                 <div className="panel">
-                    <div className="flex justify-between items-center mb-6">
-                        <h2>Upcoming Services</h2>
-                        <div className="filter-container">
-                            <label>Type:</label>
-                            <select 
-                                value={upcomingTypeFilter} 
-                                onChange={(e) => setUpcomingTypeFilter(e.target.value)}
-                            >
-                                <option value="all">All</option>
-                                <option value="SERVICE">SERVICE</option>
-                                <option value="UPGRADE">UPGRADE</option>
-                                <option value="REPAIR">REPAIR</option>
-                            </select>
-                            <label>Oil Change:</label>
-                            <select 
-                                value={upcomingOilChangeFilter} 
-                                onChange={(e) => setUpcomingOilChangeFilter(e.target.value)}
-                            >
-                                <option value="all">All</option>
-                                <option value="Yes">Yes</option>
-                                <option value="No">No</option>
-                            </select>
-                            <label>Spark Plug:</label>
-                            <select 
-                                value={upcomingSparkPlugFilter} 
-                                onChange={(e) => setUpcomingSparkPlugFilter(e.target.value)}
-                            >
-                                <option value="all">All</option>
-                                <option value="Yes">Yes</option>
-                                <option value="No">No</option>
-                            </select>
-                            <label>Brake Service:</label>
-                            <select 
-                                value={upcomingBrakeFilter} 
-                                onChange={(e) => setUpcomingBrakeFilter(e.target.value)}
-                            >
-                                <option value="all">All</option>
-                                <option value="Yes">Yes</option>
-                                <option value="No">No</option>
-                            </select>
-                            <input 
-                                type="text" 
-                                value={upcomingSearch} 
-                                onChange={(e) => setUpcomingSearch(e.target.value)} 
-                                placeholder="Search..." 
-                                style={{ width: '200px' }}
-                            />
-                        </div>
+                    <div className="filter-container">
+                        <label>Type:</label>
+                        <select 
+                            value={upcomingTypeFilter} 
+                            onChange={(e) => setUpcomingTypeFilter(e.target.value)}
+                        >
+                            <option value="all">All</option>
+                            <option value="SERVICE">SERVICE</option>
+                            <option value="UPGRADE">UPGRADE</option>
+                            <option value="REPAIR">REPAIR</option>
+                        </select>
+                        <label>Oil Change:</label>
+                        <select 
+                            value={upcomingOilChangeFilter} 
+                            onChange={(e) => setUpcomingOilChangeFilter(e.target.value)}
+                        >
+                            <option value="all">All</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                        <label>Spark Plug:</label>
+                        <select 
+                            value={upcomingSparkPlugFilter} 
+                            onChange={(e) => setUpcomingSparkPlugFilter(e.target.value)}
+                        >
+                            <option value="all">All</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                        <label>Brake Service:</label>
+                        <select 
+                            value={upcomingBrakeFilter} 
+                            onChange={(e) => setUpcomingBrakeFilter(e.target.value)}
+                        >
+                            <option value="all">All</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                        <input 
+                            type="text" 
+                            value={upcomingSearch} 
+                            onChange={(e) => setUpcomingSearch(e.target.value)} 
+                            placeholder="Search..." 
+                            style={{ width: '200px' }}
+                        />
                     </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th className="project-col" onClick={() => handleSortUpcoming('project')}>Project</th>
-                                <th className="date-col" onClick={() => handleSortUpcoming('date')}>Date</th>
-                                <th className="mileage-col" onClick={() => handleSortUpcoming('mileage')}>Mileage</th>
-                                <th className="cost-col">Cost</th>
-                                <th className="status-col">Status</th>
-                                <th className="description-col">Description</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filteredUpcoming.map(service => {
-                                const isOverdue = service.mileage <= currentMileage;
-                                return (
-                                    <tr 
-                                        key={`${service.project}-${service.mileage}`} 
-                                        className={isOverdue ? 'overdue-row' : ''}
-                                        onClick={() => setModal({ visible: true, type: 'upcoming', data: service })}
-                                    >
-                                        <td className="project-col">
-                                            {service.project}
-                                            <div>
-                                                <span className="tag">{service.type}</span>
-                                                {service.oilChange === 'Yes' && <span className="tag">Oil Change</span>}
-                                                {service.sparkPlug === 'Yes' && <span className="tag">Spark Plug</span>}
-                                                {service.brake === 'Yes' && <span className="tag">Brake Service</span>}
-                                            </div>
-                                        </td>
-                                        <td className="date-col">{service.date}</td>
-                                        <td className="mileage-col">{service.mileage.toLocaleString()}</td>
-                                        <td className="cost-col">{service.cost}</td>
-                                        <td className="status-col status-indicator">{isOverdue ? 'Emergency' : 'Pending'}</td>
-                                        <td className="description-col">{service.description || 'No description'}</td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
-                </div>
-
-                <div className="panel">
-                    <div className="flex justify-between items-center mb-6">
-                        <h2>Completed Services</h2>
-                        <div className="filter-container">
-                            <label>Filter by Type:</label>
-                            <select 
-                                value={completedTypeFilter} 
-                                onChange={(e) => setCompletedTypeFilter(e.target.value)}
+                    {filteredUpcoming.map(service => {
+                        const isOverdue = service.mileage <= currentMileage;
+                        return (
+                            <div 
+                                key={`${service.project}-${service.mileage}`} 
+                                className={`card ${isOverdue ? 'overdue' : ''}`}
                             >
-                                <option value="all">All</option>
-                                <option value="SERVICE">SERVICE</option>
-                                <option value="UPGRADE">UPGRADE</option>
-                                <option value="REPAIR">REPAIR</option>
-                            </select>
-                            <input 
-                                type="text" 
-                                value={completedSearch} 
-                                onChange={(e) => setCompletedSearch(e.target.value)} 
-                                placeholder="Search..." 
-                                style={{ width: '200px' }}
-                            />
-                        </div>
-                    </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th className="project-col" onClick={() => handleSortCompleted('project')}>Project</th>
-                                <th className="date-col" onClick={() => handleSortCompleted('date')}>Date</th>
-                                <th className="mileage-col" onClick={() => handleSortCompleted('mileage')}>Mileage</th>
-                                <th className="cost-col">Cost</th>
-                                <th className="status-col">Status</th>
-                                <th className="description-col">Description</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filteredCompleted.map(service => (
-                                <tr 
-                                    key={`${service.project}-${service.mileage}`} 
-                                    className="completed-row"
-                                    onClick={() => setModal({ visible: true, type: 'completed', data: service })}
-                                >
-                                    <td className="project-col">{service.project}</td>
-                                    <td className="date-col">{service.date}</td>
-                                    <td className="mileage-col">{service.mileage.toLocaleString()}</td>
-                                    <td className="cost-col">{service.cost}</td>
-                                    <td className="status-col status-indicator">Completed</td>
-                                    <td className="description-col">{service.description || 'No description'}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                                <div className="card-content">
+                                    <div className="card-details">
+                                        <h3>{service.project}</h3>
+                                        <div className="card-meta">
+                                            <span className="tag">{service.type}</span>
+                                            {service.oilChange === 'Yes' && <span className="tag">Oil Change</span>}
+                                            {service.sparkPlug === 'Yes' && <span className="tag">Spark Plug</span>}
+                                            {service.brake === 'Yes' && <span className="tag">Brake Service</span>}
+                                        </div>
+                                        <p><span className="label">Date:</span> {service.date}</p>
+                                        <p><span className="label">Mileage:</span> {service.mileage.toLocaleString()}</p>
+                                        <p><span className="label">Miles Remaining:</span> {(service.mileage - currentMileage).toLocaleString()}</p>
+                                        <p><span className="label">Cost:</span> {service.cost}</p>
+                                        <p><span className="label">Status:</span> <span className="status-indicator">{isOverdue ? 'Emergency' : 'Pending'}</span></p>
+                                        <p><span className="label">Description:</span> {service.description || 'No description'}</p>
+                                    </div>
+                                    <button onClick={(e) => { e.stopPropagation(); setModal({ visible: true, type: 'upcoming', data: service }); }}>
+                                        View Details
+                                    </button>
+                                </div>
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
         );
     };
 
-    const ServiceHistoryTab = () => {
-        const allServices = [...upcomingServices, ...completedServices];
-        const servicesByYear = {};
+    const CompletedWorkTab = () => {
+        const inferServiceType = (description) => {
+            if (!description) return '';
+            const desc = description.toLowerCase();
+            if (desc.includes('oil change') || desc.includes('filter') || desc.includes('inspection') || desc.includes('fluid')) return 'SERVICE';
+            if (desc.includes('replace') || desc.includes('bearing') || desc.includes('clutch')) return 'UPGRADE';
+            if (desc.includes('repair') || desc.includes('fix')) return 'REPAIR';
+            return '';
+        };
 
-        allServices.forEach(service => {
-            const year = service.date.split('-')[0];
-            if (!servicesByYear[year]) {
-                servicesByYear[year] = { upcoming: [], completed: [] };
-            }
-            if (upcomingServices.includes(service)) {
-                servicesByYear[year].upcoming.push(service);
-            } else {
-                servicesByYear[year].completed.push(service);
-            }
-        });
-
-        const years = Object.keys(servicesByYear).sort((a, b) => b - a);
+        const filteredCompleted = completedServices
+            .filter(service => {
+                const inferredType = inferServiceType(service.description);
+                return (
+                    (completedTypeFilter === 'all' || inferredType === completedTypeFilter) &&
+                    (service.project.toLowerCase().includes(completedSearch.toLowerCase()) ||
+                     (service.description || '').toLowerCase().includes(completedSearch.toLowerCase()))
+                );
+            });
 
         return (
-            <div id="history" className="tab-content">
+            <div id="completed" className="tab-content">
                 <div className="panel">
-                    <h2>Service History Dashboard</h2>
-                    {years.map(year => {
-                        const { upcoming, completed } = servicesByYear[year];
-                        const projectedSpend = upcoming.reduce((sum, s) => sum + parseFloat(s.cost.replace('$', '').replace(',', '')), 0);
-                        const actualSpend = completed.reduce((sum, s) => sum + parseFloat(s.cost.replace('$', '').replace(',', '')), 0);
-
-                        const oilChanges = completed
-                            .filter(s => (s.description || '').toLowerCase().includes('oil change'))
-                            .sort((a, b) => a.mileage - b.mileage);
-                        const sparkPlugs = completed
-                            .filter(s => (s.description || '').toLowerCase().includes('spark plug') || (s.description || '').toLowerCase().includes('spark plugs'))
-                            .sort((a, b) => a.mileage - b.mileage);
-
-                        const oilChangeIntervals = [];
-                        for (let i = 1; i < oilChanges.length; i++) {
-                            const interval = oilChanges[i].mileage - oilChanges[i-1].mileage;
-                            oilChangeIntervals.push(interval);
-                        }
-                        const avgOilChangeInterval = oilChangeIntervals.length > 0 ? (oilChangeIntervals.reduce((sum, val) => sum + val, 0) / oilChangeIntervals.length).toFixed(0) : 'N/A';
-
-                        const sparkPlugIntervals = [];
-                        for (let i = 1; i < sparkPlugs.length; i++) {
-                            const interval = sparkPlugs[i].mileage - sparkPlugs[i-1].mileage;
-                            sparkPlugIntervals.push(interval);
-                        }
-                        const avgSparkPlugInterval = sparkPlugIntervals.length > 0 ? (sparkPlugIntervals.reduce((sum, val) => sum + val, 0) / sparkPlugIntervals.length).toFixed(0) : 'N/A';
-
-                        return (
-                            <div key={year} className="dashboard-section">
-                                <h3>{year}</h3>
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>Projected Spend</th>
-                                            <th>Actual Spend</th>
-                                            <th>Avg. Miles Between Oil Changes</th>
-                                            <th>Avg. Miles Between Spark Plugs</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>${projectedSpend.toLocaleString()}</td>
-                                            <td>${actualSpend.toLocaleString()}</td>
-                                            <td>{avgOilChangeInterval === 'N/A' ? 'N/A' : avgOilChangeInterval + ' miles'}</td>
-                                            <td>{avgSparkPlugInterval === 'N/A' ? 'N/A' : avgSparkPlugInterval + ' miles'}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                    <div className="filter-container">
+                        <label>Filter by Type:</label>
+                        <select 
+                            value={completedTypeFilter} 
+                            onChange={(e) => setCompletedTypeFilter(e.target.value)}
+                        >
+                            <option value="all">All</option>
+                            <option value="SERVICE">SERVICE</option>
+                            <option value="UPGRADE">UPGRADE</option>
+                            <option value="REPAIR">REPAIR</option>
+                        </select>
+                        <input 
+                            type="text" 
+                            value={completedSearch} 
+                            onChange={(e) => setCompletedSearch(e.target.value)} 
+                            placeholder="Search..." 
+                            style={{ width: '200px' }}
+                        />
+                    </div>
+                    {filteredCompleted.map(service => (
+                        <div 
+                            key={`${service.project}-${service.mileage}`} 
+                            className="card completed"
+                        >
+                            <div className="card-content">
+                                <div className="card-details">
+                                    <h3>{service.project}</h3>
+                                    <p><span className="label">Date:</span> {service.date}</p>
+                                    <p><span className="label">Mileage:</span> {service.mileage.toLocaleString()}</p>
+                                    <p><span className="label">Cost:</span> {service.cost}</p>
+                                    <p><span className="label">Status:</span> <span className="status-indicator">Completed</span></p>
+                                    <p><span className="label">Description:</span> {service.description || 'No description'}</p>
+                                </div>
+                                <button onClick={(e) => { e.stopPropagation(); setModal({ visible: true, type: 'completed', data: service }); }}>
+                                    View Details
+                                </button>
                             </div>
-                        );
-                    })}
+                        </div>
+                    ))}
                 </div>
             </div>
         );
@@ -772,62 +649,57 @@ const App = () => {
     return (
         <ErrorBoundary>
             <div className="container">
-                <div className="header">
-                    <h1>Porsche 996 Maintenance Tracker</h1>
-                    <div onClick={() => setQrModal(true)}>
-                        <svg className="qr-icon" viewBox="0 0 24 24" fill="currentColor">
-                            <rect x="4" y="4" width="6" height="6" />
-                            <rect x="14" y="4" width="6" height="6" />
-                            <rect x="4" y="14" width="6" height="6" />
-                            <rect x="14" y="14" width="6" height="6" />
-                            <rect x="10" y="10" width="4" height="4" />
-                        </svg>
+                <div className="sidebar">
+                    <h1 style={{ marginBottom: '24px' }}>Porsche 996 Maintenance</h1>
+                    <div 
+                        className={`nav-item ${activeTab === 'upcoming' ? 'active' : ''}`} 
+                        onClick={() => setActiveTab('upcoming')}
+                    >
+                        Upcoming Work
+                    </div>
+                    <div 
+                        className={`nav-item ${activeTab === 'completed' ? 'active' : ''}`} 
+                        onClick={() => setActiveTab('completed')}
+                    >
+                        Completed Work
                     </div>
                 </div>
+                <div className="main-content">
+                    <div className="header">
+                        <h1>{activeTab === 'upcoming' ? 'Upcoming Work' : 'Completed Work'}</h1>
+                        <div onClick={() => setQrModal(true)}>
+                            <svg className="qr-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <rect x="4" y="4" width="6" height="6" />
+                                <rect x="14" y="4" width="6" height="6" />
+                                <rect x="4" y="14" width="6" height="6" />
+                                <rect x="14" y="14" width="6" height="6" />
+                                <rect x="10" y="10" width="4" height="4" />
+                            </svg>
+                        </div>
+                    </div>
+                    {activeTab === 'upcoming' && <UpcomingWorkTab />}
+                    {activeTab === 'completed' && <CompletedWorkTab />}
 
-                <div className="nav-bar">
-                    <ul className="flex">
-                        <li>
-                            <button 
-                                className={`tab-button ${activeTab === 'maintenance' ? 'active' : ''}`} 
-                                onClick={() => setActiveTab('maintenance')}
-                            >
-                                Maintenance
-                            </button>
-                        </li>
-                        <li>
-                            <button 
-                                className={`tab-button ${activeTab === 'history' ? 'active' : ''}`} 
-                                onClick={() => setActiveTab('history')}
-                            >
-                                Service History
-                            </button>
-                        </li>
-                    </ul>
+                    <ServiceDetailsModal 
+                        visible={modal.visible} 
+                        type={modal.type} 
+                        data={modal.data} 
+                        onClose={() => setModal({ visible: false, type: '', data: null })}
+                        onEdit={() => handleEditService(modal.data, modal.type)}
+                        onDelete={() => handleDeleteService(modal.data, modal.type)}
+                    />
+
+                    <AddServiceModal 
+                        visible={addServiceModal.visible} 
+                        onClose={() => setAddServiceModal({ ...addServiceModal, visible: false })}
+                        onSubmit={handleAddService}
+                    />
+
+                    <QRModal 
+                        visible={qrModal} 
+                        onClose={() => setQrModal(false)}
+                    />
                 </div>
-
-                {activeTab === 'maintenance' && <MaintenanceTab />}
-                {activeTab === 'history' && <ServiceHistoryTab />}
-
-                <ServiceDetailsModal 
-                    visible={modal.visible} 
-                    type={modal.type} 
-                    data={modal.data} 
-                    onClose={() => setModal({ visible: false, type: '', data: null })}
-                    onEdit={() => handleEditService(modal.data, modal.type)}
-                    onDelete={() => handleDeleteService(modal.data, modal.type)}
-                />
-
-                <AddServiceModal 
-                    visible={addServiceModal.visible} 
-                    onClose={() => setAddServiceModal({ ...addServiceModal, visible: false })}
-                    onSubmit={handleAddService}
-                />
-
-                <QRModal 
-                    visible={qrModal} 
-                    onClose={() => setQrModal(false)}
-                />
             </div>
         </ErrorBoundary>
     );
