@@ -43,11 +43,11 @@
       background-color: #f1f5f9; 
       cursor: pointer; 
     }
-    #popup, #subtaskPopup, #filterDropdown {
+    #popup, #subtaskPopup, #filterDropdown, #addVehiclePopup {
       opacity: 0;
       transition: opacity 0.3s ease-in-out;
     }
-    #popup.show, #subtaskPopup.show, #filterDropdown.show {
+    #popup.show, #subtaskPopup.show, #filterDropdown.show, #addVehiclePopup.show {
       opacity: 1;
     }
     .preview-img {
@@ -83,7 +83,7 @@
       font-weight: 600;
       margin-bottom: 2px;
     }
-    .edit-field input[type="text"] {
+    .edit-field input[type="text"], .edit-field input[type="number"] {
       width: 100%;
       padding: 4px 8px;
       border: 1px solid #d1d5db;
@@ -172,7 +172,7 @@
       text-overflow: ellipsis;
       white-space: nowrap;
       display: inline-block;
-      width: calc(100% - 1rem); /* Adjust for the arrow */
+      width: calc(100% - 1rem);
     }
     .sort-arrow {
       display: inline-block;
@@ -186,6 +186,38 @@
     }
     .sort-header.desc .sort-arrow {
       transform: rotate(0deg);
+    }
+    /* Fleet Tile Styling */
+    .fleet-tile {
+      width: 200px;
+      height: 250px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+    .fleet-tile:hover {
+      transform: scale(1.05);
+    }
+    .fleet-tile img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+    }
+    .fleet-tile div {
+      padding: 0.5rem;
+      text-align: center;
+    }
+    .fleet-tile h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 0;
+    }
+    .fleet-tile p {
+      font-size: 0.875rem;
+      margin: 0;
+      color: #6b7280;
     }
   </style>
 </head>
@@ -204,13 +236,20 @@
     <div class="flex-1 p-4">
       <!-- Homepage -->
       <div id="homePage">
-        <h2 class="text-base font-semibold text-gray-700">Car Maintenance Tracker</h2>
+        <div class="flex justify-between items-center mb-3">
+          <h2 class="text-base font-semibold text-gray-700">Car Maintenance Tracker</h2>
+          <button class="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition" onclick="showAddVehiclePopup()">Add Vehicle</button>
+        </div>
+        <h3 class="text-sm font-semibold text-gray-700 mb-3">My Fleet</h3>
+        <div id="fleetList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <!-- Fleet tiles will be populated here -->
+        </div>
       </div>
 
-      <!-- Main Page -->
+      <!-- Main Page (Maintenance Tracker Details) -->
       <div id="mainPage" class="hidden">
         <div class="flex justify-between items-center mb-3">
-          <div></div>
+          <div id="vehicleHeader"></div>
           <div class="text-gray-700 text-sm">May 27, 2025</div>
           <div></div>
         </div>
@@ -366,6 +405,40 @@
           </div>
         </div>
       </div>
+
+      <!-- Add Vehicle Popup -->
+      <div id="addVehiclePopup" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg shadow-lg p-6 w-96">
+          <h3 class="text-base font-semibold text-gray-700 mb-4">Add Vehicle</h3>
+          <div id="addVehicleFields" class="text-sm text-gray-700 mb-4">
+            <div class="edit-field">
+              <label>Photo</label>
+              <input type="file" id="vehiclePhoto" accept="image/*" onchange="previewVehiclePhoto(event)">
+              <img id="vehiclePhotoPreview" class="preview-img hidden" src="" alt="Vehicle Preview">
+            </div>
+            <div class="edit-field">
+              <label>Make</label>
+              <input type="text" id="vehicleMake" class="text-sm" placeholder="e.g., Porsche">
+            </div>
+            <div class="edit-field">
+              <label>Model</label>
+              <input type="text" id="vehicleModel" class="text-sm" placeholder="e.g., 996 Convertible">
+            </div>
+            <div class="edit-field">
+              <label>Current Mileage</label>
+              <input type="number" id="vehicleMileage" class="text-sm" placeholder="e.g., 50000">
+            </div>
+            <div class="edit-field">
+              <label>VIN Number</label>
+              <input type="text" id="vehicleVIN" class="text-sm" placeholder="e.g., WP0CA29933S651234">
+            </div>
+          </div>
+          <div class="flex space-x-2 justify-end">
+            <button class="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 transition" onclick="saveVehicle()">Save</button>
+            <button class="px-3 py-1 bg-gray-200 rounded text-gray-700 text-sm hover:bg-gray-300 transition" onclick="closeAddVehiclePopup()">Close</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -376,16 +449,115 @@
     let currentSubtaskRow = null;
     let sortColumn = null;
     let sortDirection = 'asc';
+    let selectedVehicle = null;
+    let fleet = [
+      {
+        id: 1,
+        photo: "https://via.placeholder.com/200x150?text=2003+Porsche+996+Convertible",
+        make: "Porsche",
+        model: "996 Convertible",
+        year: 2003,
+        mileage: 50000,
+        vin: "WP0CA29933S651234"
+      }
+    ];
 
     // Page navigation
-    function showPage(page) {
+    function showPage(page, vehicle = null) {
       document.getElementById('homePage').classList.add('hidden');
       document.getElementById('mainPage').classList.add('hidden');
       document.getElementById('dashboardPage').classList.add('hidden');
       document.getElementById(page + 'Page').classList.remove('hidden');
       if (page === 'dashboard') {
         updateDashboard();
+      } else if (page === 'main' && vehicle) {
+        selectedVehicle = vehicle;
+        document.getElementById('vehicleHeader').innerHTML = `
+          <h2 class="text-base font-semibold text-gray-700">${vehicle.year} ${vehicle.make} ${vehicle.model}</h2>
+          <p class="text-sm text-gray-700">VIN: ${vehicle.vin} | Mileage: ${vehicle.mileage}</p>
+        `;
       }
+    }
+
+    // Populate fleet tiles on homepage
+    function populateFleet() {
+      const fleetList = document.getElementById('fleetList');
+      fleetList.innerHTML = '';
+      fleet.forEach(vehicle => {
+        const tile = document.createElement('div');
+        tile.className = 'fleet-tile';
+        tile.innerHTML = `
+          <img src="${vehicle.photo}" alt="${vehicle.make} ${vehicle.model}">
+          <div>
+            <h3>${vehicle.make}</h3>
+            <p>${vehicle.model}</p>
+          </div>
+        `;
+        tile.onclick = () => showPage('main', vehicle);
+        fleetList.appendChild(tile);
+      });
+    }
+
+    // Show Add Vehicle Popup
+    function showAddVehiclePopup() {
+      document.getElementById('vehiclePhoto').value = '';
+      document.getElementById('vehiclePhotoPreview').classList.add('hidden');
+      document.getElementById('vehicleMake').value = '';
+      document.getElementById('vehicleModel').value = '';
+      document.getElementById('vehicleMileage').value = '';
+      document.getElementById('vehicleVIN').value = '';
+      const popup = document.getElementById('addVehiclePopup');
+      popup.classList.remove('hidden');
+      popup.classList.add('show');
+    }
+
+    // Preview Vehicle Photo
+    function previewVehiclePhoto(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const preview = document.getElementById('vehiclePhotoPreview');
+          preview.src = e.target.result;
+          preview.classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    // Save Vehicle
+    function saveVehicle() {
+      const photo = document.getElementById('vehiclePhotoPreview').src || 'https://via.placeholder.com/200x150?text=Vehicle';
+      const make = document.getElementById('vehicleMake').value.trim();
+      const model = document.getElementById('vehicleModel').value.trim();
+      const mileage = parseInt(document.getElementById('vehicleMileage').value.trim());
+      const vin = document.getElementById('vehicleVIN').value.trim();
+
+      if (!make || !model || isNaN(mileage) || !vin) {
+        alert('Please fill in all fields.');
+        return;
+      }
+
+      const vehicle = {
+        id: fleet.length + 1,
+        photo: photo,
+        make: make,
+        model: model,
+        year: new Date().getFullYear(), // Assuming current year for simplicity
+        mileage: mileage,
+        vin: vin
+      };
+
+      fleet.push(vehicle);
+      populateFleet();
+      closeAddVehiclePopup();
+    }
+
+    // Close Add Vehicle Popup
+    function closeAddVehiclePopup() {
+      const popup = document.getElementById('addVehiclePopup');
+      popup.classList.remove('show');
+      setTimeout(() => popup.classList.add('hidden'), 300);
     }
 
     // Update dashboard counts
@@ -409,9 +581,8 @@
 
     // Toggle filter dropdown
     function toggleFilterDropdown() {
-      // Ensure the mainPage is visible and elements exist
       if (document.getElementById('mainPage').classList.contains('hidden')) {
-        return; // Do nothing if mainPage is not visible
+        return;
       }
 
       const dropdown = document.getElementById('filterDropdown');
@@ -429,7 +600,7 @@
       const searchInput = document.getElementById('searchInput');
       const checkboxes = document.querySelectorAll('#filterDropdown input[type="checkbox"]');
 
-      if (!searchInput || !checkboxes) return; // Exit if elements are not found
+      if (!searchInput || !checkboxes) return;
 
       const searchValue = searchInput.value.toLowerCase();
       const selectedStatuses = Array.from(checkboxes)
@@ -445,18 +616,15 @@
         return matchesSearch && matchesStatus;
       });
 
-      // Reapply sorting if a column is currently sorted
       if (sortColumn !== null) {
         const columnIndex = { 'status': 0, 'task': 2, 'serviceDate': 3, 'mileage': 4 }[sortColumn];
         filteredRows.sort((a, b) => compareRows(a, b, columnIndex, sortColumn));
       }
 
-      // Clear and re-append rows in the filtered and sorted order
       const tbody = document.getElementById('taskTable');
       tbody.innerHTML = '';
       filteredRows.forEach(row => tbody.appendChild(row));
 
-      // Show all rows that passed the filter
       filteredRows.forEach(row => row.style.display = '');
     }
 
@@ -488,7 +656,7 @@
       tbody.innerHTML = '';
       sortedRows.forEach(row => tbody.appendChild(row));
 
-      filterAndSearch(); // Reapply filters after sorting
+      filterAndSearch();
     }
 
     function compareRows(a, b, columnIndex, columnType) {
@@ -677,6 +845,7 @@
 
     // Initialize the page
     showPage('home');
+    populateFleet();
   </script>
 </body>
 </html>
