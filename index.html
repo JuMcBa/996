@@ -43,11 +43,11 @@
       background-color: #f1f5f9; 
       cursor: pointer; 
     }
-    #popup, #subtaskPopup, #filterDropdown, #addVehiclePopup {
+    #popup, #subtaskPopup, #filterDropdown, #addVehiclePopup, #addServicePopup {
       opacity: 0;
       transition: opacity 0.3s ease-in-out;
     }
-    #popup.show, #subtaskPopup.show, #filterDropdown.show, #addVehiclePopup.show {
+    #popup.show, #subtaskPopup.show, #filterDropdown.show, #addVehiclePopup.show, #addServicePopup.show {
       opacity: 1;
     }
     .preview-img {
@@ -196,6 +196,7 @@
       overflow: hidden;
       cursor: pointer;
       transition: transform 0.3s ease;
+      position: relative;
     }
     .fleet-tile:hover {
       transform: scale(1.05);
@@ -222,11 +223,12 @@
     /* Scheduled Services Styling */
     .service-entry {
       display: flex;
-      justify-content: space-between;
       align-items: center;
       padding: 0.5rem;
       border-bottom: 1px solid #e5e7eb;
       cursor: pointer;
+      position: relative;
+      min-height: 60px; /* Ensure enough height for the line */
     }
     .service-entry:hover {
       background-color: #f1f5f9;
@@ -263,17 +265,62 @@
       width: 1rem;
       height: 1rem;
     }
+    /* Status Indicator Styling */
+    .status-line-bottom {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+    }
+    .status-line-left {
+      width: 4px;
+      height: 100%;
+      min-height: 60px; /* Match the min-height of service-entry */
+      margin-right: 0.5rem;
+      flex-shrink: 0; /* Prevent the line from shrinking */
+    }
+    .status-green {
+      background-color: #22c55e;
+    }
+    .status-grey {
+      background-color: #6b7280;
+    }
+    .status-red {
+      background-color: #ef4444;
+    }
+    /* Update Vehicle Section */
+    .update-vehicle {
+      margin-bottom: 1rem;
+      padding: 1rem;
+      background-color: #f9fafb;
+      border-radius: 0.5rem;
+    }
+    .update-vehicle h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .update-vehicle .edit-field {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .update-vehicle .edit-field input[type="file"],
+    .update-vehicle .edit-field input[type="number"] {
+      flex: 1;
+    }
   </style>
 </head>
 <body class="bg-gray-100 font-sans text-gray-700">
   <div class="flex h-screen">
     <!-- Sidebar -->
-    <div class="bg-purple-800 text-white w-12 flex flex-col items-center py-2">
-      <button class="mb-3" onclick="showPage('home')"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7m-9 2v7a2 2 0 002 2h4a2 2 0 002-2v-7"></path></svg></button>
-      <button class="mb-3" onclick="showPage('main')"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12h18M3 6h18M3 18h18"></path></svg></button>
-      <button class="mb-3" onclick="showPage('dashboard')"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h4v16H3zM10 8h4v12h-4zM17 12h4v8h-4z"></path></svg></button>
-      <button class="mb-3"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></button>
-      <button><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l-4-4m0 0l4-4m-4 4h14"></path></svg></button>
+    <div class="bg-blue-800 text-white w-16 flex flex-col items-center py-2">
+      <button class="mb-3" onclick="showPage('home')"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7m-9 2v7a2 2 0 002 2h4a2 2 0 002-2v-7"></path></svg></button>
+      <button class="mb-3" onclick="showPage('main')"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12h18M3 6h18M3 18h18"></path></svg></button>
+      <button class="mb-3" onclick="showPage('dashboard')"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h4v16H3zM10 8h4v12h-4zM17 12h4v8h-4z"></path></svg></button>
+      <button class="mb-3"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></button>
+      <button><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l-4-4m0 0l4-4m-4 4h14"></path></svg></button>
     </div>
 
     <!-- Main Content -->
@@ -285,15 +332,21 @@
           <button class="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition" onclick="showAddVehiclePopup()">Add Vehicle</button>
         </div>
         <h3 class="text-sm font-semibold text-gray-700 mb-3">My Fleet</h3>
-        <div id="fleetList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
+        <div id="fleetList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 mb-6">
           <!-- Fleet tiles will be populated here -->
         </div>
         <div class="flex justify-between items-center mb-3">
           <h3 class="text-sm font-semibold text-gray-700">Scheduled Services</h3>
-          <select id="sortServices" onchange="sortServices()" class="border rounded px-2 py-1 text-sm">
-            <option value="date">Sort by Scheduled Date</option>
-            <option value="mileage">Sort by Mileage</option>
-          </select>
+          <div class="flex items-center gap-2">
+            <select id="vehicleFilter" onchange="filterServicesByVehicle()" class="border rounded px-2 py-1 text-sm">
+              <option value="all">All Vehicles</option>
+              <!-- Options will be populated dynamically -->
+            </select>
+            <select id="sortServices" onchange="sortServices()" class="border rounded px-2 py-1 text-sm">
+              <option value="date">Sort by Scheduled Date</option>
+              <option value="mileage">Sort by Mileage</option>
+            </select>
+          </div>
         </div>
         <div id="scheduledServices" class="bg-white shadow rounded p-2">
           <!-- Scheduled services will be populated here -->
@@ -306,6 +359,26 @@
           <div id="vehicleHeader"></div>
           <div class="text-gray-700 text-sm">May 27, 2025</div>
           <div></div>
+        </div>
+
+        <!-- Update Vehicle Section -->
+        <div class="update-vehicle mb-3">
+          <h3>Update Vehicle Details</h3>
+          <div class="edit-field">
+            <label>Vehicle Image</label>
+            <input type="file" id="updateVehiclePhoto" accept="image/*" onchange="previewUpdateVehiclePhoto(event)">
+            <img id="updateVehiclePhotoPreview" class="preview-img" src="" alt="Vehicle Preview">
+          </div>
+          <div class="edit-field">
+            <label>Current Mileage</label>
+            <input type="number" id="updateVehicleMileage" class="text-sm" placeholder="e.g., 50000">
+            <button class="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 transition" onclick="updateVehicleDetails()">Update</button>
+          </div>
+        </div>
+
+        <!-- Add New Service Button -->
+        <div class="mb-3">
+          <button class="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition" onclick="showAddServicePopup()">Add New Service</button>
         </div>
 
         <!-- Filters and Search -->
@@ -459,6 +532,70 @@
           </div>
         </div>
       </div>
+
+      <!-- Add Service Popup -->
+      <div id="addServicePopup" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg shadow-lg p-6 w-96">
+          <h3 class="text-base font-semibold text-gray-700 mb-4">Add New Service</h3>
+          <div id="addServiceFields" class="text-sm text-gray-700 mb-4">
+            <div class="edit-field">
+              <label>Description</label>
+              <input type="text" id="newServiceDescription" class="text-sm" placeholder="e.g., Oil Change">
+            </div>
+            <div class="edit-field">
+              <label>Scheduled Date (MM/DD/YYYY)</label>
+              <input type="text" id="newServiceDate" class="text-sm" placeholder="e.g., 06/15/2025">
+            </div>
+            <div class="edit-field">
+              <label>Mileage</label>
+              <input type="number" id="newServiceMileage" class="text-sm" placeholder="e.g., 51000">
+            </div>
+            <div class="edit-field">
+              <label>Details</label>
+              <input type="text" id="newServiceDetails" class="text-sm" placeholder="e.g., Check oil levels">
+            </div>
+            <div class="edit-field">
+              <label>Vendor</label>
+              <input type="text" id="newServiceVendor" class="text-sm" placeholder="e.g., AutoFix Shop">
+            </div>
+            <div class="edit-field">
+              <label>Projected Cost</label>
+              <input type="text" id="newServiceProjectedCost" class="text-sm" placeholder="e.g., $50">
+            </div>
+            <div class="edit-field">
+              <label>Actual Cost</label>
+              <input type="text" id="newServiceActualCost" class="text-sm" placeholder="e.g., $45">
+            </div>
+            <div class="edit-field">
+              <label>Vendors</label>
+              <input type="text" id="newServiceVendors" class="text-sm" placeholder="e.g., AutoFix Shop, CarCare Center">
+            </div>
+            <div class="edit-field">
+              <label>Oil Change</label>
+              <input type="checkbox" id="newServiceOilChange">
+            </div>
+            <div class="edit-field">
+              <label>Spark Plugs</label>
+              <input type="checkbox" id="newServiceSparkPlugs">
+            </div>
+            <div class="edit-field">
+              <label>Brakes</label>
+              <input type="checkbox" id="newServiceBrakes">
+            </div>
+            <div class="edit-field">
+              <label>Status</label>
+              <select id="newServiceStatus" class="border rounded px-2 py-1 text-sm">
+                <option value="Scheduled">Scheduled</option>
+                <option value="Completed">Completed</option>
+              </select>
+            </div>
+          </div>
+          <div class="flex space-x-2 justify-end">
+            <button class="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 transition" onclick="saveNewService()">Save</button>
+            <button class="px-3 py-1 bg-gray-200 rounded text-gray-700 text-sm hover:bg-gray-300 transition" onclick="closeAddServicePopup()">Close</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -470,6 +607,7 @@
     let sortColumn = null;
     let sortDirection = 'asc';
     let selectedVehicle = null;
+    let currentDate = new Date('2025-06-01T22:47:00-07:00'); // 10:47 PM PDT on June 01, 2025
     let fleet = [
       {
         id: 1,
@@ -551,6 +689,42 @@
       }
     ];
 
+    // Determine status for a vehicle or service
+    function determineStatus(vehicleId, isService = false, service = null) {
+      const vehicle = fleet.find(v => v.id === vehicleId);
+      if (!vehicle) return 'status-grey';
+
+      const relevantServices = isService 
+        ? [service] 
+        : scheduledServices.filter(s => s.vehicleId === vehicleId && s.status === "Scheduled");
+
+      if (relevantServices.length === 0) return 'status-green'; // No scheduled services, all good
+
+      let hasOverdue = false;
+      let hasUpcoming = false;
+
+      for (const svc of relevantServices) {
+        const svcDate = new Date(svc.scheduledDate.split('/').reverse().join('-'));
+        const daysDiff = (svcDate - currentDate) / (1000 * 60 * 60 * 24);
+        const mileageDiff = svc.mileage - vehicle.mileage;
+
+        // Overdue: Past the scheduled date or mileage exceeded
+        if (svcDate < currentDate || mileageDiff < 0) {
+          hasOverdue = true;
+          break;
+        }
+
+        // Upcoming: Within 5 days or 500 miles
+        if (daysDiff <= 5 || mileageDiff <= 500) {
+          hasUpcoming = true;
+        }
+      }
+
+      if (hasOverdue) return 'status-red';
+      if (hasUpcoming) return 'status-grey';
+      return 'status-green';
+    }
+
     // Page navigation
     function showPage(page, vehicle = null, service = null) {
       document.getElementById('homePage').classList.add('hidden');
@@ -565,11 +739,39 @@
           <h2 class="text-base font-semibold text-gray-700">${vehicle.year} ${vehicle.make} ${vehicle.model}</h2>
           <p class="text-sm text-gray-700">VIN: ${vehicle.vin} | Mileage: ${vehicle.mileage}</p>
         `;
+        document.getElementById('updateVehiclePhotoPreview').src = vehicle.photo;
+        document.getElementById('updateVehicleMileage').value = vehicle.mileage;
         if (service) {
           populateTasksForService(service);
         } else {
           populateTasksForVehicle(vehicle.id);
         }
+      }
+    }
+
+    // Populate vehicle filter dropdown
+    function populateVehicleFilter() {
+      const vehicleFilter = document.getElementById('vehicleFilter');
+      vehicleFilter.innerHTML = '<option value="all">All Vehicles</option>';
+      fleet.forEach(vehicle => {
+        const option = document.createElement('option');
+        option.value = vehicle.id;
+        option.textContent = `${vehicle.year} ${vehicle.make} ${vehicle.model}`;
+        vehicleFilter.appendChild(option);
+      });
+    }
+
+    // Filter services by selected vehicle
+    function filterServicesByVehicle() {
+      const vehicleId = document.getElementById('vehicleFilter').value;
+      if (vehicleId === 'all') {
+        populateScheduledServices(scheduledServices);
+      } else {
+        const filteredServices = scheduledServices.filter(service => 
+          service.vehicleId === parseInt(vehicleId) && 
+          (service.status === "Scheduled" || service.status === "Completed")
+        );
+        populateScheduledServices(filteredServices);
       }
     }
 
@@ -580,40 +782,47 @@
       fleet.forEach(vehicle => {
         const tile = document.createElement('div');
         tile.className = 'fleet-tile';
+        const statusClass = determineStatus(vehicle.id);
         tile.innerHTML = `
           <img src="${vehicle.photo}" alt="${vehicle.make} ${vehicle.model}">
           <div>
             <h3>${vehicle.make}</h3>
             <p>${vehicle.model}</p>
           </div>
+          <div class="status-line-bottom ${statusClass}"></div>
         `;
         tile.onclick = () => showPage('main', vehicle);
         fleetList.appendChild(tile);
       });
+      populateVehicleFilter();
     }
 
     // Populate scheduled services
-    function populateScheduledServices() {
+    function populateScheduledServices(servicesToShow = scheduledServices) {
       const servicesList = document.getElementById('scheduledServices');
       servicesList.innerHTML = '';
-      scheduledServices.forEach(service => {
+      servicesToShow.forEach(service => {
         const vehicle = fleet.find(v => v.id === service.vehicleId);
         if (!vehicle) return;
         const entry = document.createElement('div');
         entry.className = 'service-entry';
+        const statusClass = determineStatus(vehicle.id, true, service);
         entry.innerHTML = `
-          <div class="service-details">
-            <h4>${vehicle.year} ${vehicle.make} ${vehicle.model}</h4>
-            <p>${service.description}</p>
-          </div>
-          <div class="service-meta">
-            <div>
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-              ${service.scheduledDate}
+          <div class="status-line-left ${statusClass}"></div>
+          <div style="flex: 1; display: flex; justify-content: space-between; align-items: center;">
+            <div class="service-details">
+              <h4>${vehicle.year} ${vehicle.make} ${vehicle.model}</h4>
+              <p>${service.description}</p>
             </div>
-            <div>
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-              ${service.mileage}
+            <div class="service-meta">
+              <div>
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                ${service.scheduledDate}
+              </div>
+              <div>
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                ${service.mileage}
+              </div>
             </div>
           </div>
         `;
@@ -625,7 +834,15 @@
     // Sort scheduled services
     function sortServices() {
       const sortBy = document.getElementById('sortServices').value;
-      scheduledServices.sort((a, b) => {
+      const vehicleId = document.getElementById('vehicleFilter').value;
+      let servicesToSort = scheduledServices;
+      if (vehicleId !== 'all') {
+        servicesToSort = scheduledServices.filter(service => 
+          service.vehicleId === parseInt(vehicleId) && 
+          (service.status === "Scheduled" || service.status === "Completed")
+        );
+      }
+      servicesToSort.sort((a, b) => {
         if (sortBy === 'date') {
           const dateA = new Date(a.scheduledDate.split('/').reverse().join('-'));
           const dateB = new Date(b.scheduledDate.split('/').reverse().join('-'));
@@ -634,7 +851,7 @@
           return a.mileage - b.mileage;
         }
       });
-      populateScheduledServices();
+      populateScheduledServices(servicesToSort);
     }
 
     // Populate tasks for a vehicle
@@ -750,6 +967,116 @@
     // Close Add Vehicle Popup
     function closeAddVehiclePopup() {
       const popup = document.getElementById('addVehiclePopup');
+      popup.classList.remove('show');
+      setTimeout(() => popup.classList.add('hidden'), 300);
+    }
+
+    // Preview Updated Vehicle Photo
+    function previewUpdateVehiclePhoto(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const preview = document.getElementById('updateVehiclePhotoPreview');
+          preview.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    // Update Vehicle Details
+    function updateVehicleDetails() {
+      const newPhoto = document.getElementById('updateVehiclePhotoPreview').src;
+      const newMileage = parseInt(document.getElementById('updateVehicleMileage').value.trim());
+
+      if (isNaN(newMileage)) {
+        alert('Please enter a valid mileage.');
+        return;
+      }
+
+      const vehicleIndex = fleet.findIndex(v => v.id === selectedVehicle.id);
+      if (vehicleIndex !== -1) {
+        fleet[vehicleIndex] = {
+          ...fleet[vehicleIndex],
+          photo: newPhoto,
+          mileage: newMileage
+        };
+        selectedVehicle = fleet[vehicleIndex];
+        document.getElementById('vehicleHeader').innerHTML = `
+          <h2 class="text-base font-semibold text-gray-700">${selectedVehicle.year} ${selectedVehicle.make} ${selectedVehicle.model}</h2>
+          <p class="text-sm text-gray-700">VIN: ${selectedVehicle.vin} | Mileage: ${selectedVehicle.mileage}</p>
+        `;
+        populateFleet();
+        populateScheduledServices();
+      }
+    }
+
+    // Show Add Service Popup
+    function showAddServicePopup() {
+      document.getElementById('newServiceDescription').value = '';
+      document.getElementById('newServiceDate').value = '';
+      document.getElementById('newServiceMileage').value = '';
+      document.getElementById('newServiceDetails').value = '';
+      document.getElementById('newServiceVendor').value = '';
+      document.getElementById('newServiceProjectedCost').value = '';
+      document.getElementById('newServiceActualCost').value = '';
+      document.getElementById('newServiceVendors').value = '';
+      document.getElementById('newServiceOilChange').checked = false;
+      document.getElementById('newServiceSparkPlugs').checked = false;
+      document.getElementById('newServiceBrakes').checked = false;
+      document.getElementById('newServiceStatus').value = 'Scheduled';
+      const popup = document.getElementById('addServicePopup');
+      popup.classList.remove('hidden');
+      popup.classList.add('show');
+    }
+
+    // Save New Service
+    function saveNewService() {
+      const description = document.getElementById('newServiceDescription').value.trim();
+      const scheduledDate = document.getElementById('newServiceDate').value.trim();
+      const mileage = parseInt(document.getElementById('newServiceMileage').value.trim());
+      const details = document.getElementById('newServiceDetails').value.trim();
+      const vendor = document.getElementById('newServiceVendor').value.trim();
+      const projectedCost = document.getElementById('newServiceProjectedCost').value.trim();
+      const actualCost = document.getElementById('newServiceActualCost').value.trim();
+      const vendors = document.getElementById('newServiceVendors').value.trim();
+      const metadata = {
+        oilChange: document.getElementById('newServiceOilChange').checked,
+        sparkPlugs: document.getElementById('newServiceSparkPlugs').checked,
+        brakes: document.getElementById('newServiceBrakes').checked
+      };
+      const status = document.getElementById('newServiceStatus').value;
+
+      if (!description || !scheduledDate || isNaN(mileage)) {
+        alert('Please fill in all required fields (Description, Scheduled Date, Mileage).');
+        return;
+      }
+
+      const newService = {
+        vehicleId: selectedVehicle.id,
+        description: description,
+        scheduledDate: scheduledDate,
+        mileage: mileage,
+        details: details || "No details provided",
+        vendor: vendor || "Not specified",
+        projectedCost: projectedCost || "Not specified",
+        actualCost: actualCost || "Not specified",
+        vendors: vendors || "Not specified",
+        metadata: JSON.stringify(metadata),
+        subtasks: '[]',
+        status: status
+      };
+
+      scheduledServices.push(newService);
+      populateTasksForVehicle(selectedVehicle.id);
+      populateScheduledServices();
+      populateFleet();
+      closeAddServicePopup();
+    }
+
+    // Close Add Service Popup
+    function closeAddServicePopup() {
+      const popup = document.getElementById('addServicePopup');
       popup.classList.remove('show');
       setTimeout(() => popup.classList.add('hidden'), 300);
     }
@@ -995,6 +1322,7 @@
           metadata: JSON.stringify(newMetadata)
         };
         populateScheduledServices();
+        populateFleet();
       }
 
       showPopup(selectedRow);
