@@ -197,6 +197,7 @@
       cursor: pointer;
       transition: transform 0.3s ease;
       position: relative;
+      flex: 0 0 auto; /* Prevent shrinking */
     }
     .fleet-tile:hover {
       transform: scale(1.05);
@@ -219,6 +220,26 @@
       font-size: 0.875rem;
       margin: 0;
       color: #6b7280;
+    }
+    /* Horizontal Scroll Container */
+    .horizontal-scroll {
+      display: flex;
+      overflow-x: auto;
+      gap: 0.5rem; /* Reduced gap for single row */
+      padding-bottom: 0.5rem;
+      margin-bottom: 1rem;
+      -webkit-overflow-scrolling: touch; /* Smooth scrolling on touch devices */
+      scrollbar-width: thin; /* For Firefox */
+    }
+    .horizontal-scroll::-webkit-scrollbar {
+      height: 8px;
+    }
+    .horizontal-scroll::-webkit-scrollbar-thumb {
+      background-color: #d1d5db;
+      border-radius: 4px;
+    }
+    .horizontal-scroll::-webkit-scrollbar-track {
+      background: #f1f5f9;
     }
     /* Scheduled Services Styling */
     .service-entry {
@@ -310,30 +331,75 @@
     .update-vehicle .edit-field input[type="number"] {
       flex: 1;
     }
+    /* Dashboard Tile Styling */
+    .dashboard-tile {
+      flex: 0 0 auto;
+      width: 200px;
+      background-color: white;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .dashboard-tile h3 {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #374151;
+    }
+    .dashboard-tile p {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #374151;
+      margin-top: 0.5rem;
+    }
   </style>
 </head>
 <body class="bg-gray-100 font-sans text-gray-700">
   <div class="flex h-screen">
     <!-- Sidebar -->
     <div class="bg-blue-800 text-white w-16 flex flex-col items-center py-2">
-      <button class="mb-3" onclick="showPage('home')"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7m-9 2v7a2 2 0 002 2h4a2 2 0 002-2v-7"></path></svg></button>
-      <button class="mb-3" onclick="showPage('main')"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12h18M3 6h18M3 18h18"></path></svg></button>
-      <button class="mb-3" onclick="showPage('dashboard')"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h4v16H3zM10 8h4v12h-4zM17 12h4v8h-4z"></path></svg></button>
-      <button class="mb-3"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></button>
-      <button><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l-4-4m0 0l4-4m-4 4h14"></path></svg></button>
+      <button class="mb-3" onclick="showPage('welcome')">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7m-9 2v7a2 2 0 002 2h4a2 2 0 002-2v-7"></path>
+        </svg>
+      </button>
+      <button class="mb-3" onclick="showPage('home')">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10h6m-6 0h-3m3-10h3M4 4h16v16H4z"></path>
+        </svg>
+      </button>
     </div>
 
     <!-- Main Content -->
     <div class="flex-1 p-4">
+      <!-- Welcome Page -->
+      <div id="welcomePage">
+        <h2 class="text-base font-semibold text-gray-700">Welcome to Car Maintenance Tracker</h2>
+      </div>
+
       <!-- Homepage -->
-      <div id="homePage">
+      <div id="homePage" class="hidden">
         <div class="flex justify-between items-center mb-3">
-          <h2 class="text-base font-semibold text-gray-700">Car Maintenance Tracker</h2>
+          <h2 class="text-base font-semibold text-gray-700">Home Maintenance Tracker</h2>
           <button class="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition" onclick="showAddVehiclePopup()">Add Vehicle</button>
         </div>
         <h3 class="text-sm font-semibold text-gray-700 mb-3">My Fleet</h3>
-        <div id="fleetList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 mb-6">
+        <div id="fleetList" class="horizontal-scroll mb-6">
           <!-- Fleet tiles will be populated here -->
+        </div>
+        <h3 class="text-sm font-semibold text-gray-700 mb-3">Dashboard</h3>
+        <div id="dashboardTiles" class="horizontal-scroll mb-6">
+          <div class="dashboard-tile">
+            <h3>Scheduled Tasks</h3>
+            <p id="scheduledCount">0</p>
+          </div>
+          <div class="dashboard-tile">
+            <h3>In Progress Tasks</h3>
+            <p id="inProgressCount">0</p>
+          </div>
+          <div class="dashboard-tile">
+            <h3>Completed Tasks</h3>
+            <p id="completedCount">0</p>
+          </div>
         </div>
         <div class="flex justify-between items-center mb-3">
           <h3 class="text-sm font-semibold text-gray-700">Scheduled Services</h3>
@@ -357,7 +423,7 @@
       <div id="mainPage" class="hidden">
         <div class="flex justify-between items-center mb-3">
           <div id="vehicleHeader"></div>
-          <div class="text-gray-700 text-sm">May 27, 2025</div>
+          <div class="text-gray-700 text-sm">June 02, 2025</div>
           <div></div>
         </div>
 
@@ -437,30 +503,6 @@
               <!-- Tasks will be populated dynamically -->
             </tbody>
           </table>
-        </div>
-      </div>
-
-      <!-- Dashboard Page -->
-      <div id="dashboardPage" class="hidden">
-        <div class="flex justify-between items-center mb-3">
-          <div></div>
-          <div class="text-gray-700 text-sm">May 27, 2025</div>
-          <div></div>
-        </div>
-        <h2 class="text-base font-semibold text-gray-700 mb-3">Dashboard</h2>
-        <div class="grid grid-cols-3 gap-4">
-          <div class="bg-white shadow rounded p-4">
-            <h3 class="text-sm font-semibold text-gray-700">Scheduled Tasks</h3>
-            <p id="scheduledCount" class="text-2xl font-bold text-gray-700 mt-2">0</p>
-          </div>
-          <div class="bg-white shadow rounded p-4">
-            <h3 class="text-sm font-semibold text-gray-700">In Progress Tasks</h3>
-            <p id="inProgressCount" class="text-2xl font-bold text-gray-700 mt-2">0</p>
-          </div>
-          <div class="bg-white shadow rounded p-4">
-            <h3 class="text-sm font-semibold text-gray-700">Completed Tasks</h3>
-            <p id="completedCount" class="text-2xl font-bold text-gray-700 mt-2">0</p>
-          </div>
         </div>
       </div>
 
@@ -607,7 +649,7 @@
     let sortColumn = null;
     let sortDirection = 'asc';
     let selectedVehicle = null;
-    let currentDate = new Date('2025-06-01T22:47:00-07:00'); // 10:47 PM PDT on June 01, 2025
+    let currentDate = new Date('2025-06-02T08:03:00-07:00'); // 08:03 AM PDT on June 02, 2025
     let fleet = [
       {
         id: 1,
@@ -727,11 +769,11 @@
 
     // Page navigation
     function showPage(page, vehicle = null, service = null) {
+      document.getElementById('welcomePage').classList.add('hidden');
       document.getElementById('homePage').classList.add('hidden');
       document.getElementById('mainPage').classList.add('hidden');
-      document.getElementById('dashboardPage').classList.add('hidden');
       document.getElementById(page + 'Page').classList.remove('hidden');
-      if (page === 'dashboard') {
+      if (page === 'home') {
         updateDashboard();
       } else if (page === 'main' && vehicle) {
         selectedVehicle = vehicle;
@@ -1071,6 +1113,7 @@
       populateTasksForVehicle(selectedVehicle.id);
       populateScheduledServices();
       populateFleet();
+      updateDashboard();
       closeAddServicePopup();
     }
 
@@ -1083,16 +1126,14 @@
 
     // Update dashboard counts
     function updateDashboard() {
-      const rows = document.querySelectorAll('#taskTable tr');
       let scheduledCount = 0;
       let inProgressCount = 0;
       let completedCount = 0;
 
-      rows.forEach(row => {
-        const status = row.cells[0].textContent;
-        if (status === 'Scheduled') scheduledCount++;
-        if (status === 'In Progress') inProgressCount++;
-        if (status === 'Completed') completedCount++;
+      scheduledServices.forEach(service => {
+        if (service.status === 'Scheduled') scheduledCount++;
+        if (service.status === 'In Progress') inProgressCount++;
+        if (service.status === 'Completed') completedCount++;
       });
 
       document.getElementById('scheduledCount').textContent = scheduledCount;
@@ -1323,6 +1364,7 @@
         };
         populateScheduledServices();
         populateFleet();
+        updateDashboard();
       }
 
       showPopup(selectedRow);
