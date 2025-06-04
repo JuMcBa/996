@@ -5,7 +5,7 @@ let currentSubtaskRow = null;
 let sortColumn = null;
 let sortDirection = 'asc';
 let selectedVehicle = null;
-let currentDate = new Date('2025-06-03T07:35:00-07:00'); // 07:35 AM PDT on June 03, 2025
+let currentDate = new Date('2025-06-03T20:33:00-07:00'); // 08:33 PM PDT on June 03, 2025
 let fleet = [
   {
     id: 1,
@@ -196,7 +196,7 @@ function populateFleet() {
       </div>
       <div class="status-line-bottom ${statusClass}"></div>
     `;
-    tile.onclick = () => showPage('main', vehicle);
+    tile.addEventListener('click', () => showPage('main', vehicle));
     fleetList.appendChild(tile);
   });
   populateVehicleFilter();
@@ -231,7 +231,7 @@ function populateScheduledServices(servicesToShow = scheduledServices) {
         </div>
       </div>
     `;
-    entry.onclick = () => showPage('main', vehicle, service);
+    entry.addEventListener('click', () => showPage('main', vehicle, service));
     servicesList.appendChild(entry);
   });
 }
@@ -266,7 +266,6 @@ function populateTasksForVehicle(vehicleId) {
   tbody.innerHTML = '';
   tasks.forEach(task => {
     const row = document.createElement('tr');
-    row.onclick = () => showPopup(row);
     row.setAttribute('data-subtasks', task.subtasks);
     row.setAttribute('data-details', task.details);
     row.setAttribute('data-vendor', task.vendor);
@@ -279,11 +278,13 @@ function populateTasksForVehicle(vehicleId) {
     if (task.status === 'Completed') statusColor = 'bg-blue-500';
     row.innerHTML = `
       <td class="p-2 status-col"><span class="${statusColor} text-white px-2 py-1 rounded text-xs">${task.status}</span></td>
-      <td class="p-2 subtasks-col"><button onclick="showSubtaskPopup(this.parentElement.parentElement, event)"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg></button></td>
+      <td class="p-2 subtasks-col"><button class="subtaskBtn"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg></button></td>
       <td class="p-2 task-col">${task.description}</td>
       <td class="p-2 date-col">${task.scheduledDate}</td>
       <td class="p-2 mileage-col">${task.mileage}</td>
     `;
+    row.addEventListener('click', () => showPopup(row));
+    row.querySelector('.subtaskBtn').addEventListener('click', (event) => showSubtaskPopup(row, event));
     tbody.appendChild(row);
   });
 }
@@ -293,7 +294,6 @@ function populateTasksForService(service) {
   const tbody = document.getElementById('taskTable');
   tbody.innerHTML = '';
   const row = document.createElement('tr');
-  row.onclick = () => showPopup(row);
   row.setAttribute('data-subtasks', service.subtasks);
   row.setAttribute('data-details', service.details);
   row.setAttribute('data-vendor', service.vendor);
@@ -306,11 +306,13 @@ function populateTasksForService(service) {
   if (service.status === 'Completed') statusColor = 'bg-blue-500';
   row.innerHTML = `
     <td class="p-2 status-col"><span class="${statusColor} text-white px-2 py-1 rounded text-xs">${service.status}</span></td>
-    <td class="p-2 subtasks-col"><button onclick="showSubtaskPopup(this.parentElement.parentElement, event)"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg></button></td>
+    <td class="p-2 subtasks-col"><button class="subtaskBtn"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg></button></td>
     <td class="p-2 task-col">${service.description}</td>
     <td class="p-2 date-col">${service.scheduledDate}</td>
     <td class="p-2 mileage-col">${service.mileage}</td>
   `;
+  row.addEventListener('click', () => showPopup(row));
+  row.querySelector('.subtaskBtn').addEventListener('click', (event) => showSubtaskPopup(row, event));
   tbody.appendChild(row);
 }
 
@@ -577,7 +579,7 @@ function toggleFilterDropdown() {
   }
 
   const dropdown = document.getElementById('filterDropdown');
-  const button = document.querySelector('.filter-button');
+  const button = document.getElementById('filterBtn');
 
   if (dropdown && button) {
     dropdown.classList.toggle('hidden');
@@ -621,7 +623,7 @@ function filterAndSearch() {
 
 // Sort table
 function sortTable(columnIndex, columnType) {
-  const headers = document.querySelectorAll('th[onclick]');
+  const headers = document.querySelectorAll('thead th');
   headers.forEach(header => {
     header.classList.remove('asc', 'desc');
     const svg = header.querySelector('.sort-arrow');
@@ -817,14 +819,22 @@ function showSubtaskPopup(row, event) {
     <div class="subtask-row ${subtask.completed ? 'completed' : ''}">
       <span>${subtask.name}</span>
       <div>
-        <button class="text-green-500 mr-2" onclick="toggleSubtask(${index})">${subtask.completed ? 'Undo' : 'Complete'}</button>
-        <button class="text-red-500" onclick="deleteSubtask(${index})">Delete</button>
+        <button class="text-green-500 mr-2 toggleSubtaskBtn" data-index="${index}">${subtask.completed ? 'Undo' : 'Complete'}</button>
+        <button class="text-red-500 deleteSubtaskBtn" data-index="${index}">Delete</button>
       </div>
     </div>
   `).join('') : '<p>No subtasks yet.</p>';
 
   subtaskPopup.classList.remove('hidden');
   subtaskPopup.classList.add('show');
+
+  // Add event listeners for toggle and delete buttons
+  document.querySelectorAll('.toggleSubtaskBtn').forEach(btn => {
+    btn.addEventListener('click', () => toggleSubtask(parseInt(btn.dataset.index)));
+  });
+  document.querySelectorAll('.deleteSubtaskBtn').forEach(btn => {
+    btn.addEventListener('click', () => deleteSubtask(parseInt(btn.dataset.index)));
+  });
 }
 
 function addSubtask() {
@@ -864,7 +874,36 @@ showPage('home');
 populateFleet();
 populateScheduledServices();
 
-// Set up sidebar button event listeners
+// Set up event listeners
 document.getElementById('welcomeBtn').addEventListener('click', () => showPage('welcome'));
 document.getElementById('homeBtn').addEventListener('click', () => showPage('home'));
 document.getElementById('remindersBtn').addEventListener('click', () => showPage('reminders'));
+document.getElementById('addVehicleBtn').addEventListener('click', showAddVehiclePopup);
+document.getElementById('vehiclePhoto').addEventListener('change', previewVehiclePhoto);
+document.getElementById('saveVehicleBtn').addEventListener('click', saveVehicle);
+document.getElementById('closeAddVehiclePopupBtn').addEventListener('click', closeAddVehiclePopup);
+document.getElementById('updateVehiclePhoto').addEventListener('change', previewUpdateVehiclePhoto);
+document.getElementById('updateVehicleBtn').addEventListener('click', updateVehicleDetails);
+document.getElementById('addServiceBtn').addEventListener('click', showAddServicePopup);
+document.getElementById('saveNewServiceBtn').addEventListener('click', saveNewService);
+document.getElementById('closeAddServicePopupBtn').addEventListener('click', closeAddServicePopup);
+document.getElementById('filterBtn').addEventListener('click', toggleFilterDropdown);
+document.getElementById('searchInput').addEventListener('keyup', filterAndSearch);
+document.querySelectorAll('#filterDropdown input[type="checkbox"]').forEach(checkbox => {
+  checkbox.addEventListener('change', filterAndSearch);
+});
+document.getElementById('vehicleFilter').addEventListener('change', filterServicesByVehicle);
+document.getElementById('sortServices').addEventListener('change', sortServices);
+document.querySelectorAll('thead th').forEach((header, index) => {
+  const columnTypes = ['status', '', 'task', 'serviceDate', 'mileage'];
+  if (columnTypes[index]) {
+    header.addEventListener('click', () => sortTable(index, columnTypes[index]));
+  }
+});
+document.getElementById('editBtn').addEventListener('click', editDetails);
+document.getElementById('saveBtn').addEventListener('click', saveEdits);
+document.getElementById('closePopupBtn').addEventListener('click', closePopup);
+document.getElementById('addSubtaskBtn').addEventListener('click', addSubtask);
+document.getElementById('closeSubtaskPopupBtn').addEventListener('click', closeSubtaskPopup);
+document.getElementById('addReminderBtn').addEventListener('click', addReminder);
+document.getElementById('addTodoBtn').addEventListener('click', addTodo);
