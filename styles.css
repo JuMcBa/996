@@ -68,18 +68,25 @@ tr:hover {
   text-align: right;
 }
 .edit-field {
-  margin-bottom: 8px;
+  margin-bottom: 12px; /* Increased spacing for better readability */
 }
 .edit-field label {
   display: block;
   font-weight: 600;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
+  color: #4b5563; /* Slightly darker gray for better contrast */
 }
 .edit-field input[type="text"], .edit-field input[type="number"], .edit-field input[type="date"], .edit-field select, .edit-field textarea {
   width: 100%;
-  padding: 4px 8px;
+  padding: 6px 10px; /* Slightly more padding for comfort */
   border: 1px solid #d1d5db;
-  border-radius: 4px;
+  border-radius: 6px; /* Softer corners */
+  background-color: #f9fafb;
+  transition: border-color 0.2s ease;
+}
+.edit-field input[type="text"]:focus, .edit-field input[type="number"]:focus, .edit-field input[type="date"]:focus, .edit-field select:focus, .edit-field textarea:focus {
+  border-color: #3b82f6; /* Blue focus border for better accessibility */
+  outline: none;
 }
 .edit-field input[type="file"] {
   width: 100%;
@@ -89,7 +96,7 @@ tr:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 4px 0;
+  padding: 8px 0; /* Increased padding for better spacing */
   border-bottom: 1px solid #e5e7eb;
 }
 .subtask-row:last-child {
@@ -343,50 +350,114 @@ tr:hover {
   color: #374151;
   margin-top: 0.5rem;
 }
+/* Top Navigation Bar Styling */
+#topNav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+#topNavLinks button {
+  padding: 6px 12px;
+  font-size: 0.875rem;
+  color: #374151;
+  background-color: transparent;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+#topNavLinks button:hover {
+  background-color: #e5e7eb;
+}
+#topNavLinks button.active {
+  background-color: #d1d5db;
+  color: #1f2937;
+  font-weight: 600;
+}
 /* Reminders and To-Do Page Styling */
 .reminders-todo-container {
   display: flex;
-  gap: 2rem;
+  gap: 1.5rem; /* Slightly reduced gap for better balance */
   margin-top: 1rem;
 }
 .reminders-column, .todo-column {
   flex: 1;
-  padding: 1rem;
-  background-color: #f9fafb;
-  border-radius: 0.5rem;
+  padding: 1.5rem; /* Increased padding for a more spacious look */
+  background-color: #ffffff; /* White background for better contrast */
+  border-radius: 8px; /* Softer corners */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Drop-shadow */
+  border: 1px solid #e5e7eb; /* Subtle border for definition */
 }
 .reminders-column h3, .todo-column h3 {
-  font-size: 1rem;
+  font-size: 1.125rem; /* Slightly larger for emphasis */
   font-weight: 600;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem; /* More spacing below headers */
+  color: #1f2937; /* Darker color for better readability */
 }
 .reminder-item, .todo-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.5rem;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 12px 16px; /* Increased padding for better spacing */
+  border: 1px solid #e5e7eb; /* Light border around each item */
+  border-radius: 6px; /* Rounded corners */
+  background-color: #f9fafb; /* Slight background color */
+  margin-bottom: 8px; /* Space between items */
+  transition: background-color 0.2s ease, transform 0.1s ease; /* Smooth hover and click effects */
+}
+.reminder-item:hover, .todo-item:hover {
+  background-color: #f3f4f6; /* Slightly darker on hover */
+  transform: translateY(-1px); /* Subtle lift effect */
 }
 .reminder-item:last-child, .todo-item:last-child {
-  border-bottom: none;
+  margin-bottom: 0; /* No margin on the last item */
 }
-.reminder-item span, .todo-item span {
+.reminder-item.completed, .todo-item.completed {
+  background-color: #f0fdf4; /* Light green background for completed items */
+}
+.reminder-details, .todo-details {
+  display: flex;
+  gap: 12px; /* Space between content elements */
   font-size: 0.875rem;
   color: #374151;
   cursor: pointer;
+  font-weight: 500; /* Slightly bolder text */
 }
-.reminder-item span:hover, .todo-item span:hover {
+.reminder-details span, .todo-details span {
+  display: inline-block;
+}
+.reminder-details .name {
+  flex: 1; /* Allow name to take remaining space */
+}
+.reminder-details .frequency {
+  width: 100px; /* Fixed width for alignment */
+  text-align: left;
+}
+.todo-details .task {
+  width: 200px; /* Fixed width for alignment */
+}
+.todo-details .due-date {
+  width: 100px; /* Fixed width for alignment */
+}
+.todo-details .priority {
+  width: 80px; /* Fixed width for alignment */
+}
+.reminder-item.completed .reminder-details, .todo-item.completed .todo-details {
+  text-decoration: line-through;
+  color: #6b7280;
+}
+.reminder-details:hover, .todo-details:hover {
   text-decoration: underline;
 }
 .reminder-item .actions, .todo-item .actions {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 8px; /* Consistent spacing between action elements */
 }
 .reminder-item .actions button, .todo-item .actions button {
   font-size: 0.75rem;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.25rem;
+  padding: 4px 10px; /* More padding for better click area */
+  border-radius: 4px; /* Softer corners */
+  transition: background-color 0.2s ease;
 }
 .reminder-item .actions .edit-btn, .todo-item .actions .edit-btn {
   background-color: #3b82f6;
@@ -402,14 +473,24 @@ tr:hover {
 .reminder-item .actions .delete-btn:hover, .todo-item .actions .delete-btn:hover {
   background-color: #dc2626;
 }
-.reminder-item .actions .sms-toggle, .todo-item .actions .sms-toggle {
+.todo-item .actions .complete-btn {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background-color: #22c55e; /* Green for completion */
+  color: white;
   font-size: 0.75rem;
-  color: #374151;
+  transition: background-color 0.2s ease;
 }
-.reminder-item .actions .sms-toggle input, .todo-item .actions .sms-toggle input {
-  width: 1rem;
-  height: 1rem;
+.todo-item .actions .complete-btn.completed {
+  background-color: #16a34a; /* Darker green when completed */
+}
+.todo-item .actions .complete-btn:hover {
+  background-color: #16a34a;
+}
+.todo-item .actions .complete-btn svg {
+  width: 12px;
+  height: 12px;
 }
