@@ -8,447 +8,464 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body class="bg-gray-100 font-sans text-gray-700">
-  <div class="flex h-screen">
-    <!-- Sidebar -->
-    <div class="bg-blue-800 text-white w-16 flex flex-col items-center py-2">
-      <button id="welcomeBtn" class="mb-3">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7m-9 2v7a2 2 0 002 2h4a2 2 0 002-2v-7"></path>
-        </svg>
-      </button>
-      <button id="homeBtn" class="mb-3">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V6z M8 2v2m8-2v2m-4 10h.01M8 10h.01M16 10h.01"></path>
-        </svg>
-      </button>
-      <button id="remindersBtn" class="mb-3">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-        </svg>
-      </button>
-    </div>
+  <div class="flex flex-col h-screen">
+    <!-- Top Navigation Bar -->
+    <nav id="topNav" class="bg-gray-200 text-gray-700 w-full px-5 py-3 border-b border-gray-300 flex items-center justify-between">
+      <div id="topNavTitle" class="text-base font-semibold">Car Maintenance Tracker</div>
+      <div id="topNavLinks" class="flex gap-4">
+        <!-- Sub-section links will be populated dynamically -->
+      </div>
+    </nav>
 
-    <!-- Main Content -->
-    <div class="flex-1 p-4">
-      <!-- Welcome Page -->
-      <div id="welcomePage">
-        <h2 class="text-base font-semibold text-gray-700">Welcome to Car Maintenance Tracker</h2>
+    <div class="flex flex-1">
+      <!-- Sidebar -->
+      <div class="bg-gray-200 text-gray-700 w-1/5 flex flex-col py-2 border-r border-gray-300">
+        <button id="welcomeBtn" class="flex items-center mb-2 px-3 py-2 hover:bg-gray-300 transition rounded">
+          <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7m-9 2v7a2 2 0 002 2h4a2 2 0 002-2v-7"></path>
+          </svg>
+          Welcome
+        </button>
+        <button id="homeBtn" class="flex items-center mb-2 px-3 py-2 hover:bg-gray-300 transition rounded">
+          <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V6z M8 2v2m8-2v2m-4 10h.01M8 10h.01M16 10h.01"></path>
+          </svg>
+          Home
+        </button>
+        <button id="remindersBtn" class="flex items-center mb-2 px-3 py-2 hover:bg-gray-300 transition rounded">
+          <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+          </svg>
+          Reminders
+        </button>
       </div>
 
-      <!-- Homepage -->
-      <div id="homePage" class="hidden">
-        <div class="flex justify-between items-center mb-3">
-          <h2 class="text-base font-semibold text-gray-700">Car Maintenance Tracker</h2>
-          <button id="addVehicleBtn" class="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition">Add Vehicle</button>
+      <!-- Main Content -->
+      <div class="flex-1 p-5">
+        <!-- Welcome Page -->
+        <div id="welcomePage">
+          <h2 class="text-base font-semibold text-gray-700">Welcome to Car Maintenance Tracker</h2>
         </div>
-        <h3 class="text-sm font-semibold text-gray-700 mb-3">My Fleet</h3>
-        <div id="fleetList" class="horizontal-scroll mb-6">
-          <!-- Fleet tiles will be populated here -->
-        </div>
-        <h3 class="text-sm font-semibold text-gray-700 mb-3">Dashboard</h3>
-        <div id="dashboardTiles" class="horizontal-scroll mb-6">
-          <div class="dashboard-tile">
-            <h3>Scheduled Tasks</h3>
-            <p id="scheduledCount">0</p>
-          </div>
-          <div class="dashboard-tile">
-            <h3>In Progress Tasks</h3>
-            <p id="inProgressCount">0</p>
-          </div>
-          <div class="dashboard-tile">
-            <h3>Completed Tasks</h3>
-            <p id="completedCount">0</p>
-          </div>
-        </div>
-        <div class="flex justify-between items-center mb-3">
-          <h3 class="text-sm font-semibold text-gray-700">Scheduled Services</h3>
-          <div class="flex items-center gap-2">
-            <select id="vehicleFilter" class="border rounded px-2 py-1 text-sm">
-              <option value="all">All Vehicles</option>
-              <!-- Options will be populated dynamically -->
-            </select>
-            <select id="sortServices" class="border rounded px-2 py-1 text-sm">
-              <option value="date">Sort by Scheduled Date</option>
-              <option value="mileage">Sort by Mileage</option>
-            </select>
-          </div>
-        </div>
-        <div id="scheduledServices" class="bg-white shadow rounded p-2">
-          <!-- Scheduled services will be populated here -->
-        </div>
-      </div>
 
-      <!-- Reminders and To-Do Page -->
-      <div id="remindersPage" class="hidden">
-        <h2 class="text-base font-semibold text-gray-700 mb-3">Reminders and To-Do</h2>
-        <div class="reminders-todo-container">
-          <!-- Recurring Reminders Column -->
-          <div class="reminders-column">
-            <h3>Add Recurring Reminders</h3>
-            <div class="edit-field">
-              <label>Reminder Name</label>
-              <input type="text" id="reminderName" class="text-sm" placeholder="e.g., Check Tire Pressure">
+        <!-- Homepage -->
+        <div id="homePage" class="hidden">
+          <div class="flex justify-between items-center mb-3">
+            <h2 class="text-base font-semibold text-gray-700">Car Maintenance Tracker</h2>
+            <button id="addVehicleBtn" class="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition">Add Vehicle</button>
+          </div>
+          <h3 class="text-sm font-semibold text-gray-700 mb-3">My Fleet</h3>
+          <div id="fleetList" class="horizontal-scroll mb-6">
+            <!-- Fleet tiles will be populated here -->
+          </div>
+          <h3 class="text-sm font-semibold text-gray-700 mb-3">Dashboard</h3>
+          <div id="dashboardTiles" class="horizontal-scroll mb-6">
+            <div class="dashboard-tile">
+              <h3>Scheduled Tasks</h3>
+              <p id="scheduledCount">0</p>
             </div>
-            <div class="edit-field">
-              <label>Frequency</label>
-              <select id="reminderFrequency" class="text-sm">
-                <option value="daily">Daily</option>
-                <option value="weekly">Weekly</option>
-                <option value="monthly">Monthly</option>
-                <option value="annually">Annually</option>
+            <div class="dashboard-tile">
+              <h3>In Progress Tasks</h3>
+              <p id="inProgressCount">0</p>
+            </div>
+            <div class="dashboard-tile">
+              <h3>Completed Tasks</h3>
+              <p id="completedCount">0</p>
+            </div>
+          </div>
+          <div class="flex justify-between items-center mb-3">
+            <h3 class="text-sm font-semibold text-gray-700">Scheduled Services</h3>
+            <div class="flex items-center gap-2">
+              <select id="vehicleFilter" class="border rounded px-2 py-1 text-sm">
+                <option value="all">All Vehicles</option>
+                <!-- Options will be populated dynamically -->
+              </select>
+              <select id="sortServices" class="border rounded px-2 py-1 text-sm">
+                <option value="date">Sort by Scheduled Date</option>
+                <option value="mileage">Sort by Mileage</option>
               </select>
             </div>
-            <div class="edit-field">
-              <label>Start Date</label>
-              <input type="date" id="reminderStartDate" class="text-sm">
-            </div>
-            <div class="edit-field">
-              <label>Instructions (Optional)</label>
-              <textarea id="reminderInstructions" class="text-sm w-full p-2 border rounded" placeholder="e.g., Contact the bank at (123) 456-7890"></textarea>
-            </div>
-            <div class="edit-field">
-              <label>Enable Text Message Reminder</label>
-              <input type="checkbox" id="reminderTextMessage">
-            </div>
-            <button id="addReminderBtn" class="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition mt-2">Add Reminder</button>
-            <div id="remindersList" class="mt-4">
-              <!-- Reminders will be populated here -->
-            </div>
           </div>
-          <!-- To-Do Column -->
-          <div class="todo-column">
-            <h3>Add To-Do</h3>
-            <div class="edit-field">
-              <label>Task Name</label>
-              <input type="text" id="todoTask" class="text-sm" placeholder="e.g., Schedule Oil Change">
-            </div>
-            <div class="edit-field">
-              <label>Due Date</label>
-              <input type="date" id="todoDueDate" class="text-sm">
-            </div>
-            <div class="edit-field">
-              <label>Priority</label>
-              <select id="todoPriority" class="text-sm">
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-              </select>
-            </div>
-            <div class="edit-field">
-              <label>Instructions (Optional)</label>
-              <textarea id="todoInstructions" class="text-sm w-full p-2 border rounded" placeholder="e.g., Purchase cameras from Best Buy"></textarea>
-            </div>
-            <div class="edit-field">
-              <label>Enable Text Message Reminder</label>
-              <input type="checkbox" id="todoTextMessage">
-            </div>
-            <button id="addTodoBtn" class="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition mt-2">Add To-Do</button>
-            <div id="todoList" class="mt-4">
-              <!-- To-Do items will be populated here -->
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Main Page (Maintenance Tracker Details) -->
-      <div id="mainPage" class="hidden">
-        <div class="flex justify-between items-center mb-3">
-          <div id="vehicleHeader"></div>
-          <div class="text-gray-700 text-sm">June 03, 2025</div>
-          <div></div>
-        </div>
-
-        <!-- Update Vehicle Section -->
-        <div class="update-vehicle mb-3">
-          <h3>Update Vehicle Details</h3>
-          <div class="edit-field">
-            <label>Vehicle Image</label>
-            <input type="file" id="updateVehiclePhoto" accept="image/*">
-            <img id="updateVehiclePhotoPreview" class="preview-img" src="" alt="Vehicle Preview">
-          </div>
-          <div class="edit-field">
-            <label>Current Mileage</label>
-            <input type="number" id="updateVehicleMileage" class="text-sm" placeholder="e.g., 50000">
-            <button id="updateVehicleBtn" class="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 transition">Update</button>
+          <div id="scheduledServices" class="bg-white shadow rounded p-2">
+            <!-- Scheduled services will be populated here -->
           </div>
         </div>
 
-        <!-- Add New Service Button -->
-        <div class="mb-3">
-          <button id="addServiceBtn" class="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition">Add New Service</button>
+        <!-- Reminders and To-Do Page -->
+        <div id="remindersPage" class="hidden">
+          <h2 class="text-base font-semibold text-gray-700 mb-3">Reminders and To-Do</h2>
+          <div class="reminders-todo-container">
+            <!-- To-Do Column (Default View) -->
+            <div id="todoSection" class="todo-column">
+              <h3>To-Do's</h3>
+              <div id="todoList" class="mt-4">
+                <!-- To-Do items will be populated here -->
+              </div>
+            </div>
+            <!-- Add Recurring Reminders Column (Hidden by Default) -->
+            <div id="remindersSection" class="reminders-column hidden">
+              <h3>Add Recurring Reminders</h3>
+              <div class="edit-field">
+                <label>Reminder Name</label>
+                <input type="text" id="reminderName" class="text-sm" placeholder="e.g., Check Tire Pressure">
+              </div>
+              <div class="edit-field">
+                <label>Frequency</label>
+                <select id="reminderFrequency" class="text-sm">
+                  <option value="daily">Daily</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="monthly">Monthly</option>
+                  <option value="annually">Annually</option>
+                </select>
+              </div>
+              <div class="edit-field">
+                <label>Start Date</label>
+                <input type="date" id="reminderStartDate" class="text-sm">
+              </div>
+              <div class="edit-field">
+                <label>Instructions (Optional)</label>
+                <textarea id="reminderInstructions" class="text-sm w-full p-2 border rounded" placeholder="e.g., Contact the bank at (123) 456-7890"></textarea>
+              </div>
+              <div class="edit-field">
+                <label>Enable Text Message Reminder</label>
+                <input type="checkbox" id="reminderTextMessage">
+              </div>
+              <button id="addReminderBtn" class="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition mt-2">Add Reminder</button>
+              <div id="remindersList" class="mt-4">
+                <!-- Reminders will be populated here -->
+              </div>
+            </div>
+            <!-- Add To-Do Column (Hidden by Default) -->
+            <div id="addTodoSection" class="todo-column hidden">
+              <h3>Add To-Do</h3>
+              <div class="edit-field">
+                <label>Task Name</label>
+                <input type="text" id="todoTask" class="text-sm" placeholder="e.g., Schedule Oil Change">
+              </div>
+              <div class="edit-field">
+                <label>Due Date</label>
+                <input type="date" id="todoDueDate" class="text-sm">
+              </div>
+              <div class="edit-field">
+                <label>Priority</label>
+                <select id="todoPriority" class="text-sm">
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                </select>
+              </div>
+              <div class="edit-field">
+                <label>Instructions (Optional)</label>
+                <textarea id="todoInstructions" class="text-sm w-full p-2 border rounded" placeholder="e.g., Purchase cameras from Best Buy"></textarea>
+              </div>
+              <div class="edit-field">
+                <label>Enable Text Message Reminder</label>
+                <input type="checkbox" id="todoTextMessage">
+              </div>
+              <button id="addTodoBtn" class="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition mt-2">Add To-Do</button>
+            </div>
+          </div>
         </div>
 
-        <!-- Filters and Search -->
-        <div class="mb-3">
-          <h2 class="text-base font-semibold text-gray-700">Home Maintenance Tracker</h2>
-          <div class="my-1">
-            <div class="filter-container">
-              <button id="filterBtn" class="filter-button">
-                Search and Filter
-                <svg id="filterArrow" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-              </button>
-              <div id="filterDropdown" class="filter-dropdown hidden">
-                <input type="text" id="searchInput" class="text-sm" placeholder="Search tasks...">
-                <div class="mt-2">
-                  <label><input type="checkbox" value="Scheduled" checked> Scheduled</label>
-                  <label><input type="checkbox" value="In Progress" checked> In Progress</label>
-                  <label><input type="checkbox" value="Completed" checked> Completed</label>
+        <!-- Main Page (Maintenance Tracker Details) -->
+        <div id="mainPage" class="hidden">
+          <div class="flex justify-between items-center mb-3">
+            <div id="vehicleHeader"></div>
+            <div class="text-gray-700 text-sm">June 04, 2025</div>
+            <div></div>
+          </div>
+
+          <!-- Update Vehicle Section -->
+          <div class="update-vehicle mb-3">
+            <h3>Update Vehicle Details</h3>
+            <div class="edit-field">
+              <label>Vehicle Image</label>
+              <input type="file" id="updateVehiclePhoto" accept="image/*">
+              <img id="updateVehiclePhotoPreview" class="preview-img" src="" alt="Vehicle Preview">
+            </div>
+            <div class="edit-field">
+              <label>Current Mileage</label>
+              <input type="number" id="updateVehicleMileage" class="text-sm" placeholder="e.g., 50000">
+              <button id="updateVehicleBtn" class="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 transition">Update</button>
+            </div>
+          </div>
+
+          <!-- Add New Service Button -->
+          <div class="mb-3">
+            <button id="addServiceBtn" class="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition">Add New Service</button>
+          </div>
+
+          <!-- Filters and Search -->
+          <div class="mb-3">
+            <h2 class="text-base font-semibold text-gray-700">Home Maintenance Tracker</h2>
+            <div class="my-1">
+              <div class="filter-container">
+                <button id="filterBtn" class="filter-button">
+                  Search and Filter
+                  <svg id="filterArrow" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div id="filterDropdown" class="filter-dropdown hidden">
+                  <input type="text" id="searchInput" class="text-sm" placeholder="Search tasks...">
+                  <div class="mt-2">
+                    <label><input type="checkbox" value="Scheduled" checked> Scheduled</label>
+                    <label><input type="checkbox" value="In Progress" checked> In Progress</label>
+                    <label><input type="checkbox" value="Completed" checked> Completed</label>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+
+          <!-- Table -->
+          <div class="bg-white shadow rounded">
+            <table class="w-full text-left text-sm">
+              <colgroup>
+                <col class="status-col">
+                <col class="subtasks-col">
+                <col class="task-col">
+                <col class="date-col">
+                <col class="mileage-col">
+              </colgroup>
+              <thead>
+                <tr class="bg-gray-200">
+                  <th class="p-2 status-col">
+                    <span class="sort-header">Status</span>
+                    <svg class="sort-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                  </th>
+                  <th class="p-2 subtasks-col">Subtasks</th>
+                  <th class="p-2 task-col">
+                    <span class="sort-header">Task</span>
+                    <svg class="sort-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                  </th>
+                  <th class="p-2 date-col">
+                    <span class="sort-header">Service Date</span>
+                    <svg class="sort-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                  </th>
+                  <th class="p-2 mileage-col">
+                    <span class="sort-header">Mileage</span>
+                    <svg class="sort-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="taskTable">
+                <!-- Tasks will be populated dynamically -->
+              </tbody>
+            </table>
+          </div>
         </div>
 
-        <!-- Table -->
-        <div class="bg-white shadow rounded">
-          <table class="w-full text-left text-sm">
-            <colgroup>
-              <col class="status-col">
-              <col class="subtasks-col">
-              <col class="task-col">
-              <col class="date-col">
-              <col class="mileage-col">
-            </colgroup>
-            <thead>
-              <tr class="bg-gray-200">
-                <th class="p-2 status-col">
-                  <span class="sort-header">Status</span>
-                  <svg class="sort-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </th>
-                <th class="p-2 subtasks-col">Subtasks</th>
-                <th class="p-2 task-col">
-                  <span class="sort-header">Task</span>
-                  <svg class="sort-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </th>
-                <th class="p-2 date-col">
-                  <span class="sort-header">Service Date</span>
-                  <svg class="sort-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </th>
-                <th class="p-2 mileage-col">
-                  <span class="sort-header">Mileage</span>
-                  <svg class="sort-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </th>
-              </tr>
-            </thead>
-            <tbody id="taskTable">
-              <!-- Tasks will be populated dynamically -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Task Details Popup -->
-      <div id="popup" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden">
-        <div class="bg-white rounded-lg shadow-lg p-6 w-96">
-          <h3 class="text-base font-semibold text-gray-700 mb-4">Task Details</h3>
-          <div id="popupContent" class="text-sm text-gray-700 mb-4">
-            <!-- Details will be populated here -->
-          </div>
-          <div id="editFields" class="hidden text-sm text-gray-700 mb-4">
-            <!-- Editable fields will be populated here -->
-          </div>
-          <div class="flex space-x-2 justify-end">
-            <button id="editBtn" class="px-3 py-1 bg-gray-200 rounded text-gray-700 text-sm hover:bg-gray-300 transition">Edit</button>
-            <button id="saveBtn" class="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 transition hidden">Save</button>
-            <button id="closePopupBtn" class="px-3 py-1 bg-gray-200 rounded text-gray-700 text-sm hover:bg-gray-300 transition">Close</button>
+        <!-- Task Details Popup -->
+        <div id="popup" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden">
+          <div class="bg-white rounded-lg shadow-lg p-6 w-96">
+            <h3 class="text-base font-semibold text-gray-700 mb-4">Task Details</h3>
+            <div id="popupContent" class="text-sm text-gray-700 mb-4">
+              <!-- Details will be populated here -->
+            </div>
+            <div id="editFields" class="hidden text-sm text-gray-700 mb-4">
+              <!-- Editable fields will be populated here -->
+            </div>
+            <div class="flex space-x-2 justify-end">
+              <button id="editBtn" class="px-3 py-1 bg-gray-200 rounded text-gray-700 text-sm hover:bg-gray-300 transition">Edit</button>
+              <button id="saveBtn" class="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 transition hidden">Save</button>
+              <button id="closePopupBtn" class="px-3 py-1 bg-gray-200 rounded text-gray-700 text-sm hover:bg-gray-300 transition">Close</button>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Subtask Popup -->
-      <div id="subtaskPopup" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden">
-        <div class="bg-white rounded-lg shadow-lg p-6 w-96">
-          <h3 class="text-base font-semibold text-gray-700 mb-4">Subtasks</h3>
-          <div class="mb-4">
-            <input type="text" id="newSubtaskInput" class="border rounded px-2 py-1 w-full text-sm" placeholder="Add a subtask...">
-            <button id="addSubtaskBtn" class="mt-2 px-3 py-1 bg-gray-200 rounded text-gray-700 text-sm hover:bg-gray-300 transition">Add</button>
-          </div>
-          <div id="subtaskList" class="text-sm text-gray-700 mb-4">
-            <!-- Subtasks will be populated here -->
-          </div>
-          <div class="flex justify-end">
-            <button id="closeSubtaskPopupBtn" class="px-3 py-1 bg-gray-200 rounded text-gray-700 text-sm hover:bg-gray-300 transition">Close</button>
+        <!-- Subtask Popup -->
+        <div id="subtaskPopup" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden">
+          <div class="bg-white rounded-lg shadow-lg p-6 w-96">
+            <h3 class="text-base font-semibold text-gray-700 mb-4">Subtasks</h3>
+            <div class="mb-4">
+              <input type="text" id="newSubtaskInput" class="border rounded px-2 py-1 w-full text-sm" placeholder="Add a subtask...">
+              <button id="addSubtaskBtn" class="mt-2 px-3 py-1 bg-gray-200 rounded text-gray-700 text-sm hover:bg-gray-300 transition">Add</button>
+            </div>
+            <div id="subtaskList" class="text-sm text-gray-700 mb-4">
+              <!-- Subtasks will be populated here -->
+            </div>
+            <div class="flex justify-end">
+              <button id="closeSubtaskPopupBtn" class="px-3 py-1 bg-gray-200 rounded text-gray-700 text-sm hover:bg-gray-300 transition">Close</button>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Add Vehicle Popup -->
-      <div id="addVehiclePopup" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden">
-        <div class="bg-white rounded-lg shadow-lg p-6 w-96">
-          <h3 class="text-base font-semibold text-gray-700 mb-4">Add Vehicle</h3>
-          <div id="addVehicleFields" class="text-sm text-gray-700 mb-4">
-            <div class="edit-field">
-              <label>Photo</label>
-              <input type="file" id="vehiclePhoto" accept="image/*">
-              <img id="vehiclePhotoPreview" class="preview-img hidden" src="" alt="Vehicle Preview">
+        <!-- Add Vehicle Popup -->
+        <div id="addVehiclePopup" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden">
+          <div class="bg-white rounded-lg shadow-lg p-6 w-96">
+            <h3 class="text-base font-semibold text-gray-700 mb-4">Add Vehicle</h3>
+            <div id="addVehicleFields" class="text-sm text-gray-700 mb-4">
+              <div class="edit-field">
+                <label>Photo</label>
+                <input type="file" id="vehiclePhoto" accept="image/*">
+                <img id="vehiclePhotoPreview" class="preview-img hidden" src="" alt="Vehicle Preview">
+              </div>
+              <div class="edit-field">
+                <label>Make</label>
+                <input type="text" id="vehicleMake" class="text-sm" placeholder="e.g., Porsche">
+              </div>
+              <div class="edit-field">
+                <label>Model</label>
+                <input type="text" id="vehicleModel" class="text-sm" placeholder="e.g., 996 Convertible">
+              </div>
+              <div class="edit-field">
+                <label>Current Mileage</label>
+                <input type="number" id="vehicleMileage" class="text-sm" placeholder="e.g., 50000">
+              </div>
+              <div class="edit-field">
+                <label>VIN Number</label>
+                <input type="text" id="vehicleVIN" class="text-sm" placeholder="e.g., WP0CA29933S651234">
+              </div>
             </div>
-            <div class="edit-field">
-              <label>Make</label>
-              <input type="text" id="vehicleMake" class="text-sm" placeholder="e.g., Porsche">
+            <div class="flex space-x-2 justify-end">
+              <button id="saveVehicleBtn" class="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 transition">Save</button>
+              <button id="closeAddVehiclePopupBtn" class="px-3 py-1 bg-gray-200 rounded text-gray-700 text-sm hover:bg-gray-300 transition">Close</button>
             </div>
-            <div class="edit-field">
-              <label>Model</label>
-              <input type="text" id="vehicleModel" class="text-sm" placeholder="e.g., 996 Convertible">
-            </div>
-            <div class="edit-field">
-              <label>Current Mileage</label>
-              <input type="number" id="vehicleMileage" class="text-sm" placeholder="e.g., 50000">
-            </div>
-            <div class="edit-field">
-              <label>VIN Number</label>
-              <input type="text" id="vehicleVIN" class="text-sm" placeholder="e.g., WP0CA29933S651234">
-            </div>
-          </div>
-          <div class="flex space-x-2 justify-end">
-            <button id="saveVehicleBtn" class="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 transition">Save</button>
-            <button id="closeAddVehiclePopupBtn" class="px-3 py-1 bg-gray-200 rounded text-gray-700 text-sm hover:bg-gray-300 transition">Close</button>
           </div>
         </div>
-      </div>
 
-      <!-- Add Service Popup -->
-      <div id="addServicePopup" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden">
-        <div class="bg-white rounded-lg shadow-lg p-6 w-96">
-          <h3 class="text-base font-semibold text-gray-700 mb-4">Add New Service</h3>
-          <div id="addServiceFields" class="text-sm text-gray-700 mb-4">
-            <div class="edit-field">
-              <label>Description</label>
-              <input type="text" id="newServiceDescription" class="text-sm" placeholder="e.g., Oil Change">
+        <!-- Add Service Popup -->
+        <div id="addServicePopup" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden">
+          <div class="bg-white rounded-lg shadow-lg p-6 w-96">
+            <h3 class="text-base font-semibold text-gray-700 mb-4">Add New Service</h3>
+            <div id="addServiceFields" class="text-sm text-gray-700 mb-4">
+              <div class="edit-field">
+                <label>Description</label>
+                <input type="text" id="newServiceDescription" class="text-sm" placeholder="e.g., Oil Change">
+              </div>
+              <div class="edit-field">
+                <label>Scheduled Date (MM/DD/YYYY)</label>
+                <input type="text" id="newServiceDate" class="text-sm" placeholder="e.g., 06/15/2025">
+              </div>
+              <div class="edit-field">
+                <label>Mileage</label>
+                <input type="number" id="newServiceMileage" class="text-sm" placeholder="e.g., 51000">
+              </div>
+              <div class="edit-field">
+                <label>Details</label>
+                <input type="text" id="newServiceDetails" class="text-sm" placeholder="e.g., Check oil levels">
+              </div>
+              <div class="edit-field">
+                <label>Vendor</label>
+                <input type="text" id="newServiceVendor" class="text-sm" placeholder="e.g., AutoFix Shop">
+              </div>
+              <div class="edit-field">
+                <label>Projected Cost</label>
+                <input type="text" id="newServiceProjectedCost" class="text-sm" placeholder="e.g., $50">
+              </div>
+              <div class="edit-field">
+                <label>Actual Cost</label>
+                <input type="text" id="newServiceActualCost" class="text-sm" placeholder="e.g., $45">
+              </div>
+              <div class="edit-field">
+                <label>Vendors</label>
+                <input type="text" id="newServiceVendors" class="text-sm" placeholder="e.g., AutoFix Shop, CarCare Center">
+              </div>
+              <div class="edit-field">
+                <label>Oil Change</label>
+                <input type="checkbox" id="newServiceOilChange">
+              </div>
+              <div class="edit-field">
+                <label>Spark Plugs</label>
+                <input type="checkbox" id="newServiceSparkPlugs">
+              </div>
+              <div class="edit-field">
+                <label>Brakes</label>
+                <input type="checkbox" id="newServiceBrakes">
+              </div>
+              <div class="edit-field">
+                <label>Status</label>
+                <select id="newServiceStatus" class="border rounded px-2 py-1 text-sm">
+                  <option value="Scheduled">Scheduled</option>
+                  <option value="Completed">Completed</option>
+                </select>
+              </div>
             </div>
-            <div class="edit-field">
-              <label>Scheduled Date (MM/DD/YYYY)</label>
-              <input type="text" id="newServiceDate" class="text-sm" placeholder="e.g., 06/15/2025">
+            <div class="flex space-x-2 justify-end">
+              <button id="saveNewServiceBtn" class="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 transition">Save</button>
+              <button id="closeAddServicePopupBtn" class="px-3 py-1 bg-gray-200 rounded text-gray-700 text-sm hover:bg-gray-300 transition">Close</button>
             </div>
-            <div class="edit-field">
-              <label>Mileage</label>
-              <input type="number" id="newServiceMileage" class="text-sm" placeholder="e.g., 51000">
-            </div>
-            <div class="edit-field">
-              <label>Details</label>
-              <input type="text" id="newServiceDetails" class="text-sm" placeholder="e.g., Check oil levels">
-            </div>
-            <div class="edit-field">
-              <label>Vendor</label>
-              <input type="text" id="newServiceVendor" class="text-sm" placeholder="e.g., AutoFix Shop">
-            </div>
-            <div class="edit-field">
-              <label>Projected Cost</label>
-              <input type="text" id="newServiceProjectedCost" class="text-sm" placeholder="e.g., $50">
-            </div>
-            <div class="edit-field">
-              <label>Actual Cost</label>
-              <input type="text" id="newServiceActualCost" class="text-sm" placeholder="e.g., $45">
-            </div>
-            <div class="edit-field">
-              <label>Vendors</label>
-              <input type="text" id="newServiceVendors" class="text-sm" placeholder="e.g., AutoFix Shop, CarCare Center">
-            </div>
-            <div class="edit-field">
-              <label>Oil Change</label>
-              <input type="checkbox" id="newServiceOilChange">
-            </div>
-            <div class="edit-field">
-              <label>Spark Plugs</label>
-              <input type="checkbox" id="newServiceSparkPlugs">
-            </div>
-            <div class="edit-field">
-              <label>Brakes</label>
-              <input type="checkbox" id="newServiceBrakes">
-            </div>
-            <div class="edit-field">
-              <label>Status</label>
-              <select id="newServiceStatus" class="border rounded px-2 py-1 text-sm">
-                <option value="Scheduled">Scheduled</option>
-                <option value="Completed">Completed</option>
-              </select>
-            </div>
-          </div>
-          <div class="flex space-x-2 justify-end">
-            <button id="saveNewServiceBtn" class="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 transition">Save</button>
-            <button id="closeAddServicePopupBtn" class="px-3 py-1 bg-gray-200 rounded text-gray-700 text-sm hover:bg-gray-300 transition">Close</button>
           </div>
         </div>
-      </div>
 
-      <!-- Reminder Details/Edit Popup -->
-      <div id="reminderDetailsPopup" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden">
-        <div class="bg-white rounded-lg shadow-lg p-6 w-96">
-          <h3 id="reminderDetailsTitle" class="text-base font-semibold text-gray-700 mb-4">Reminder Details</h3>
-          <div id="reminderDetailsContent" class="text-sm text-gray-700 mb-4 hidden">
-            <!-- Details will be populated here -->
-          </div>
-          <div id="reminderEditFields" class="text-sm text-gray-700 mb-4 hidden">
-            <div class="edit-field">
-              <label>Reminder Name</label>
-              <input type="text" id="editReminderName" class="text-sm">
+        <!-- Reminder Details/Edit Popup -->
+        <div id="reminderDetailsPopup" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden">
+          <div class="bg-white rounded-lg shadow-lg p-6 w-96">
+            <h3 id="reminderDetailsTitle" class="text-base font-semibold text-gray-700 mb-4">Reminder Details</h3>
+            <div id="reminderDetailsContent" class="text-sm text-gray-700 mb-4 hidden">
+              <!-- Details will be populated here -->
             </div>
-            <div class="edit-field">
-              <label>Frequency</label>
-              <select id="editReminderFrequency" class="text-sm">
-                <option value="daily">Daily</option>
-                <option value="weekly">Weekly</option>
-                <option value="monthly">Monthly</option>
-                <option value="annually">Annually</option>
-              </select>
+            <div id="reminderEditFields" class="text-sm text-gray-700 mb-4 hidden">
+              <div class="edit-field">
+                <label>Reminder Name</label>
+                <input type="text" id="editReminderName" class="text-sm">
+              </div>
+              <div class="edit-field">
+                <label>Frequency</label>
+                <select id="editReminderFrequency" class="text-sm">
+                  <option value="daily">Daily</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="monthly">Monthly</option>
+                  <option value="annually">Annually</option>
+                </select>
+              </div>
+              <div class="edit-field">
+                <label>Start Date</label>
+                <input type="date" id="editReminderStartDate" class="text-sm">
+              </div>
+              <div class="edit-field">
+                <label>Instructions</label>
+                <textarea id="editReminderInstructions" class="text-sm w-full p-2 border rounded"></textarea>
+              </div>
+              <div class="edit-field">
+                <label>Enable Text Message Reminder</label>
+                <input type="checkbox" id="editReminderTextMessage">
+              </div>
             </div>
-            <div class="edit-field">
-              <label>Start Date</label>
-              <input type="date" id="editReminderStartDate" class="text-sm">
+            <div class="flex space-x-2 justify-end">
+              <button id="editReminderBtn" class="px-3 py-1 bg-gray-200 rounded text-gray-700 text-sm hover:bg-gray-300 transition">Edit</button>
+              <button id="saveReminderBtn" class="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 transition hidden">Save</button>
+              <button id="closeReminderDetailsBtn" class="px-3 py-1 bg-gray-200 rounded text-gray-700 text-sm hover:bg-gray-300 transition">Close</button>
             </div>
-            <div class="edit-field">
-              <label>Instructions</label>
-              <textarea id="editReminderInstructions" class="text-sm w-full p-2 border rounded"></textarea>
-            </div>
-            <div class="edit-field">
-              <label>Enable Text Message Reminder</label>
-              <input type="checkbox" id="editReminderTextMessage">
-            </div>
-          </div>
-          <div class="flex space-x-2 justify-end">
-            <button id="editReminderBtn" class="px-3 py-1 bg-gray-200 rounded text-gray-700 text-sm hover:bg-gray-300 transition">Edit</button>
-            <button id="saveReminderBtn" class="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 transition hidden">Save</button>
-            <button id="closeReminderDetailsBtn" class="px-3 py-1 bg-gray-200 rounded text-gray-700 text-sm hover:bg-gray-300 transition">Close</button>
           </div>
         </div>
-      </div>
 
-      <!-- To-Do Details/Edit Popup -->
-      <div id="todoDetailsPopup" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden">
-        <div class="bg-white rounded-lg shadow-lg p-6 w-96">
-          <h3 id="todoDetailsTitle" class="text-base font-semibold text-gray-700 mb-4">To-Do Details</h3>
-          <div id="todoDetailsContent" class="text-sm text-gray-700 mb-4 hidden">
-            <!-- Details will be populated here -->
-          </div>
-          <div id="todoEditFields" class="text-sm text-gray-700 mb-4 hidden">
-            <div class="edit-field">
-              <label>Task Name</label>
-              <input type="text" id="editTodoTask" class="text-sm">
+        <!-- To-Do Details/Edit Popup -->
+        <div id="todoDetailsPopup" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden">
+          <div class="bg-white rounded-lg shadow-lg p-6 w-96">
+            <h3 id="todoDetailsTitle" class="text-base font-semibold text-gray-700 mb-4">To-Do Details</h3>
+            <div id="todoDetailsContent" class="text-sm text-gray-700 mb-4 hidden">
+              <!-- Details will be populated here -->
             </div>
-            <div class="edit-field">
-              <label>Due Date</label>
-              <input type="date" id="editTodoDueDate" class="text-sm">
+            <div id="todoEditFields" class="text-sm text-gray-700 mb-4 hidden">
+              <div class="edit-field">
+                <label>Task Name</label>
+                <input type="text" id="editTodoTask" class="text-sm">
+              </div>
+              <div class="edit-field">
+                <label>Due Date</label>
+                <input type="date" id="editTodoDueDate" class="text-sm">
+              </div>
+              <div class="edit-field">
+                <label>Priority</label>
+                <select id="editTodoPriority" class="text-sm">
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                </select>
+              </div>
+              <div class="edit-field">
+                <label>Instructions</label>
+                <textarea id="editTodoInstructions" class="text-sm w-full p-2 border rounded"></textarea>
+              </div>
+              <div class="edit-field">
+                <label>Enable Text Message Reminder</label>
+                <input type="checkbox" id="editTodoTextMessage">
+              </div>
             </div>
-            <div class="edit-field">
-              <label>Priority</label>
-              <select id="editTodoPriority" class="text-sm">
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-              </select>
+            <div class="flex space-x-2 justify-end">
+              <button id="editTodoBtn" class="px-3 py-1 bg-gray-200 rounded text-gray-700 text-sm hover:bg-gray-300 transition">Edit</button>
+              <button id="saveTodoBtn" class="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 transition hidden">Save</button>
+              <button id="closeTodoDetailsBtn" class="px-3 py-1 bg-gray-200 rounded text-gray-700 text-sm hover:bg-gray-300 transition">Close</button>
             </div>
-            <div class="edit-field">
-              <label>Instructions</label>
-              <textarea id="editTodoInstructions" class="text-sm w-full p-2 border rounded"></textarea>
-            </div>
-            <div class="edit-field">
-              <label>Enable Text Message Reminder</label>
-              <input type="checkbox" id="editTodoTextMessage">
-            </div>
-          </div>
-          <div class="flex space-x-2 justify-end">
-            <button id="editTodoBtn" class="px-3 py-1 bg-gray-200 rounded text-gray-700 text-sm hover:bg-gray-300 transition">Edit</button>
-            <button id="saveTodoBtn" class="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 transition hidden">Save</button>
-            <button id="closeTodoDetailsBtn" class="px-3 py-1 bg-gray-200 rounded text-gray-700 text-sm hover:bg-gray-300 transition">Close</button>
           </div>
         </div>
       </div>
