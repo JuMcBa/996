@@ -5,7 +5,7 @@ let currentSubtaskRow = null;
 let sortColumn = null;
 let sortDirection = 'asc';
 let selectedVehicle = null;
-let currentDate = new Date('2025-06-03T21:21:00-07:00'); // 09:21 PM PDT on June 03, 2025
+let currentDate = new Date('2025-06-04T08:31:00-07:00'); // 08:31 AM PDT on June 04, 2025
 let fleet = [
   {
     id: 1,
@@ -97,11 +97,11 @@ let recurringReminders = JSON.parse(localStorage.getItem('recurringReminders')) 
 ];
 
 let toDoItems = JSON.parse(localStorage.getItem('toDoItems')) || [
-  { task: "Install Wall Safes", dueDate: "2025-06-10", priority: "high", instructions: "", textMessageEnabled: false },
-  { task: "Install Security Cameras", dueDate: "2025-06-15", priority: "high", instructions: "", textMessageEnabled: false },
-  { task: "Book Split Hotel", dueDate: "2025-06-20", priority: "medium", instructions: "", textMessageEnabled: false },
-  { task: "Return Amplifier", dueDate: "2025-06-25", priority: "low", instructions: "", textMessageEnabled: false },
-  { task: "Schedule Dentist Appointment", dueDate: "2025-06-30", priority: "medium", instructions: "", textMessageEnabled: false }
+  { task: "Install Wall Safes", dueDate: "2025-06-10", priority: "high", instructions: "", textMessageEnabled: false, completed: false },
+  { task: "Install Security Cameras", dueDate: "2025-06-15", priority: "high", instructions: "", textMessageEnabled: false, completed: false },
+  { task: "Book Split Hotel", dueDate: "2025-06-20", priority: "medium", instructions: "", textMessageEnabled: false, completed: false },
+  { task: "Return Amplifier", dueDate: "2025-06-25", priority: "low", instructions: "", textMessageEnabled: false, completed: false },
+  { task: "Schedule Dentist Appointment", dueDate: "2025-06-30", priority: "medium", instructions: "", textMessageEnabled: false, completed: false }
 ];
 
 // Save to localStorage whenever data changes
@@ -146,6 +146,103 @@ function determineStatus(vehicleId, isService = false, service = null) {
   return 'status-green';
 }
 
+// Update top navigation bar based on the current page
+function updateTopNav(page) {
+  const topNavTitle = document.getElementById('topNavTitle');
+  const topNavLinks = document.getElementById('topNavLinks');
+  topNavLinks.innerHTML = '';
+
+  if (page === 'welcome') {
+    topNavTitle.textContent = 'Welcome to Car Maintenance Tracker';
+    // No sub-sections for Welcome page
+  } else if (page === 'home') {
+    topNavTitle.textContent = 'Car Maintenance Tracker';
+    const subSections = [
+      { id: 'fleet', label: 'My Fleet' },
+      { id: 'dashboard', label: 'Dashboard' },
+      { id: 'services', label: 'Scheduled Services' }
+    ];
+    subSections.forEach(section => {
+      const btn = document.createElement('button');
+      btn.textContent = section.label;
+      btn.addEventListener('click', () => {
+        // Scroll to the section
+        document.getElementById(section.id + 'List')?.scrollIntoView({ behavior: 'smooth' });
+        document.getElementById('dashboardTiles')?.scrollIntoView({ behavior: 'smooth' });
+        document.getElementById('scheduledServices')?.scrollIntoView({ behavior: 'smooth' });
+        // Update active state
+        topNavLinks.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+      topNavLinks.appendChild(btn);
+    });
+    // Set "My Fleet" as active by default
+    topNavLinks.querySelector('button').classList.add('active');
+  } else if (page === 'reminders') {
+    topNavTitle.textContent = 'Reminders and To-Do';
+    const subSections = [
+      { id: 'todo', label: "To-Do's" },
+      { id: 'add-todo', label: 'Add To-Do' },
+      { id: 'reminders', label: 'Add Recurring Reminders' }
+    ];
+    subSections.forEach(section => {
+      const btn = document.createElement('button');
+      btn.textContent = section.label;
+      btn.addEventListener('click', () => {
+        showRemindersSubSection(section.id);
+        topNavLinks.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+      topNavLinks.appendChild(btn);
+    });
+    // Set "To-Do's" as active by default
+    topNavLinks.querySelector('button').classList.add('active');
+  } else if (page === 'main') {
+    topNavTitle.textContent = selectedVehicle ? `${selectedVehicle.year} ${selectedVehicle.make} ${selectedVehicle.model}` : 'Home Maintenance Tracker';
+    const subSections = [
+      { id: 'update-vehicle', label: 'Update Vehicle' },
+      { id: 'add-service', label: 'Add Service' },
+      { id: 'task-table', label: 'Tasks' }
+    ];
+    subSections.forEach(section => {
+      const btn = document.createElement('button');
+      btn.textContent = section.label;
+      btn.addEventListener('click', () => {
+        if (section.id === 'add-service') {
+          showAddServicePopup();
+        } else {
+          document.querySelector(`.update-vehicle`)?.scrollIntoView({ behavior: 'smooth' });
+          document.getElementById('taskTable')?.scrollIntoView({ behavior: 'smooth' });
+        }
+        topNavLinks.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+      topNavLinks.appendChild(btn);
+    });
+    // Set "Update Vehicle" as active by default
+    topNavLinks.querySelector('button').classList.add('active');
+  }
+}
+
+// Show specific sub-section on the Reminders page
+function showRemindersSubSection(sectionId) {
+  const todoSection = document.getElementById('todoSection');
+  const addTodoSection = document.getElementById('addTodoSection');
+  const remindersSection = document.getElementById('remindersSection');
+
+  todoSection.classList.add('hidden');
+  addTodoSection.classList.add('hidden');
+  remindersSection.classList.add('hidden');
+
+  if (sectionId === 'todo') {
+    todoSection.classList.remove('hidden');
+  } else if (sectionId === 'add-todo') {
+    addTodoSection.classList.remove('hidden');
+  } else if (sectionId === 'reminders') {
+    remindersSection.classList.remove('hidden');
+  }
+}
+
 // Page navigation
 function showPage(page, vehicle = null, service = null) {
   document.getElementById('welcomePage').classList.add('hidden');
@@ -153,6 +250,10 @@ function showPage(page, vehicle = null, service = null) {
   document.getElementById('mainPage').classList.add('hidden');
   document.getElementById('remindersPage').classList.add('hidden');
   document.getElementById(page + 'Page').classList.remove('hidden');
+
+  // Update top navigation bar
+  updateTopNav(page);
+
   if (page === 'home') {
     updateDashboard();
   } else if (page === 'main' && vehicle) {
@@ -169,6 +270,8 @@ function showPage(page, vehicle = null, service = null) {
       populateTasksForVehicle(vehicle.id);
     }
   } else if (page === 'reminders') {
+    // Show "To-Do's" by default
+    showRemindersSubSection('todo');
     populateRemindersAndTodos();
   }
 }
@@ -343,34 +446,37 @@ function populateRemindersAndTodos() {
   // Populate recurring reminders
   remindersList.innerHTML = recurringReminders.length ? recurringReminders.map((reminder, index) => `
     <div class="reminder-item">
-      <span class="reminder-details" data-index="${index}">${reminder.name} (${reminder.frequency}, starts ${reminder.startDate})</span>
+      <span class="reminder-details" data-index="${index}">
+        <span class="name">${reminder.name}</span>
+        <span class="frequency">${reminder.frequency}</span>
+      </span>
       <div class="actions">
-        <label class="sms-toggle">
-          <input type="checkbox" class="sms-toggle-checkbox" data-index="${index}" ${reminder.textMessageEnabled ? 'checked' : ''}>
-          SMS
-        </label>
         <button class="edit-btn edit-reminder-btn" data-index="${index}">Edit</button>
         <button class="delete-btn delete-reminder-btn" data-index="${index}">Delete</button>
       </div>
     </div>
-  `).join('') : '<p>No recurring reminders yet.</p>';
+  `).join('') : '<p class="text-gray-500 italic">No recurring reminders yet.</p>';
 
   // Populate to-do items
   todoList.innerHTML = toDoItems.length ? toDoItems.map((todo, index) => `
-    <div class="todo-item">
-      <span class="todo-details" data-index="${index}">${todo.task} (Due: ${todo.dueDate}, Priority: ${todo.priority})</span>
+    <div class="todo-item ${todo.completed ? 'completed' : ''}">
+      <span class="todo-details" data-index="${index}">
+        <span class="task">${todo.task}</span>
+        <span class="due-date">${todo.dueDate}</span>
+        <span class="priority">${todo.priority}</span>
+      </span>
       <div class="actions">
-        <label class="sms-toggle">
-          <input type="checkbox" class="sms-toggle-checkbox" data-index="${index}" ${todo.textMessageEnabled ? 'checked' : ''}>
-          SMS
-        </label>
+        <button class="complete-btn ${todo.completed ? 'completed' : ''}" data-index="${index}">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+          ${todo.completed ? 'Undo' : 'Done'}
+        </button>
         <button class="edit-btn edit-todo-btn" data-index="${index}">Edit</button>
         <button class="delete-btn delete-todo-btn" data-index="${index}">Delete</button>
       </div>
     </div>
-  `).join('') : '<p>No to-do items yet.</p>';
+  `).join('') : '<p class="text-gray-500 italic">No to-do items yet.</p>';
 
-  // Add event listeners for details, edit, delete, and SMS toggles
+  // Add event listeners for details, edit, delete, and complete toggles
   document.querySelectorAll('.reminder-details').forEach(item => {
     item.addEventListener('click', () => showReminderDetails(parseInt(item.dataset.index)));
   });
@@ -389,11 +495,8 @@ function populateRemindersAndTodos() {
   document.querySelectorAll('.delete-todo-btn').forEach(btn => {
     btn.addEventListener('click', () => deleteTodo(parseInt(btn.dataset.index)));
   });
-  document.querySelectorAll('.reminders-column .sms-toggle-checkbox').forEach(checkbox => {
-    checkbox.addEventListener('change', () => toggleReminderSMS(parseInt(checkbox.dataset.index)));
-  });
-  document.querySelectorAll('.todo-column .sms-toggle-checkbox').forEach(checkbox => {
-    checkbox.addEventListener('change', () => toggleTodoSMS(parseInt(checkbox.dataset.index)));
+  document.querySelectorAll('.complete-btn').forEach(btn => {
+    btn.addEventListener('click', () => toggleTodoComplete(parseInt(btn.dataset.index)));
   });
 }
 
@@ -469,6 +572,7 @@ function showTodoDetails(index, editMode = false) {
       <div class="detail-row"><span class="detail-label">Priority</span><span class="detail-value">${todo.priority}</span></div>
       <div class="detail-row"><span class="detail-label">Instructions</span><span class="detail-value">${todo.instructions || 'None'}</span></div>
       <div class="detail-row"><span class="detail-label">Text Message</span><span class="detail-value">${todo.textMessageEnabled ? 'Enabled' : 'Disabled'}</span></div>
+      <div class="detail-row"><span class="detail-label">Status</span><span class="detail-value">${todo.completed ? 'Completed' : 'Pending'}</span></div>
     `;
     content.classList.remove('hidden');
     editFields.classList.add('hidden');
@@ -509,6 +613,9 @@ function addReminder() {
   document.getElementById('reminderTextMessage').checked = false;
   saveData();
   populateRemindersAndTodos();
+  // Switch back to To-Do's view after adding
+  showRemindersSubSection('todo');
+  document.getElementById('topNavLinks').querySelector('button').classList.add('active');
 }
 
 // Add a new to-do item
@@ -529,7 +636,8 @@ function addTodo() {
     dueDate: dueDate,
     priority: priority,
     instructions: instructions,
-    textMessageEnabled: textMessageEnabled
+    textMessageEnabled: textMessageEnabled,
+    completed: false
   });
 
   document.getElementById('todoTask').value = '';
@@ -539,6 +647,9 @@ function addTodo() {
   document.getElementById('todoTextMessage').checked = false;
   saveData();
   populateRemindersAndTodos();
+  // Switch back to To-Do's view after adding
+  showRemindersSubSection('todo');
+  document.getElementById('topNavLinks').querySelector('button').classList.add('active');
 }
 
 // Delete a reminder
@@ -559,16 +670,9 @@ function deleteTodo(index) {
   }
 }
 
-// Toggle SMS for a reminder
-function toggleReminderSMS(index) {
-  recurringReminders[index].textMessageEnabled = !recurringReminders[index].textMessageEnabled;
-  saveData();
-  populateRemindersAndTodos();
-}
-
-// Toggle SMS for a to-do item
-function toggleTodoSMS(index) {
-  toDoItems[index].textMessageEnabled = !toDoItems[index].textMessageEnabled;
+// Toggle completion for a to-do item
+function toggleTodoComplete(index) {
+  toDoItems[index].completed = !toDoItems[index].completed;
   saveData();
   populateRemindersAndTodos();
 }
@@ -606,6 +710,7 @@ function saveEditedTodo(index) {
   const priority = document.getElementById('editTodoPriority').value;
   const instructions = document.getElementById('editTodoInstructions').value.trim();
   const textMessageEnabled = document.getElementById('editTodoTextMessage').checked;
+  const completed = toDoItems[index].completed; // Preserve the completed status
 
   if (!task || !dueDate) {
     alert('Please fill in all required fields (Task Name, Due Date).');
@@ -617,7 +722,8 @@ function saveEditedTodo(index) {
     dueDate: dueDate,
     priority: priority,
     instructions: instructions,
-    textMessageEnabled: textMessageEnabled
+    textMessageEnabled: textMessageEnabled,
+    completed: completed
   };
 
   saveData();
