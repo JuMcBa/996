@@ -5,7 +5,7 @@ let currentSubtaskRow = null;
 let sortColumn = null;
 let sortDirection = 'asc';
 let selectedVehicle = null;
-let currentDate = new Date('2025-06-03T20:33:00-07:00'); // 08:33 PM PDT on June 03, 2025
+let currentDate = new Date('2025-06-03T20:53:00-07:00'); // 08:53 PM PDT on June 03, 2025
 let fleet = [
   {
     id: 1,
@@ -87,9 +87,23 @@ let scheduledServices = [
   }
 ];
 
-// Arrays to store reminders and to-do items
-let recurringReminders = [];
-let toDoItems = [];
+// Default recurring reminders (all annual)
+let recurringReminders = [
+  { name: "Pay HELOC", frequency: "annually", startDate: "2025-01-01" },
+  { name: "Pay Water Bill", frequency: "annually", startDate: "2025-02-01" },
+  { name: "Notify Tenants of Rent Renewal", frequency: "annually", startDate: "2025-03-01" },
+  { name: "Renew Insurance Policy", frequency: "annually", startDate: "2025-04-01" },
+  { name: "Schedule Annual Maintenance", frequency: "annually", startDate: "2025-05-01" }
+];
+
+// Default to-do items
+let toDoItems = [
+  { task: "Install Wall Safes", dueDate: "2025-06-10", priority: "high" },
+  { task: "Install Security Cameras", dueDate: "2025-06-15", priority: "high" },
+  { task: "Book Split Hotel", dueDate: "2025-06-20", priority: "medium" },
+  { task: "Return Amplifier", dueDate: "2025-06-25", priority: "low" },
+  { task: "Schedule Dentist Appointment", dueDate: "2025-06-30", priority: "medium" }
+];
 
 // Determine status for a vehicle or service
 function determineStatus(vehicleId, isService = false, service = null) {
