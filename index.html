@@ -102,6 +102,14 @@
               <label>Start Date</label>
               <input type="date" id="reminderStartDate" class="text-sm">
             </div>
+            <div class="edit-field">
+              <label>Instructions (Optional)</label>
+              <textarea id="reminderInstructions" class="text-sm w-full p-2 border rounded" placeholder="e.g., Contact the bank at (123) 456-7890"></textarea>
+            </div>
+            <div class="edit-field">
+              <label>Enable Text Message Reminder</label>
+              <input type="checkbox" id="reminderTextMessage">
+            </div>
             <button id="addReminderBtn" class="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition mt-2">Add Reminder</button>
             <div id="remindersList" class="mt-4">
               <!-- Reminders will be populated here -->
@@ -125,6 +133,14 @@
                 <option value="medium">Medium</option>
                 <option value="high">High</option>
               </select>
+            </div>
+            <div class="edit-field">
+              <label>Instructions (Optional)</label>
+              <textarea id="todoInstructions" class="text-sm w-full p-2 border rounded" placeholder="e.g., Purchase cameras from Best Buy"></textarea>
+            </div>
+            <div class="edit-field">
+              <label>Enable Text Message Reminder</label>
+              <input type="checkbox" id="todoTextMessage">
             </div>
             <button id="addTodoBtn" class="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition mt-2">Add To-Do</button>
             <div id="todoList" class="mt-4">
@@ -350,6 +366,89 @@
           <div class="flex space-x-2 justify-end">
             <button id="saveNewServiceBtn" class="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 transition">Save</button>
             <button id="closeAddServicePopupBtn" class="px-3 py-1 bg-gray-200 rounded text-gray-700 text-sm hover:bg-gray-300 transition">Close</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reminder Details/Edit Popup -->
+      <div id="reminderDetailsPopup" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg shadow-lg p-6 w-96">
+          <h3 id="reminderDetailsTitle" class="text-base font-semibold text-gray-700 mb-4">Reminder Details</h3>
+          <div id="reminderDetailsContent" class="text-sm text-gray-700 mb-4 hidden">
+            <!-- Details will be populated here -->
+          </div>
+          <div id="reminderEditFields" class="text-sm text-gray-700 mb-4 hidden">
+            <div class="edit-field">
+              <label>Reminder Name</label>
+              <input type="text" id="editReminderName" class="text-sm">
+            </div>
+            <div class="edit-field">
+              <label>Frequency</label>
+              <select id="editReminderFrequency" class="text-sm">
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+                <option value="annually">Annually</option>
+              </select>
+            </div>
+            <div class="edit-field">
+              <label>Start Date</label>
+              <input type="date" id="editReminderStartDate" class="text-sm">
+            </div>
+            <div class="edit-field">
+              <label>Instructions</label>
+              <textarea id="editReminderInstructions" class="text-sm w-full p-2 border rounded"></textarea>
+            </div>
+            <div class="edit-field">
+              <label>Enable Text Message Reminder</label>
+              <input type="checkbox" id="editReminderTextMessage">
+            </div>
+          </div>
+          <div class="flex space-x-2 justify-end">
+            <button id="editReminderBtn" class="px-3 py-1 bg-gray-200 rounded text-gray-700 text-sm hover:bg-gray-300 transition">Edit</button>
+            <button id="saveReminderBtn" class="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 transition hidden">Save</button>
+            <button id="closeReminderDetailsBtn" class="px-3 py-1 bg-gray-200 rounded text-gray-700 text-sm hover:bg-gray-300 transition">Close</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- To-Do Details/Edit Popup -->
+      <div id="todoDetailsPopup" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg shadow-lg p-6 w-96">
+          <h3 id="todoDetailsTitle" class="text-base font-semibold text-gray-700 mb-4">To-Do Details</h3>
+          <div id="todoDetailsContent" class="text-sm text-gray-700 mb-4 hidden">
+            <!-- Details will be populated here -->
+          </div>
+          <div id="todoEditFields" class="text-sm text-gray-700 mb-4 hidden">
+            <div class="edit-field">
+              <label>Task Name</label>
+              <input type="text" id="editTodoTask" class="text-sm">
+            </div>
+            <div class="edit-field">
+              <label>Due Date</label>
+              <input type="date" id="editTodoDueDate" class="text-sm">
+            </div>
+            <div class="edit-field">
+              <label>Priority</label>
+              <select id="editTodoPriority" class="text-sm">
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+              </select>
+            </div>
+            <div class="edit-field">
+              <label>Instructions</label>
+              <textarea id="editTodoInstructions" class="text-sm w-full p-2 border rounded"></textarea>
+            </div>
+            <div class="edit-field">
+              <label>Enable Text Message Reminder</label>
+              <input type="checkbox" id="editTodoTextMessage">
+            </div>
+          </div>
+          <div class="flex space-x-2 justify-end">
+            <button id="editTodoBtn" class="px-3 py-1 bg-gray-200 rounded text-gray-700 text-sm hover:bg-gray-300 transition">Edit</button>
+            <button id="saveTodoBtn" class="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 transition hidden">Save</button>
+            <button id="closeTodoDetailsBtn" class="px-3 py-1 bg-gray-200 rounded text-gray-700 text-sm hover:bg-gray-300 transition">Close</button>
           </div>
         </div>
       </div>
