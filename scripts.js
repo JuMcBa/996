@@ -5,7 +5,7 @@ let currentSubtaskRow = null;
 let sortColumn = null;
 let sortDirection = 'asc';
 let selectedVehicle = null;
-let currentDate = new Date('2025-06-03T20:53:00-07:00'); // 08:53 PM PDT on June 03, 2025
+let currentDate = new Date('2025-06-03T21:21:00-07:00'); // 09:21 PM PDT on June 03, 2025
 let fleet = [
   {
     id: 1,
@@ -87,23 +87,28 @@ let scheduledServices = [
   }
 ];
 
-// Default recurring reminders (all annual)
-let recurringReminders = [
-  { name: "Pay HELOC", frequency: "annually", startDate: "2025-01-01" },
-  { name: "Pay Water Bill", frequency: "annually", startDate: "2025-02-01" },
-  { name: "Notify Tenants of Rent Renewal", frequency: "annually", startDate: "2025-03-01" },
-  { name: "Renew Insurance Policy", frequency: "annually", startDate: "2025-04-01" },
-  { name: "Schedule Annual Maintenance", frequency: "annually", startDate: "2025-05-01" }
+// Load reminders and to-do items from localStorage, or use defaults if not present
+let recurringReminders = JSON.parse(localStorage.getItem('recurringReminders')) || [
+  { name: "Pay HELOC", frequency: "annually", startDate: "2025-01-01", instructions: "", textMessageEnabled: false },
+  { name: "Pay Water Bill", frequency: "annually", startDate: "2025-02-01", instructions: "", textMessageEnabled: false },
+  { name: "Notify Tenants of Rent Renewal", frequency: "annually", startDate: "2025-03-01", instructions: "", textMessageEnabled: false },
+  { name: "Renew Insurance Policy", frequency: "annually", startDate: "2025-04-01", instructions: "", textMessageEnabled: false },
+  { name: "Schedule Annual Maintenance", frequency: "annually", startDate: "2025-05-01", instructions: "", textMessageEnabled: false }
 ];
 
-// Default to-do items
-let toDoItems = [
-  { task: "Install Wall Safes", dueDate: "2025-06-10", priority: "high" },
-  { task: "Install Security Cameras", dueDate: "2025-06-15", priority: "high" },
-  { task: "Book Split Hotel", dueDate: "2025-06-20", priority: "medium" },
-  { task: "Return Amplifier", dueDate: "2025-06-25", priority: "low" },
-  { task: "Schedule Dentist Appointment", dueDate: "2025-06-30", priority: "medium" }
+let toDoItems = JSON.parse(localStorage.getItem('toDoItems')) || [
+  { task: "Install Wall Safes", dueDate: "2025-06-10", priority: "high", instructions: "", textMessageEnabled: false },
+  { task: "Install Security Cameras", dueDate: "2025-06-15", priority: "high", instructions: "", textMessageEnabled: false },
+  { task: "Book Split Hotel", dueDate: "2025-06-20", priority: "medium", instructions: "", textMessageEnabled: false },
+  { task: "Return Amplifier", dueDate: "2025-06-25", priority: "low", instructions: "", textMessageEnabled: false },
+  { task: "Schedule Dentist Appointment", dueDate: "2025-06-30", priority: "medium", instructions: "", textMessageEnabled: false }
 ];
+
+// Save to localStorage whenever data changes
+function saveData() {
+  localStorage.setItem('recurringReminders', JSON.stringify(recurringReminders));
+  localStorage.setItem('toDoItems', JSON.stringify(toDoItems));
+}
 
 // Determine status for a vehicle or service
 function determineStatus(vehicleId, isService = false, service = null) {
@@ -336,18 +341,144 @@ function populateRemindersAndTodos() {
   const todoList = document.getElementById('todoList');
 
   // Populate recurring reminders
-  remindersList.innerHTML = recurringReminders.length ? recurringReminders.map(reminder => `
+  remindersList.innerHTML = recurringReminders.length ? recurringReminders.map((reminder, index) => `
     <div class="reminder-item">
-      <span>${reminder.name} (${reminder.frequency}, starts ${reminder.startDate})</span>
+      <span class="reminder-details" data-index="${index}">${reminder.name} (${reminder.frequency}, starts ${reminder.startDate})</span>
+      <div class="actions">
+        <label class="sms-toggle">
+          <input type="checkbox" class="sms-toggle-checkbox" data-index="${index}" ${reminder.textMessageEnabled ? 'checked' : ''}>
+          SMS
+        </label>
+        <button class="edit-btn edit-reminder-btn" data-index="${index}">Edit</button>
+        <button class="delete-btn delete-reminder-btn" data-index="${index}">Delete</button>
+      </div>
     </div>
   `).join('') : '<p>No recurring reminders yet.</p>';
 
   // Populate to-do items
-  todoList.innerHTML = toDoItems.length ? toDoItems.map(todo => `
+  todoList.innerHTML = toDoItems.length ? toDoItems.map((todo, index) => `
     <div class="todo-item">
-      <span>${todo.task} (Due: ${todo.dueDate}, Priority: ${todo.priority})</span>
+      <span class="todo-details" data-index="${index}">${todo.task} (Due: ${todo.dueDate}, Priority: ${todo.priority})</span>
+      <div class="actions">
+        <label class="sms-toggle">
+          <input type="checkbox" class="sms-toggle-checkbox" data-index="${index}" ${todo.textMessageEnabled ? 'checked' : ''}>
+          SMS
+        </label>
+        <button class="edit-btn edit-todo-btn" data-index="${index}">Edit</button>
+        <button class="delete-btn delete-todo-btn" data-index="${index}">Delete</button>
+      </div>
     </div>
   `).join('') : '<p>No to-do items yet.</p>';
+
+  // Add event listeners for details, edit, delete, and SMS toggles
+  document.querySelectorAll('.reminder-details').forEach(item => {
+    item.addEventListener('click', () => showReminderDetails(parseInt(item.dataset.index)));
+  });
+  document.querySelectorAll('.todo-details').forEach(item => {
+    item.addEventListener('click', () => showTodoDetails(parseInt(item.dataset.index)));
+  });
+  document.querySelectorAll('.edit-reminder-btn').forEach(btn => {
+    btn.addEventListener('click', () => showReminderDetails(parseInt(btn.dataset.index), true));
+  });
+  document.querySelectorAll('.edit-todo-btn').forEach(btn => {
+    btn.addEventListener('click', () => showTodoDetails(parseInt(btn.dataset.index), true));
+  });
+  document.querySelectorAll('.delete-reminder-btn').forEach(btn => {
+    btn.addEventListener('click', () => deleteReminder(parseInt(btn.dataset.index)));
+  });
+  document.querySelectorAll('.delete-todo-btn').forEach(btn => {
+    btn.addEventListener('click', () => deleteTodo(parseInt(btn.dataset.index)));
+  });
+  document.querySelectorAll('.reminders-column .sms-toggle-checkbox').forEach(checkbox => {
+    checkbox.addEventListener('change', () => toggleReminderSMS(parseInt(checkbox.dataset.index)));
+  });
+  document.querySelectorAll('.todo-column .sms-toggle-checkbox').forEach(checkbox => {
+    checkbox.addEventListener('change', () => toggleTodoSMS(parseInt(checkbox.dataset.index)));
+  });
+}
+
+// Show Reminder Details/Edit Popup
+function showReminderDetails(index, editMode = false) {
+  const reminder = recurringReminders[index];
+  const popup = document.getElementById('reminderDetailsPopup');
+  const title = document.getElementById('reminderDetailsTitle');
+  const content = document.getElementById('reminderDetailsContent');
+  const editFields = document.getElementById('reminderEditFields');
+  const editBtn = document.getElementById('editReminderBtn');
+  const saveBtn = document.getElementById('saveReminderBtn');
+
+  title.textContent = editMode ? 'Edit Reminder' : 'Reminder Details';
+
+  if (editMode) {
+    document.getElementById('editReminderName').value = reminder.name;
+    document.getElementById('editReminderFrequency').value = reminder.frequency;
+    document.getElementById('editReminderStartDate').value = reminder.startDate;
+    document.getElementById('editReminderInstructions').value = reminder.instructions || '';
+    document.getElementById('editReminderTextMessage').checked = reminder.textMessageEnabled || false;
+    content.classList.add('hidden');
+    editFields.classList.remove('hidden');
+    editBtn.classList.add('hidden');
+    saveBtn.classList.remove('hidden');
+    saveBtn.dataset.index = index;
+  } else {
+    content.innerHTML = `
+      <div class="detail-row"><span class="detail-label">Name</span><span class="detail-value">${reminder.name}</span></div>
+      <div class="detail-row"><span class="detail-label">Frequency</span><span class="detail-value">${reminder.frequency}</span></div>
+      <div class="detail-row"><span class="detail-label">Start Date</span><span class="detail-value">${reminder.startDate}</span></div>
+      <div class="detail-row"><span class="detail-label">Instructions</span><span class="detail-value">${reminder.instructions || 'None'}</span></div>
+      <div class="detail-row"><span class="detail-label">Text Message</span><span class="detail-value">${reminder.textMessageEnabled ? 'Enabled' : 'Disabled'}</span></div>
+    `;
+    content.classList.remove('hidden');
+    editFields.classList.add('hidden');
+    editBtn.classList.remove('hidden');
+    saveBtn.classList.add('hidden');
+    editBtn.dataset.index = index;
+  }
+
+  popup.classList.remove('hidden');
+  popup.classList.add('show');
+}
+
+// Show To-Do Details/Edit Popup
+function showTodoDetails(index, editMode = false) {
+  const todo = toDoItems[index];
+  const popup = document.getElementById('todoDetailsPopup');
+  const title = document.getElementById('todoDetailsTitle');
+  const content = document.getElementById('todoDetailsContent');
+  const editFields = document.getElementById('todoEditFields');
+  const editBtn = document.getElementById('editTodoBtn');
+  const saveBtn = document.getElementById('saveTodoBtn');
+
+  title.textContent = editMode ? 'Edit To-Do' : 'To-Do Details';
+
+  if (editMode) {
+    document.getElementById('editTodoTask').value = todo.task;
+    document.getElementById('editTodoDueDate').value = todo.dueDate;
+    document.getElementById('editTodoPriority').value = todo.priority;
+    document.getElementById('editTodoInstructions').value = todo.instructions || '';
+    document.getElementById('editTodoTextMessage').checked = todo.textMessageEnabled || false;
+    content.classList.add('hidden');
+    editFields.classList.remove('hidden');
+    editBtn.classList.add('hidden');
+    saveBtn.classList.remove('hidden');
+    saveBtn.dataset.index = index;
+  } else {
+    content.innerHTML = `
+      <div class="detail-row"><span class="detail-label">Task</span><span class="detail-value">${todo.task}</span></div>
+      <div class="detail-row"><span class="detail-label">Due Date</span><span class="detail-value">${todo.dueDate}</span></div>
+      <div class="detail-row"><span class="detail-label">Priority</span><span class="detail-value">${todo.priority}</span></div>
+      <div class="detail-row"><span class="detail-label">Instructions</span><span class="detail-value">${todo.instructions || 'None'}</span></div>
+      <div class="detail-row"><span class="detail-label">Text Message</span><span class="detail-value">${todo.textMessageEnabled ? 'Enabled' : 'Disabled'}</span></div>
+    `;
+    content.classList.remove('hidden');
+    editFields.classList.add('hidden');
+    editBtn.classList.remove('hidden');
+    saveBtn.classList.add('hidden');
+    editBtn.dataset.index = index;
+  }
+
+  popup.classList.remove('hidden');
+  popup.classList.add('show');
 }
 
 // Add a new recurring reminder
@@ -355,6 +486,8 @@ function addReminder() {
   const name = document.getElementById('reminderName').value.trim();
   const frequency = document.getElementById('reminderFrequency').value;
   const startDate = document.getElementById('reminderStartDate').value;
+  const instructions = document.getElementById('reminderInstructions').value.trim();
+  const textMessageEnabled = document.getElementById('reminderTextMessage').checked;
 
   if (!name || !startDate) {
     alert('Please fill in all required fields (Reminder Name, Start Date).');
@@ -364,12 +497,17 @@ function addReminder() {
   recurringReminders.push({
     name: name,
     frequency: frequency,
-    startDate: startDate
+    startDate: startDate,
+    instructions: instructions,
+    textMessageEnabled: textMessageEnabled
   });
 
   document.getElementById('reminderName').value = '';
   document.getElementById('reminderFrequency').value = 'daily';
   document.getElementById('reminderStartDate').value = '';
+  document.getElementById('reminderInstructions').value = '';
+  document.getElementById('reminderTextMessage').checked = false;
+  saveData();
   populateRemindersAndTodos();
 }
 
@@ -378,6 +516,8 @@ function addTodo() {
   const task = document.getElementById('todoTask').value.trim();
   const dueDate = document.getElementById('todoDueDate').value;
   const priority = document.getElementById('todoPriority').value;
+  const instructions = document.getElementById('todoInstructions').value.trim();
+  const textMessageEnabled = document.getElementById('todoTextMessage').checked;
 
   if (!task || !dueDate) {
     alert('Please fill in all required fields (Task Name, Due Date).');
@@ -387,13 +527,116 @@ function addTodo() {
   toDoItems.push({
     task: task,
     dueDate: dueDate,
-    priority: priority
+    priority: priority,
+    instructions: instructions,
+    textMessageEnabled: textMessageEnabled
   });
 
   document.getElementById('todoTask').value = '';
   document.getElementById('todoDueDate').value = '';
   document.getElementById('todoPriority').value = 'low';
+  document.getElementById('todoInstructions').value = '';
+  document.getElementById('todoTextMessage').checked = false;
+  saveData();
   populateRemindersAndTodos();
+}
+
+// Delete a reminder
+function deleteReminder(index) {
+  if (confirm('Are you sure you want to delete this reminder?')) {
+    recurringReminders.splice(index, 1);
+    saveData();
+    populateRemindersAndTodos();
+  }
+}
+
+// Delete a to-do item
+function deleteTodo(index) {
+  if (confirm('Are you sure you want to delete this to-do item?')) {
+    toDoItems.splice(index, 1);
+    saveData();
+    populateRemindersAndTodos();
+  }
+}
+
+// Toggle SMS for a reminder
+function toggleReminderSMS(index) {
+  recurringReminders[index].textMessageEnabled = !recurringReminders[index].textMessageEnabled;
+  saveData();
+  populateRemindersAndTodos();
+}
+
+// Toggle SMS for a to-do item
+function toggleTodoSMS(index) {
+  toDoItems[index].textMessageEnabled = !toDoItems[index].textMessageEnabled;
+  saveData();
+  populateRemindersAndTodos();
+}
+
+// Save edited reminder
+function saveEditedReminder(index) {
+  const name = document.getElementById('editReminderName').value.trim();
+  const frequency = document.getElementById('editReminderFrequency').value;
+  const startDate = document.getElementById('editReminderStartDate').value;
+  const instructions = document.getElementById('editReminderInstructions').value.trim();
+  const textMessageEnabled = document.getElementById('editReminderTextMessage').checked;
+
+  if (!name || !startDate) {
+    alert('Please fill in all required fields (Reminder Name, Start Date).');
+    return;
+  }
+
+  recurringReminders[index] = {
+    name: name,
+    frequency: frequency,
+    startDate: startDate,
+    instructions: instructions,
+    textMessageEnabled: textMessageEnabled
+  };
+
+  saveData();
+  closeReminderDetailsPopup();
+  populateRemindersAndTodos();
+}
+
+// Save edited to-do item
+function saveEditedTodo(index) {
+  const task = document.getElementById('editTodoTask').value.trim();
+  const dueDate = document.getElementById('editTodoDueDate').value;
+  const priority = document.getElementById('editTodoPriority').value;
+  const instructions = document.getElementById('editTodoInstructions').value.trim();
+  const textMessageEnabled = document.getElementById('editTodoTextMessage').checked;
+
+  if (!task || !dueDate) {
+    alert('Please fill in all required fields (Task Name, Due Date).');
+    return;
+  }
+
+  toDoItems[index] = {
+    task: task,
+    dueDate: dueDate,
+    priority: priority,
+    instructions: instructions,
+    textMessageEnabled: textMessageEnabled
+  };
+
+  saveData();
+  closeTodoDetailsPopup();
+  populateRemindersAndTodos();
+}
+
+// Close Reminder Details Popup
+function closeReminderDetailsPopup() {
+  const popup = document.getElementById('reminderDetailsPopup');
+  popup.classList.remove('show');
+  setTimeout(() => popup.classList.add('hidden'), 300);
+}
+
+// Close To-Do Details Popup
+function closeTodoDetailsPopup() {
+  const popup = document.getElementById('todoDetailsPopup');
+  popup.classList.remove('show');
+  setTimeout(() => popup.classList.add('hidden'), 300);
 }
 
 // Show Add Vehicle Popup
@@ -833,22 +1076,14 @@ function showSubtaskPopup(row, event) {
     <div class="subtask-row ${subtask.completed ? 'completed' : ''}">
       <span>${subtask.name}</span>
       <div>
-        <button class="text-green-500 mr-2 toggleSubtaskBtn" data-index="${index}">${subtask.completed ? 'Undo' : 'Complete'}</button>
-        <button class="text-red-500 deleteSubtaskBtn" data-index="${index}">Delete</button>
+        <button class="text-green-500 mr-2" onclick="toggleSubtask(${index})">${subtask.completed ? 'Undo' : 'Complete'}</button>
+        <button class="text-red-500" onclick="deleteSubtask(${index})">Delete</button>
       </div>
     </div>
   `).join('') : '<p>No subtasks yet.</p>';
 
   subtaskPopup.classList.remove('hidden');
   subtaskPopup.classList.add('show');
-
-  // Add event listeners for toggle and delete buttons
-  document.querySelectorAll('.toggleSubtaskBtn').forEach(btn => {
-    btn.addEventListener('click', () => toggleSubtask(parseInt(btn.dataset.index)));
-  });
-  document.querySelectorAll('.deleteSubtaskBtn').forEach(btn => {
-    btn.addEventListener('click', () => deleteSubtask(parseInt(btn.dataset.index)));
-  });
 }
 
 function addSubtask() {
@@ -921,3 +1156,9 @@ document.getElementById('addSubtaskBtn').addEventListener('click', addSubtask);
 document.getElementById('closeSubtaskPopupBtn').addEventListener('click', closeSubtaskPopup);
 document.getElementById('addReminderBtn').addEventListener('click', addReminder);
 document.getElementById('addTodoBtn').addEventListener('click', addTodo);
+document.getElementById('editReminderBtn').addEventListener('click', (e) => showReminderDetails(parseInt(e.target.dataset.index), true));
+document.getElementById('saveReminderBtn').addEventListener('click', (e) => saveEditedReminder(parseInt(e.target.dataset.index)));
+document.getElementById('closeReminderDetailsBtn').addEventListener('click', closeReminderDetailsPopup);
+document.getElementById('editTodoBtn').addEventListener('click', (e) => showTodoDetails(parseInt(e.target.dataset.index), true));
+document.getElementById('saveTodoBtn').addEventListener('click', (e) => saveEditedTodo(parseInt(e.target.dataset.index)));
+document.getElementById('closeTodoDetailsBtn').addEventListener('click', closeTodoDetailsPopup);
