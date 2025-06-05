@@ -96,40 +96,20 @@
           <div class="reminders-todo-container">
             <!-- To-Do Column (Default View) -->
             <div id="todoSection" class="todo-column">
-              <h3>To-Do's</h3>
+              <div class="flex justify-between items-center mb-3">
+                <h3>To-Do's</h3>
+                <button id="addTodoBtnTop" class="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition">Add To-Do's</button>
+              </div>
               <div id="todoList" class="mt-4">
                 <!-- To-Do items will be populated here -->
               </div>
             </div>
             <!-- Add Recurring Reminders Column (Hidden by Default) -->
             <div id="remindersSection" class="reminders-column hidden">
-              <h3>Add Recurring Reminders</h3>
-              <div class="edit-field">
-                <label>Reminder Name</label>
-                <input type="text" id="reminderName" class="text-sm" placeholder="e.g., Check Tire Pressure">
+              <div class="flex justify-between items-center mb-3">
+                <h3>Recurring Reminders</h3>
+                <button id="addReminderBtnTop" class="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition">Add Recurring Reminders</button>
               </div>
-              <div class="edit-field">
-                <label>Frequency</label>
-                <select id="reminderFrequency" class="text-sm">
-                  <option value="daily">Daily</option>
-                  <option value="weekly">Weekly</option>
-                  <option value="monthly">Monthly</option>
-                  <option value="annually">Annually</option>
-                </select>
-              </div>
-              <div class="edit-field">
-                <label>Start Date</label>
-                <input type="date" id="reminderStartDate" class="text-sm">
-              </div>
-              <div class="edit-field">
-                <label>Instructions (Optional)</label>
-                <textarea id="reminderInstructions" class="text-sm w-full p-2 border rounded" placeholder="e.g., Contact the bank at (123) 456-7890"></textarea>
-              </div>
-              <div class="edit-field">
-                <label>Enable Text Message Reminder</label>
-                <input type="checkbox" id="reminderTextMessage">
-              </div>
-              <button id="addReminderBtn" class="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition mt-2">Add Reminder</button>
               <div id="remindersList" class="mt-4">
                 <!-- Reminders will be populated here -->
               </div>
@@ -163,6 +143,16 @@
               </div>
               <button id="addTodoBtn" class="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition mt-2">Add To-Do</button>
             </div>
+            <!-- Quick Save Column (Hidden by Default) -->
+            <div id="quickSaveSection" class="todo-column hidden">
+              <div class="flex justify-between items-center mb-3">
+                <h3>Quick Save</h3>
+                <button id="addQuickSaveBtn" class="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition">Add a Quick Save</button>
+              </div>
+              <div id="quickSaveList" class="mt-4">
+                <!-- Quick Saves will be populated here -->
+              </div>
+            </div>
           </div>
         </div>
 
@@ -170,7 +160,7 @@
         <div id="mainPage" class="hidden">
           <div class="flex justify-between items-center mb-3">
             <div id="vehicleHeader"></div>
-            <div class="text-gray-700 text-sm">June 04, 2025</div>
+            <div class="text-gray-700 text-sm">June 05, 2025</div>
             <div></div>
           </div>
 
@@ -465,6 +455,111 @@
               <button id="editTodoBtn" class="px-3 py-1 bg-gray-200 rounded text-gray-700 text-sm hover:bg-gray-300 transition">Edit</button>
               <button id="saveTodoBtn" class="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 transition hidden">Save</button>
               <button id="closeTodoDetailsBtn" class="px-3 py-1 bg-gray-200 rounded text-gray-700 text-sm hover:bg-gray-300 transition">Close</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add To-Do Popup -->
+        <div id="addTodoPopup" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden">
+          <div class="bg-white rounded-lg shadow-lg p-6 w-96">
+            <h3 class="text-base font-semibold text-gray-700 mb-4">Add To-Do</h3>
+            <div id="addTodoFields" class="text-sm text-gray-700 mb-4">
+              <div class="edit-field">
+                <label>Task Name</label>
+                <input type="text" id="newTodoTask" class="text-sm" placeholder="e.g., Schedule Oil Change">
+              </div>
+              <div class="edit-field">
+                <label>Due Date</label>
+                <input type="date" id="newTodoDueDate" class="text-sm">
+              </div>
+              <div class="edit-field">
+                <label>Priority</label>
+                <select id="newTodoPriority" class="text-sm">
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                </select>
+              </div>
+              <div class="edit-field">
+                <label>Instructions (Optional)</label>
+                <textarea id="newTodoInstructions" class="text-sm w-full p-2 border rounded" placeholder="e.g., Purchase cameras from Best Buy"></textarea>
+              </div>
+              <div class="edit-field">
+                <label>Enable Text Message Reminder</label>
+                <input type="checkbox" id="newTodoTextMessage">
+              </div>
+            </div>
+            <div class="flex space-x-2 justify-end">
+              <button id="saveTodoBtnPopup" class="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 transition">Save</button>
+              <button id="closeAddTodoPopupBtn" class="px-3 py-1 bg-gray-200 rounded text-gray-700 text-sm hover:bg-gray-300 transition">Close</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add Recurring Reminder Popup -->
+        <div id="addReminderPopup" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden">
+          <div class="bg-white rounded-lg shadow-lg p-6 w-96">
+            <h3 class="text-base font-semibold text-gray-700 mb-4">Add Recurring Reminder</h3>
+            <div id="addReminderFields" class="text-sm text-gray-700 mb-4">
+              <div class="edit-field">
+                <label>Reminder Name</label>
+                <input type="text" id="newReminderName" class="text-sm" placeholder="e.g., Check Tire Pressure">
+              </div>
+              <div class="edit-field">
+                <label>Frequency</label>
+                <select id="newReminderFrequency" class="text-sm">
+                  <option value="daily">Daily</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="monthly">Monthly</option>
+                  <option value="annually">Annually</option>
+                </select>
+              </div>
+              <div class="edit-field">
+                <label>Start Date</label>
+                <input type="date" id="newReminderStartDate" class="text-sm">
+              </div>
+              <div class="edit-field">
+                <label>Instructions (Optional)</label>
+                <textarea id="newReminderInstructions" class="text-sm w-full p-2 border rounded" placeholder="e.g., Contact the bank at (123) 456-7890"></textarea>
+              </div>
+              <div class="edit-field">
+                <label>Enable Text Message Reminder</label>
+                <input type="checkbox" id="newReminderTextMessage">
+              </div>
+            </div>
+            <div class="flex space-x-2 justify-end">
+              <button id="saveReminderBtnPopup" class="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 transition">Save</button>
+              <button id="closeAddReminderPopupBtn" class="px-3 py-1 bg-gray-200 rounded text-gray-700 text-sm hover:bg-gray-300 transition">Close</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add Quick Save Popup -->
+        <div id="addQuickSavePopup" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden">
+          <div class="bg-white rounded-lg shadow-lg p-6 w-96">
+            <h3 class="text-base font-semibold text-gray-700 mb-4">Add Quick Save</h3>
+            <div id="addQuickSaveFields" class="text-sm text-gray-700 mb-4">
+              <div class="edit-field">
+                <label>Photo (Optional)</label>
+                <input type="file" id="quickSavePhoto" accept="image/*">
+                <img id="quickSavePhotoPreview" class="preview-img hidden" src="" alt="Quick Save Preview">
+              </div>
+              <div class="edit-field">
+                <label>Note (Optional)</label>
+                <textarea id="quickSaveNote" class="text-sm w-full p-2 border rounded" placeholder="e.g., Remember to pick up oil filter"></textarea>
+              </div>
+              <div class="edit-field">
+                <label>Shelf Life</label>
+                <select id="quickSaveShelfLife" class="text-sm">
+                  <option value="1-day">1 Day</option>
+                  <option value="1-week">1 Week</option>
+                  <option value="1-month">1 Month</option>
+                </select>
+              </div>
+            </div>
+            <div class="flex space-x-2 justify-end">
+              <button id="saveQuickSaveBtn" class="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 transition">Save</button>
+              <button id="closeAddQuickSavePopupBtn" class="px-3 py-1 bg-gray-200 rounded text-gray-700 text-sm hover:bg-gray-300 transition">Close</button>
             </div>
           </div>
         </div>
