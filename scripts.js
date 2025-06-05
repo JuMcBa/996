@@ -5,7 +5,7 @@ let currentSubtaskRow = null;
 let sortColumn = null;
 let sortDirection = 'asc';
 let selectedVehicle = null;
-let currentDate = new Date('2025-06-04T08:31:00-07:00'); // 08:31 AM PDT on June 04, 2025
+let currentDate = new Date('2025-06-05T08:31:00-07:00'); // 08:31 AM PDT on June 05, 2025
 let fleet = [
   {
     id: 1,
@@ -87,7 +87,7 @@ let scheduledServices = [
   }
 ];
 
-// Load reminders and to-do items from localStorage, or use defaults if not present
+// Load reminders, to-do items, and quick saves from localStorage, or use defaults if not present
 let recurringReminders = JSON.parse(localStorage.getItem('recurringReminders')) || [
   { name: "Pay HELOC", frequency: "annually", startDate: "2025-01-01", instructions: "", textMessageEnabled: false },
   { name: "Pay Water Bill", frequency: "annually", startDate: "2025-02-01", instructions: "", textMessageEnabled: false },
@@ -104,10 +104,31 @@ let toDoItems = JSON.parse(localStorage.getItem('toDoItems')) || [
   { task: "Schedule Dentist Appointment", dueDate: "2025-06-30", priority: "medium", instructions: "", textMessageEnabled: false, completed: false }
 ];
 
+let quickSaves = JSON.parse(localStorage.getItem('quickSaves')) || [];
+
 // Save to localStorage whenever data changes
 function saveData() {
   localStorage.setItem('recurringReminders', JSON.stringify(recurringReminders));
   localStorage.setItem('toDoItems', JSON.stringify(toDoItems));
+  localStorage.setItem('quickSaves', JSON.stringify(quickSaves));
+}
+
+// Calculate expiration date based on shelf life
+function calculateExpirationDate(shelfLife) {
+  const date = new Date(currentDate);
+  if (shelfLife === '1-day') {
+    date.setDate(date.getDate() + 1);
+  } else if (shelfLife === '1-week') {
+    date.setDate(date.getDate() + 7);
+  } else if (shelfLife === '1-month') {
+    date.setMonth(date.getMonth() + 1);
+  }
+  return date.toISOString();
+}
+
+// Format date for display (e.g., "2025-06-05")
+function formatDate(date) {
+  return new Date(date).toISOString().split('T')[0];
 }
 
 // Determine status for a vehicle or service
@@ -183,7 +204,8 @@ function updateTopNav(page) {
     const subSections = [
       { id: 'todo', label: "To-Do's" },
       { id: 'add-todo', label: 'Add To-Do' },
-      { id: 'reminders', label: 'Add Recurring Reminders' }
+      { id: 'reminders', label: 'Add Recurring Reminders' },
+      { id: 'quick-save', label: 'Quick Save' }
     ];
     subSections.forEach(section => {
       const btn = document.createElement('button');
@@ -229,10 +251,12 @@ function showRemindersSubSection(sectionId) {
   const todoSection = document.getElementById('todoSection');
   const addTodoSection = document.getElementById('addTodoSection');
   const remindersSection = document.getElementById('remindersSection');
+  const quickSaveSection = document.getElementById('quickSaveSection');
 
   todoSection.classList.add('hidden');
   addTodoSection.classList.add('hidden');
   remindersSection.classList.add('hidden');
+  quickSaveSection.classList.add('hidden');
 
   if (sectionId === 'todo') {
     todoSection.classList.remove('hidden');
@@ -240,6 +264,8 @@ function showRemindersSubSection(sectionId) {
     addTodoSection.classList.remove('hidden');
   } else if (sectionId === 'reminders') {
     remindersSection.classList.remove('hidden');
+  } else if (sectionId === 'quick-save') {
+    quickSaveSection.classList.remove('hidden');
   }
 }
 
@@ -273,6 +299,7 @@ function showPage(page, vehicle = null, service = null) {
     // Show "To-Do's" by default
     showRemindersSubSection('todo');
     populateRemindersAndTodos();
+    populateQuickSaves();
   }
 }
 
@@ -424,18 +451,18 @@ function populateTasksForService(service) {
   row.setAttribute('data-vendors', service.vendors);
   row.setAttribute('data-metadata', service.metadata);
   let statusColor = 'bg-gray-500';
-  if (service.status === 'In Progress') statusColor = 'bg-green-500';
-  if (service.status === 'Completed') statusColor = 'bg-blue-500';
-  row.innerHTML = `
-    <td class="p-2 status-col"><span class="${statusColor} text-white px-2 py-1 rounded text-xs">${service.status}</span></td>
-    <td class="p-2 subtasks-col"><button class="subtaskBtn"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg></button></td>
-    <td class="p-2 task-col">${service.description}</td>
-    <td class="p-2 date-col">${service.scheduledDate}</td>
-    <td class="p-2 mileage-col">${service.mileage}</td>
-  `;
-  row.addEventListener('click', () => showPopup(row));
-  row.querySelector('.subtaskBtn').addEventListener('click', (event) => showSubtaskPopup(row, event));
-  tbody.appendChild(row);
+    if (service.status === 'In Progress') statusColor = 'bg-green-500';
+    if (service.status === 'Completed') statusColor = 'bg-blue-500';
+    row.innerHTML = `
+      <td class="p-2 status-col"><span class="${statusColor} text-white px-2 py-1 rounded text-xs">${service.status}</span></td>
+      <td class="p-2 subtasks-col"><button class="subtaskBtn"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg></button></td>
+      <td class="p-2 task-col">${service.description}</td>
+      <td class="p-2 date-col">${service.scheduledDate}</td>
+      <td class="p-2 mileage-col">${service.mileage}</td>
+    `;
+    row.addEventListener('click', () => showPopup(row));
+    row.querySelector('.subtaskBtn').addEventListener('click', (event) => showSubtaskPopup(row, event));
+    tbody.appendChild(row);
 }
 
 // Populate reminders and to-do lists
@@ -497,6 +524,34 @@ function populateRemindersAndTodos() {
   });
   document.querySelectorAll('.complete-btn').forEach(btn => {
     btn.addEventListener('click', () => toggleTodoComplete(parseInt(btn.dataset.index)));
+  });
+}
+
+// Populate quick saves
+function populateQuickSaves() {
+  const quickSaveList = document.getElementById('quickSaveList');
+  // Filter out expired quick saves
+  quickSaves = quickSaves.filter(save => new Date(save.expires) > currentDate);
+  saveData();
+
+  quickSaveList.innerHTML = quickSaves.length ? quickSaves.map((save, index) => `
+    <div class="quick-save-item">
+      <span class="quick-save-details">
+        <span class="content">
+          ${save.photo ? `<img src="${save.photo}" alt="Quick Save Photo">` : ''}
+          <span>${save.note || 'No note'}</span>
+        </span>
+        <span class="expires">Expires: ${formatDate(save.expires)}</span>
+      </span>
+      <div class="actions">
+        <button class="delete-btn delete-quick-save-btn" data-index="${index}">Delete</button>
+      </div>
+    </div>
+  `).join('') : '<p class="text-gray-500 italic">No quick saves yet.</p>';
+
+  // Add event listeners for delete buttons
+  document.querySelectorAll('.delete-quick-save-btn').forEach(btn => {
+    btn.addEventListener('click', () => deleteQuickSave(parseInt(btn.dataset.index)));
   });
 }
 
@@ -585,13 +640,62 @@ function showTodoDetails(index, editMode = false) {
   popup.classList.add('show');
 }
 
+// Show Add To-Do Popup
+function showAddTodoPopup() {
+  document.getElementById('newTodoTask').value = '';
+  document.getElementById('newTodoDueDate').value = '';
+  document.getElementById('newTodoPriority').value = 'low';
+  document.getElementById('newTodoInstructions').value = '';
+  document.getElementById('newTodoTextMessage').checked = false;
+  const popup = document.getElementById('addTodoPopup');
+  popup.classList.remove('hidden');
+  popup.classList.add('show');
+}
+
+// Show Add Recurring Reminder Popup
+function showAddReminderPopup() {
+  document.getElementById('newReminderName').value = '';
+  document.getElementById('newReminderFrequency').value = 'daily';
+  document.getElementById('newReminderStartDate').value = '';
+  document.getElementById('newReminderInstructions').value = '';
+  document.getElementById('newReminderTextMessage').checked = false;
+  const popup = document.getElementById('addReminderPopup');
+  popup.classList.remove('hidden');
+  popup.classList.add('show');
+}
+
+// Show Add Quick Save Popup
+function showAddQuickSavePopup() {
+  document.getElementById('quickSavePhoto').value = '';
+  document.getElementById('quickSavePhotoPreview').classList.add('hidden');
+  document.getElementById('quickSaveNote').value = '';
+  document.getElementById('quickSaveShelfLife').value = '1-day';
+  const popup = document.getElementById('addQuickSavePopup');
+  popup.classList.remove('hidden');
+  popup.classList.add('show');
+}
+
+// Preview Quick Save Photo
+function previewQuickSavePhoto(event) {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const preview = document.getElementById('quickSavePhotoPreview');
+      preview.src = e.target.result;
+      preview.classList.remove('hidden');
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
 // Add a new recurring reminder
 function addReminder() {
-  const name = document.getElementById('reminderName').value.trim();
-  const frequency = document.getElementById('reminderFrequency').value;
-  const startDate = document.getElementById('reminderStartDate').value;
-  const instructions = document.getElementById('reminderInstructions').value.trim();
-  const textMessageEnabled = document.getElementById('reminderTextMessage').checked;
+  const name = document.getElementById('newReminderName').value.trim();
+  const frequency = document.getElementById('newReminderFrequency').value;
+  const startDate = document.getElementById('newReminderStartDate').value;
+  const instructions = document.getElementById('newReminderInstructions').value.trim();
+  const textMessageEnabled = document.getElementById('newReminderTextMessage').checked;
 
   if (!name || !startDate) {
     alert('Please fill in all required fields (Reminder Name, Start Date).');
@@ -606,25 +710,21 @@ function addReminder() {
     textMessageEnabled: textMessageEnabled
   });
 
-  document.getElementById('reminderName').value = '';
-  document.getElementById('reminderFrequency').value = 'daily';
-  document.getElementById('reminderStartDate').value = '';
-  document.getElementById('reminderInstructions').value = '';
-  document.getElementById('reminderTextMessage').checked = false;
   saveData();
   populateRemindersAndTodos();
-  // Switch back to To-Do's view after adding
-  showRemindersSubSection('todo');
-  document.getElementById('topNavLinks').querySelector('button').classList.add('active');
+  closeAddReminderPopup();
+  // Switch back to Recurring Reminders view after adding
+  showRemindersSubSection('reminders');
+  document.getElementById('topNavLinks').querySelectorAll('button')[2].classList.add('active');
 }
 
 // Add a new to-do item
 function addTodo() {
-  const task = document.getElementById('todoTask').value.trim();
-  const dueDate = document.getElementById('todoDueDate').value;
-  const priority = document.getElementById('todoPriority').value;
-  const instructions = document.getElementById('todoInstructions').value.trim();
-  const textMessageEnabled = document.getElementById('todoTextMessage').checked;
+  const task = document.getElementById('newTodoTask').value.trim();
+  const dueDate = document.getElementById('newTodoDueDate').value;
+  const priority = document.getElementById('newTodoPriority').value;
+  const instructions = document.getElementById('newTodoInstructions').value.trim();
+  const textMessageEnabled = document.getElementById('newTodoTextMessage').checked;
 
   if (!task || !dueDate) {
     alert('Please fill in all required fields (Task Name, Due Date).');
@@ -640,16 +740,41 @@ function addTodo() {
     completed: false
   });
 
-  document.getElementById('todoTask').value = '';
-  document.getElementById('todoDueDate').value = '';
-  document.getElementById('todoPriority').value = 'low';
-  document.getElementById('todoInstructions').value = '';
-  document.getElementById('todoTextMessage').checked = false;
   saveData();
   populateRemindersAndTodos();
+  closeAddTodoPopup();
   // Switch back to To-Do's view after adding
   showRemindersSubSection('todo');
-  document.getElementById('topNavLinks').querySelector('button').classList.add('active');
+  document.getElementById('topNavLinks').querySelectorAll('button')[0].classList.add('active');
+}
+
+// Add a new quick save
+function addQuickSave() {
+  const photoInput = document.getElementById('quickSavePhoto');
+  const photoPreview = document.getElementById('quickSavePhotoPreview').src || '';
+  const note = document.getElementById('quickSaveNote').value.trim();
+  const shelfLife = document.getElementById('quickSaveShelfLife').value;
+
+  if (!photoInput.files.length && !note) {
+    alert('Please provide either a photo or a note.');
+    return;
+  }
+
+  const photo = photoInput.files.length ? photoPreview : null;
+  const expires = calculateExpirationDate(shelfLife);
+
+  quickSaves.push({
+    photo: photo,
+    note: note,
+    expires: expires
+  });
+
+  saveData();
+  populateQuickSaves();
+  closeAddQuickSavePopup();
+  // Switch back to Quick Save view after adding
+  showRemindersSubSection('quick-save');
+  document.getElementById('topNavLinks').querySelectorAll('button')[3].classList.add('active');
 }
 
 // Delete a reminder
@@ -667,6 +792,15 @@ function deleteTodo(index) {
     toDoItems.splice(index, 1);
     saveData();
     populateRemindersAndTodos();
+  }
+}
+
+// Delete a quick save
+function deleteQuickSave(index) {
+  if (confirm('Are you sure you want to delete this quick save?')) {
+    quickSaves.splice(index, 1);
+    saveData();
+    populateQuickSaves();
   }
 }
 
@@ -741,6 +875,27 @@ function closeReminderDetailsPopup() {
 // Close To-Do Details Popup
 function closeTodoDetailsPopup() {
   const popup = document.getElementById('todoDetailsPopup');
+  popup.classList.remove('show');
+  setTimeout(() => popup.classList.add('hidden'), 300);
+}
+
+// Close Add To-Do Popup
+function closeAddTodoPopup() {
+  const popup = document.getElementById('addTodoPopup');
+  popup.classList.remove('show');
+  setTimeout(() => popup.classList.add('hidden'), 300);
+}
+
+// Close Add Recurring Reminder Popup
+function closeAddReminderPopup() {
+  const popup = document.getElementById('addReminderPopup');
+  popup.classList.remove('show');
+  setTimeout(() => popup.classList.add('hidden'), 300);
+}
+
+// Close Add Quick Save Popup
+function closeAddQuickSavePopup() {
+  const popup = document.getElementById('addQuickSavePopup');
   popup.classList.remove('show');
   setTimeout(() => popup.classList.add('hidden'), 300);
 }
@@ -1260,11 +1415,20 @@ document.getElementById('saveBtn').addEventListener('click', saveEdits);
 document.getElementById('closePopupBtn').addEventListener('click', closePopup);
 document.getElementById('addSubtaskBtn').addEventListener('click', addSubtask);
 document.getElementById('closeSubtaskPopupBtn').addEventListener('click', closeSubtaskPopup);
-document.getElementById('addReminderBtn').addEventListener('click', addReminder);
+document.getElementById('addReminderBtnTop').addEventListener('click', showAddReminderPopup);
+document.getElementById('saveReminderBtnPopup').addEventListener('click', addReminder);
+document.getElementById('closeAddReminderPopupBtn').addEventListener('click', closeAddReminderPopup);
 document.getElementById('addTodoBtn').addEventListener('click', addTodo);
+document.getElementById('addTodoBtnTop').addEventListener('click', showAddTodoPopup);
+document.getElementById('saveTodoBtnPopup').addEventListener('click', addTodo);
+document.getElementById('closeAddTodoPopupBtn').addEventListener('click', closeAddTodoPopup);
 document.getElementById('editReminderBtn').addEventListener('click', (e) => showReminderDetails(parseInt(e.target.dataset.index), true));
 document.getElementById('saveReminderBtn').addEventListener('click', (e) => saveEditedReminder(parseInt(e.target.dataset.index)));
 document.getElementById('closeReminderDetailsBtn').addEventListener('click', closeReminderDetailsPopup);
 document.getElementById('editTodoBtn').addEventListener('click', (e) => showTodoDetails(parseInt(e.target.dataset.index), true));
 document.getElementById('saveTodoBtn').addEventListener('click', (e) => saveEditedTodo(parseInt(e.target.dataset.index)));
 document.getElementById('closeTodoDetailsBtn').addEventListener('click', closeTodoDetailsPopup);
+document.getElementById('addQuickSaveBtn').addEventListener('click', showAddQuickSavePopup);
+document.getElementById('quickSavePhoto').addEventListener('change', previewQuickSavePhoto);
+document.getElementById('saveQuickSaveBtn').addEventListener('click', addQuickSave);
+document.getElementById('closeAddQuickSavePopupBtn').addEventListener('click', closeAddQuickSavePopup);
