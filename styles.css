@@ -35,11 +35,11 @@ tr:hover {
   background-color: #f1f5f9; 
   cursor: pointer; 
 }
-#popup, #subtaskPopup, #filterDropdown, #addVehiclePopup, #addServicePopup, #reminderDetailsPopup, #todoDetailsPopup {
+#popup, #subtaskPopup, #filterDropdown, #addVehiclePopup, #addServicePopup, #reminderDetailsPopup, #todoDetailsPopup, #addTodoPopup, #addReminderPopup, #addQuickSavePopup {
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
 }
-#popup.show, #subtaskPopup.show, #filterDropdown.show, #addVehiclePopup.show, #addServicePopup.show, #reminderDetailsPopup.show, #todoDetailsPopup.show {
+#popup.show, #subtaskPopup.show, #filterDropdown.show, #addVehiclePopup.show, #addServicePopup.show, #reminderDetailsPopup.show, #todoDetailsPopup.show, #addTodoPopup.show, #addReminderPopup.show, #addQuickSavePopup.show {
   opacity: 1;
 }
 .preview-img {
@@ -393,7 +393,7 @@ tr:hover {
   margin-bottom: 1.5rem; /* More spacing below headers */
   color: #1f2937; /* Darker color for better readability */
 }
-.reminder-item, .todo-item {
+.reminder-item, .todo-item, .quick-save-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -404,17 +404,17 @@ tr:hover {
   margin-bottom: 8px; /* Space between items */
   transition: background-color 0.2s ease, transform 0.1s ease; /* Smooth hover and click effects */
 }
-.reminder-item:hover, .todo-item:hover {
+.reminder-item:hover, .todo-item:hover, .quick-save-item:hover {
   background-color: #f3f4f6; /* Slightly darker on hover */
   transform: translateY(-1px); /* Subtle lift effect */
 }
-.reminder-item:last-child, .todo-item:last-child {
+.reminder-item:last-child, .todo-item:last-child, .quick-save-item:last-child {
   margin-bottom: 0; /* No margin on the last item */
 }
 .reminder-item.completed, .todo-item.completed {
   background-color: #f0fdf4; /* Light green background for completed items */
 }
-.reminder-details, .todo-details {
+.reminder-details, .todo-details, .quick-save-details {
   display: flex;
   gap: 12px; /* Space between content elements */
   font-size: 0.875rem;
@@ -422,7 +422,7 @@ tr:hover {
   cursor: pointer;
   font-weight: 500; /* Slightly bolder text */
 }
-.reminder-details span, .todo-details span {
+.reminder-details span, .todo-details span, .quick-save-details span {
   display: inline-block;
 }
 .reminder-details .name {
@@ -441,6 +441,24 @@ tr:hover {
 .todo-details .priority {
   width: 80px; /* Fixed width for alignment */
 }
+.quick-save-details .content {
+  flex: 1; /* Allow content to take remaining space */
+}
+.quick-save-details .content img {
+  max-width: 50px;
+  max-height: 50px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-right: 8px;
+}
+.quick-save-details .content span {
+  vertical-align: middle;
+}
+.quick-save-details .expires {
+  width: 120px; /* Fixed width for alignment */
+  text-align: left;
+  color: #6b7280;
+}
 .reminder-item.completed .reminder-details, .todo-item.completed .todo-details {
   text-decoration: line-through;
   color: #6b7280;
@@ -448,12 +466,12 @@ tr:hover {
 .reminder-details:hover, .todo-details:hover {
   text-decoration: underline;
 }
-.reminder-item .actions, .todo-item .actions {
+.reminder-item .actions, .todo-item .actions, .quick-save-item .actions {
   display: flex;
   align-items: center;
   gap: 8px; /* Consistent spacing between action elements */
 }
-.reminder-item .actions button, .todo-item .actions button {
+.reminder-item .actions button, .todo-item .actions button, .quick-save-item .actions button {
   font-size: 0.75rem;
   padding: 4px 10px; /* More padding for better click area */
   border-radius: 4px; /* Softer corners */
@@ -466,11 +484,11 @@ tr:hover {
 .reminder-item .actions .edit-btn:hover, .todo-item .actions .edit-btn:hover {
   background-color: #2563eb;
 }
-.reminder-item .actions .delete-btn, .todo-item .actions .delete-btn {
+.reminder-item .actions .delete-btn, .todo-item .actions .delete-btn, .quick-save-item .actions .delete-btn {
   background-color: #ef4444;
   color: white;
 }
-.reminder-item .actions .delete-btn:hover, .todo-item .actions .delete-btn:hover {
+.reminder-item .actions .delete-btn:hover, .todo-item .actions .delete-btn:hover, .quick-save-item .actions .delete-btn:hover {
   background-color: #dc2626;
 }
 .todo-item .actions .complete-btn {
